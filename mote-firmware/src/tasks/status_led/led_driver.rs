@@ -13,15 +13,15 @@ pub mod colors {
     pub const RED: RGB8 = RGB8 { r: 255, g: 0, b: 0 };
     pub const GREEN: RGB8 = RGB8 { r: 0, g: 255, b: 0 };
     pub const BLUE: RGB8 = RGB8 { r: 0, g: 0, b: 255 };
-    pub const YELLOW: RGB8 = RGB8 { r: 126, g: 129, b: 0 };
+    pub const YELLOW: RGB8 = RGB8 { r: 255, g: 255, b: 0 };
     pub const WHITE: RGB8 = RGB8 { r: 255, g: 255, b: 255 };
     pub const MAGENTA: RGB8 = RGB8 { r: 255, g: 0, b: 255 };
     pub const VIOLET: RGB8 = RGB8 { r: 125, g: 0, b: 255 };
     pub const ORANGE: RGB8 = RGB8 { r: 255, g: 125, b: 0 };
     pub const OCEAN: RGB8 = RGB8 { r: 0, g: 125, b: 255 };
-    pub const CYAN: RGB8 = RGB8 { r: 0, g: 126, b: 129 };
+    pub const CYAN: RGB8 = RGB8 { r: 0, g: 126, b: 255 };
     pub const MAROON: RGB8 = RGB8 { r: 128, g: 0, b: 0 };
-    pub const PURPLE: RGB8 = RGB8 { r: 128, g: 0, b: 128 };
+    pub const PURPLE: RGB8 = RGB8 { r: 255, g: 0, b: 128 };
 }
 
 pub struct LedDriver<'d, P, const S: usize, const N: usize>

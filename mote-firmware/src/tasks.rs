@@ -61,7 +61,7 @@ assign_resources! {
     },
     usb_power_detection: UsbPowerDetectionResources{
         cc1: PIN_26,
-        cc2: PIN_28,
+        cc2: PIN_27,
         adc: ADC
     },
     flash: FlashResources{

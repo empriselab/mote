@@ -154,7 +154,7 @@ async fn motor_task(
         error!("Unable to init drive base PWM. Drive-base disabled.");
         return;
     };
-    let left_pwm_bridge = PwmBridge::new(left_a, left_b, 0);
+    let left_pwm_bridge = PwmBridge::new(left_b, left_a, 0);
     let mut left_motor = Motor::new(left_pwm_bridge, left_encoder);
 
     // Configure right wheel
@@ -175,7 +175,7 @@ async fn motor_task(
         error!("Unable to init drive base PWM. Drive-base disabled.");
         return;
     };
-    let right_pwm_bridge = PwmBridge::new(right_a, right_b, 0);
+    let right_pwm_bridge = PwmBridge::new(right_b, right_a, 0);
     let mut right_motor = Motor::new(right_pwm_bridge, right_encoder);
 
     // Init sleep pin
@@ -224,7 +224,7 @@ async fn motor_task(
                 watchdog_deadline = Instant::now() + Duration::from_secs(WATCH_DOG_TIMEOUT);
                 // Handle the command
                 sleep.set_high();
-                left_motor.set_setpoint_rad_per_s(command.left_velocity_rad);
+                left_motor.set_setpoint_rad_per_s(-command.left_velocity_rad);
                 right_motor.set_setpoint_rad_per_s(command.right_velocity_rad);
             }
         }
