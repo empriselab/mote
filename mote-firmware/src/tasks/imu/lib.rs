@@ -31,11 +31,11 @@ impl<E> From<E> for Error<E> {
 }
 
 // Value of the WHO_AM_I register
-// const CHIP_ID: u8 = 0x69; // FOR LSM6DS33
-const CHIP_ID: u8 = 0x6A; // FOR LSM6DS3-TRC, DIFFERENT FROM LSM6DS33 WHOAMI
+const CHIP_ID: u8 = 0x69; // FOR LSM6DS33
+const CHIP_ID_TRC: u8 = 0x6A; // FOR LSM6DS3-TRC, DIFFERENT FROM LSM6DS33 WHOAMI
 
 // Earth gravity constant for acceleration conversion
-const EARTH_GRAVITY: f32 = 9.80665;
+const EARTH_GRAVITY: f32 = -9.80665;
 
 /// 6-DoF IMU accelerometer + gyro
 pub struct Lsm6ds3TRC<I2C> {
@@ -237,7 +237,7 @@ where
     async fn check(&mut self) -> Result<bool, Error<E>> {
         self.read_register(Register::WhoAmI)
             .await
-            .map(|chip_id| chip_id == CHIP_ID)
+            .map(|chip_id| chip_id == CHIP_ID || chip_id == CHIP_ID_TRC)
     }
 
     async fn set_auto_increment(&mut self, enabled: bool) -> Result<(), Error<E>> {
