@@ -532,155 +532,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Diode:PTVS5V0Z1USK"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "D"
-				(at 0 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "PTVS5V0Z1USK"
-				(at 0 -2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "Diode_SMD:Nexperia_DSN1608-2_1.6x0.8mm"
-				(at 0 -4.445 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "TVS diode"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "*DSN1608?2*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "PTVS5V0Z1USK_0_1"
-				(polyline
-					(pts
-						(xy -1.27 -1.27) (xy -1.27 1.27) (xy -0.762 1.27)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 0) (xy -1.27 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -1.27) (xy 1.27 1.27) (xy -1.27 0) (xy 1.27 -1.27)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "PTVS5V0Z1USK_1_1"
-				(pin passive line
-					(at -3.81 0 0)
-					(length 2.54)
-					(name "K"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 3.81 0 180)
-					(length 2.54)
-					(name "A"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Driver_Motor:DRV8833PW"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -1053,10 +904,457 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Power_Protection:USBLC6-2SC6"
+			(pin_names
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0.635 5.715 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "USBLC6-2SC6"
+				(at 0.635 3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+				(at 1.27 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
+				(at 1.27 -8.255 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Description" "Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "usb ethernet video"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "SOT?23*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "USBLC6-2SC6_0_0"
+				(circle
+					(center -1.524 0)
+					(radius 0.0001)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center -0.508 2.032)
+					(radius 0.0001)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center -0.508 -4.572)
+					(radius 0.0001)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0.508 2.032)
+					(radius 0.0001)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0.508 -4.572)
+					(radius 0.0001)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 1.524 -2.54)
+					(radius 0.0001)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "USBLC6-2SC6_0_1"
+				(polyline
+					(pts
+						(xy -2.54 0) (xy 2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 -2.54) (xy 2.54 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 0.508) (xy -1.016 0.508) (xy -1.524 1.524) (xy -2.032 0.508)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 -3.048) (xy -1.016 -3.048)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.016 1.524) (xy -2.032 1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.016 -4.064) (xy -2.032 -4.064) (xy -1.524 -3.048) (xy -1.016 -4.064)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.508 -1.143) (xy -0.508 -0.762) (xy 0.508 -0.762)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy -0.508 2.032) (xy 0.508 2.032) (xy 0 1.524) (xy 0 -4.064) (xy -0.508 -4.572) (xy 0.508 -4.572)
+						(xy 0 -5.08)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.508 -1.778) (xy -0.508 -1.778) (xy 0 -0.762) (xy 0.508 -1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.016 1.524) (xy 2.032 1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.016 -3.048) (xy 2.032 -3.048)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.032 0.508) (xy 1.016 0.508) (xy 1.524 1.524) (xy 2.032 0.508)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.032 -4.064) (xy 1.016 -4.064) (xy 1.524 -3.048) (xy 2.032 -4.064)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "USBLC6-2SC6_1_1"
+				(rectangle
+					(start -2.54 2.794)
+					(end 2.54 -5.334)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.508 2.032) (xy -1.524 2.032) (xy -1.524 -4.572) (xy -0.508 -4.572)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.508 -4.572) (xy 1.524 -4.572) (xy 1.524 2.032) (xy 0.508 2.032)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "I/O1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 2.54)
+					(name "I/O2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 5.08 270)
+					(length 2.54)
+					(name "VBUS"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -7.62 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 2.54)
+					(name "I/O1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 2.54)
+					(name "I/O2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(text "JST PH 2.00mm connectors"
 		(exclude_from_sim no)
-		(at 157.988 115.062 0)
+		(at 165.608 115.062 0)
 		(effects
 			(font
 				(size 1.905 1.905)
@@ -1088,7 +1386,7 @@
 	)
 	(text "ESD Protection"
 		(exclude_from_sim no)
-		(at 224.79 79.502 0)
+		(at 229.87 66.802 0)
 		(effects
 			(font
 				(size 1.905 1.905)
@@ -1122,24 +1420,6 @@
 		(uuid "310f3d8f-7dcb-4c7c-b847-46ec9236185e")
 	)
 	(junction
-		(at 224.79 137.16)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "41c23995-8eef-4593-a5cf-fff5cd5a359e")
-	)
-	(junction
-		(at 214.63 104.14)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "5041544c-e29d-4c15-8651-f68c3da9a0a1")
-	)
-	(junction
-		(at 214.63 137.16)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "7d179a5e-70f8-4c93-a107-56bb2164a61d")
-	)
-	(junction
 		(at 139.7 58.42)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1157,12 +1437,6 @@
 		(color 0 0 0 0)
 		(uuid "eca9290c-3c95-4257-b989-9f732d01bba0")
 	)
-	(junction
-		(at 224.79 104.14)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f1b3e5d9-0466-4d2d-ab53-b12327ace88d")
-	)
 	(no_connect
 		(at 124.46 101.6)
 		(uuid "329b47cb-5b98-4b1d-8d96-0e1f0b7a6429")
@@ -1179,6 +1453,56 @@
 	)
 	(wire
 		(pts
+			(xy 237.49 115.57) (xy 248.92 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "026579a2-d9e4-4b13-816b-18de28fccb98")
+	)
+	(wire
+		(pts
+			(xy 237.49 85.09) (xy 248.92 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0367b778-bc59-4c94-9297-e2b909ffaf8f")
+	)
+	(wire
+		(pts
+			(xy 232.41 74.93) (xy 232.41 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "09ad875a-356b-4bc1-983b-2fdf95c42c73")
+	)
+	(wire
+		(pts
+			(xy 232.41 123.19) (xy 232.41 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0b95b619-2248-4137-a4a4-60af57d190e3")
+	)
+	(wire
+		(pts
+			(xy 133.35 120.65) (xy 160.02 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0be4aa8c-fc2f-46bd-bcc2-2125577edb5e")
+	)
+	(wire
+		(pts
 			(xy 111.76 119.38) (xy 111.76 127)
 		)
 		(stroke
@@ -1186,26 +1510,6 @@
 			(type default)
 		)
 		(uuid "0c905bc0-598c-40d6-be55-fc56c3562cc9")
-	)
-	(wire
-		(pts
-			(xy 149.86 99.06) (xy 152.4 99.06)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0e01fb4c-6340-442a-a27c-0d3ff8a6867c")
-	)
-	(wire
-		(pts
-			(xy 224.79 137.16) (xy 234.95 137.16)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "110aad28-1aea-43ee-979c-711e212d5aae")
 	)
 	(wire
 		(pts
@@ -1219,23 +1523,13 @@
 	)
 	(wire
 		(pts
-			(xy 241.3 125.73) (xy 234.95 125.73)
+			(xy 237.49 118.11) (xy 248.92 118.11)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "19add971-5683-432d-9f7b-d6764122c8ff")
-	)
-	(wire
-		(pts
-			(xy 149.86 101.6) (xy 152.4 101.6)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1c0843cd-af12-418c-b0b3-b1590dcfd83a")
+		(uuid "183020cb-de87-43cb-8683-9798248cfff4")
 	)
 	(wire
 		(pts
@@ -1249,27 +1543,17 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 120.65) (xy 152.4 120.65)
+			(xy 134.62 101.6) (xy 160.02 101.6)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "2565d120-2483-4186-9c51-b718fef588cc")
+		(uuid "25d852b5-76fb-4758-988a-bf61588078e6")
 	)
 	(wire
 		(pts
-			(xy 234.95 137.16) (xy 234.95 135.89)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2849238a-0068-465e-bcd7-1f17014cc462")
-	)
-	(wire
-		(pts
-			(xy 129.54 130.81) (xy 152.4 130.81)
+			(xy 128.27 130.81) (xy 160.02 130.81)
 		)
 		(stroke
 			(width 0)
@@ -1289,37 +1573,17 @@
 	)
 	(wire
 		(pts
-			(xy 214.63 93.98) (xy 214.63 95.25)
+			(xy 199.39 82.55) (xy 227.33 82.55)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "31b44591-7162-4699-8be4-d7cf41f3c162")
+		(uuid "30e376ed-4cbf-41c6-8b38-f0402b852059")
 	)
 	(wire
 		(pts
-			(xy 234.95 104.14) (xy 234.95 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "32a7941b-f8e0-4c62-9867-8a58d7045ca8")
-	)
-	(wire
-		(pts
-			(xy 214.63 104.14) (xy 224.79 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "359d7c62-dbfb-46ae-aea2-4996a5b8b73e")
-	)
-	(wire
-		(pts
-			(xy 124.46 106.68) (xy 152.4 106.68)
+			(xy 124.46 106.68) (xy 160.02 106.68)
 		)
 		(stroke
 			(width 0)
@@ -1336,16 +1600,6 @@
 			(type default)
 		)
 		(uuid "39edcef5-12bd-4aa6-93b7-ef06c107230c")
-	)
-	(wire
-		(pts
-			(xy 234.95 125.73) (xy 234.95 128.27)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3deda222-453e-4b8f-a34d-c699023d79c2")
 	)
 	(wire
 		(pts
@@ -1379,16 +1633,6 @@
 	)
 	(wire
 		(pts
-			(xy 214.63 137.16) (xy 224.79 137.16)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "41d3c5c4-8465-4a3f-82fa-6f228bae32cf")
-	)
-	(wire
-		(pts
 			(xy 92.71 109.22) (xy 99.06 109.22)
 		)
 		(stroke
@@ -1419,7 +1663,7 @@
 	)
 	(wire
 		(pts
-			(xy 129.54 114.3) (xy 129.54 130.81)
+			(xy 128.27 114.3) (xy 128.27 130.81)
 		)
 		(stroke
 			(width 0)
@@ -1439,6 +1683,16 @@
 	)
 	(wire
 		(pts
+			(xy 232.41 107.95) (xy 232.41 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "57107a7f-c05b-4ca2-a3f5-d08b2a0a9f6e")
+	)
+	(wire
+		(pts
 			(xy 125.73 71.12) (xy 139.7 71.12)
 		)
 		(stroke
@@ -1449,23 +1703,13 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 128.27) (xy 132.08 128.27)
+			(xy 160.02 128.27) (xy 130.81 128.27)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "5cb1697e-33fe-4fe4-ba85-a76d2bcad3ab")
-	)
-	(wire
-		(pts
-			(xy 234.95 92.71) (xy 234.95 95.25)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "615f0a24-71be-4361-a699-f5cf82ed4ecc")
 	)
 	(wire
 		(pts
@@ -1489,26 +1733,6 @@
 	)
 	(wire
 		(pts
-			(xy 224.79 137.16) (xy 224.79 135.89)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "65fa6b8f-b749-4483-afbf-b5f688a37774")
-	)
-	(wire
-		(pts
-			(xy 214.63 137.16) (xy 214.63 138.43)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "66044d50-0e3f-4dd6-b12b-ca39cf97593e")
-	)
-	(wire
-		(pts
 			(xy 119.38 58.42) (xy 119.38 72.39)
 		)
 		(stroke
@@ -1529,7 +1753,7 @@
 	)
 	(wire
 		(pts
-			(xy 132.08 111.76) (xy 124.46 111.76)
+			(xy 130.81 111.76) (xy 124.46 111.76)
 		)
 		(stroke
 			(width 0)
@@ -1549,16 +1773,6 @@
 	)
 	(wire
 		(pts
-			(xy 224.79 118.11) (xy 224.79 128.27)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "719034ac-9c3d-4f44-8c54-6b4955f046bd")
-	)
-	(wire
-		(pts
 			(xy 82.55 99.06) (xy 71.12 99.06)
 		)
 		(stroke
@@ -1569,7 +1783,7 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 118.11) (xy 152.4 118.11)
+			(xy 157.48 118.11) (xy 160.02 118.11)
 		)
 		(stroke
 			(width 0)
@@ -1579,23 +1793,13 @@
 	)
 	(wire
 		(pts
-			(xy 124.46 114.3) (xy 129.54 114.3)
+			(xy 124.46 114.3) (xy 128.27 114.3)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "7eccc72c-e165-4120-8de1-2d51921b0b1f")
-	)
-	(wire
-		(pts
-			(xy 214.63 137.16) (xy 214.63 135.89)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "820a806e-6851-447c-b032-4b967c9d94f2")
 	)
 	(wire
 		(pts
@@ -1609,17 +1813,7 @@
 	)
 	(wire
 		(pts
-			(xy 224.79 104.14) (xy 234.95 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8c33a46a-c92e-44b7-a98b-e87997293257")
-	)
-	(wire
-		(pts
-			(xy 124.46 109.22) (xy 152.4 109.22)
+			(xy 124.46 109.22) (xy 160.02 109.22)
 		)
 		(stroke
 			(width 0)
@@ -1629,33 +1823,23 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 125.73) (xy 152.4 125.73)
+			(xy 133.35 123.19) (xy 160.02 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "96b57522-c051-4011-859f-21a28ad72f94")
+	)
+	(wire
+		(pts
+			(xy 157.48 125.73) (xy 160.02 125.73)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "98c06b5a-de2e-4523-a5c4-a66db617e492")
-	)
-	(wire
-		(pts
-			(xy 224.79 85.09) (xy 224.79 95.25)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9b2b9bf8-8405-413a-8358-990e4ec08211")
-	)
-	(wire
-		(pts
-			(xy 224.79 118.11) (xy 238.76 118.11)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9d259d02-871f-4c4a-bf22-d48a3830d2f0")
 	)
 	(wire
 		(pts
@@ -1679,13 +1863,13 @@
 	)
 	(wire
 		(pts
-			(xy 224.79 85.09) (xy 238.76 85.09)
+			(xy 237.49 82.55) (xy 248.92 82.55)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "aba5010c-2ce2-41cb-88cd-7eb0165d9716")
+		(uuid "a6c0ea5b-aaf0-4c99-953c-2eb9b997eaef")
 	)
 	(wire
 		(pts
@@ -1696,16 +1880,6 @@
 			(type default)
 		)
 		(uuid "b0e92ee3-4d9c-4488-81e6-ca0b302e096c")
-	)
-	(wire
-		(pts
-			(xy 224.79 104.14) (xy 224.79 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b1747446-ce57-4aa5-8adb-6b92b8dd61d6")
 	)
 	(wire
 		(pts
@@ -1739,17 +1913,37 @@
 	)
 	(wire
 		(pts
-			(xy 241.3 92.71) (xy 234.95 92.71)
+			(xy 200.66 115.57) (xy 227.33 115.57)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "c0eaeeb6-26a9-431a-92b1-abb77335352d")
+		(uuid "bb30b6b2-2831-49f8-ba7e-a9fbb240b4f6")
 	)
 	(wire
 		(pts
-			(xy 132.08 128.27) (xy 132.08 111.76)
+			(xy 134.62 99.06) (xy 160.02 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c019824d-fdc9-422f-9f59-74cc23742e34")
+	)
+	(wire
+		(pts
+			(xy 232.41 90.17) (xy 232.41 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c155cd4b-9c38-44bd-833c-11136a3207ab")
+	)
+	(wire
+		(pts
+			(xy 130.81 128.27) (xy 130.81 111.76)
 		)
 		(stroke
 			(width 0)
@@ -1779,16 +1973,6 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 123.19) (xy 152.4 123.19)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cd1bcd37-6685-43bf-bf30-8c70df9cabb3")
-	)
-	(wire
-		(pts
 			(xy 71.12 101.6) (xy 82.55 101.6)
 		)
 		(stroke
@@ -1799,7 +1983,7 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 96.52) (xy 152.4 96.52)
+			(xy 157.48 96.52) (xy 160.02 96.52)
 		)
 		(stroke
 			(width 0)
@@ -1809,33 +1993,13 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 104.14) (xy 152.4 104.14)
+			(xy 157.48 104.14) (xy 160.02 104.14)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "da2e71d3-bf87-459b-9ac7-f9ca876ca951")
-	)
-	(wire
-		(pts
-			(xy 214.63 127) (xy 214.63 128.27)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "df894a2a-d7d9-4993-9f2d-a26331963249")
-	)
-	(wire
-		(pts
-			(xy 214.63 104.14) (xy 214.63 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e3670d9f-4d87-4b5c-9a0f-5f28956a7618")
 	)
 	(wire
 		(pts
@@ -1859,13 +2023,23 @@
 	)
 	(wire
 		(pts
-			(xy 214.63 104.14) (xy 214.63 105.41)
+			(xy 200.66 118.11) (xy 227.33 118.11)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "f6adecf5-efe8-4590-a55c-fba2da0c56ac")
+		(uuid "f4733f2e-2ebb-4613-953c-f1744d37719b")
+	)
+	(wire
+		(pts
+			(xy 199.39 85.09) (xy 227.33 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f6da230b-195c-47bd-a112-7a24edc3c091")
 	)
 	(wire
 		(pts
@@ -1907,6 +2081,86 @@
 		)
 		(uuid "ff186557-0b69-472b-99e8-52a1db0196eb")
 	)
+	(label "left_encoder_a_internal"
+		(at 134.62 99.06 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8dabbc0a-6687-4c77-9333-346f2cea9544")
+	)
+	(label "right_encoder_b_internal"
+		(at 133.35 123.19 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "937db6b6-9a33-445b-864b-3e36e68c764e")
+	)
+	(label "left_encoder_b_internal"
+		(at 134.62 101.6 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b6c112d7-e775-4198-9255-7329b98b9009")
+	)
+	(label "right_encoder_a_internal"
+		(at 133.35 120.65 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b82a0468-852b-4639-afaf-8f785cfe7185")
+	)
+	(label "right_encoder_b_internal"
+		(at 200.66 118.11 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "bcf6552c-f8f9-4a64-9f68-24b989722456")
+	)
+	(label "left_encoder_a_internal"
+		(at 199.39 82.55 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c7e94b7e-0126-4d10-9eda-9edcd362788d")
+	)
+	(label "left_encoder_b_internal"
+		(at 199.39 85.09 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "d6e5f4c8-2163-45e6-aaac-40e967e3ccab")
+	)
+	(label "right_encoder_a_internal"
+		(at 200.66 115.57 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f67c25e7-d84d-45c4-895f-e44de1bfdf93")
+	)
 	(hierarchical_label "V_MOTOR"
 		(shape passive)
 		(at 119.38 55.88 90)
@@ -1920,7 +2174,7 @@
 	)
 	(hierarchical_label "+3v3"
 		(shape passive)
-		(at 149.86 104.14 180)
+		(at 157.48 104.14 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1942,7 +2196,7 @@
 	)
 	(hierarchical_label "+3v3"
 		(shape passive)
-		(at 149.86 125.73 180)
+		(at 157.48 125.73 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1950,6 +2204,17 @@
 			(justify right)
 		)
 		(uuid "486b65c9-b1c4-4773-b497-bb95d2b1eafa")
+	)
+	(hierarchical_label "+3v3"
+		(shape passive)
+		(at 232.41 74.93 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4ca952c6-5c0f-494b-9daa-a88599319869")
 	)
 	(hierarchical_label "GND"
 		(shape passive)
@@ -1964,7 +2229,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 149.86 96.52 180)
+		(at 157.48 96.52 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1975,7 +2240,7 @@
 	)
 	(hierarchical_label "left_encoder_b"
 		(shape input)
-		(at 241.3 92.71 0)
+		(at 248.92 85.09 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1984,9 +2249,20 @@
 		)
 		(uuid "69c021cc-3585-4e52-9c46-defc84de01a8")
 	)
+	(hierarchical_label "+3v3"
+		(shape passive)
+		(at 232.41 107.95 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6a71b74c-0921-4d29-a79e-68fd1e2125b8")
+	)
 	(hierarchical_label "left_encoder_a"
 		(shape input)
-		(at 238.76 85.09 0)
+		(at 248.92 82.55 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1995,20 +2271,9 @@
 		)
 		(uuid "735a2163-67d6-403c-a7fd-c4a55ca4bc9a")
 	)
-	(hierarchical_label "left_encoder_b"
-		(shape input)
-		(at 149.86 101.6 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "7c688877-41c6-419d-ae92-df9461116b60")
-	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 149.86 118.11 180)
+		(at 157.48 118.11 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2028,16 +2293,16 @@
 		)
 		(uuid "92c553a6-9518-48d7-93cb-ab61631fe1f1")
 	)
-	(hierarchical_label "GND"
-		(shape passive)
-		(at 214.63 138.43 270)
+	(hierarchical_label "right_encoder_b"
+		(shape input)
+		(at 248.92 118.11 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify left)
 		)
-		(uuid "976a97e6-0e1a-4025-ad65-5aa0ee8f2472")
+		(uuid "9602189d-8fa7-4274-8c08-3c5377dd6dcc")
 	)
 	(hierarchical_label "GND"
 		(shape passive)
@@ -2061,27 +2326,16 @@
 		)
 		(uuid "a5735b02-fc4c-41ef-bc28-91bc36275809")
 	)
-	(hierarchical_label "left_encoder_a"
-		(shape input)
-		(at 149.86 99.06 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "b1937d0d-a0c8-47b6-9dbb-161a747681fb")
-	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 214.63 105.41 270)
+		(at 232.41 92.71 270)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "b502615b-4e86-4ad8-9192-2e312d9e596d")
+		(uuid "b47f7888-48d6-4e91-b33e-efb2383bcb9a")
 	)
 	(hierarchical_label "sleep"
 		(shape input)
@@ -2096,14 +2350,14 @@
 	)
 	(hierarchical_label "right_encoder_a"
 		(shape input)
-		(at 149.86 120.65 180)
+		(at 248.92 115.57 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify left)
 		)
-		(uuid "bcb7b404-c974-4ad6-97cb-4ab7792d7e37")
+		(uuid "beb2f4bc-c0a7-4ec4-99a0-9c933a98265c")
 	)
 	(hierarchical_label "left_motor_a"
 		(shape input)
@@ -2116,61 +2370,6 @@
 		)
 		(uuid "c157000d-4642-40f6-b431-2f739db7e270")
 	)
-	(hierarchical_label "right_encoder_b"
-		(shape input)
-		(at 241.3 125.73 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c44a9410-c314-420f-8781-b7fd3770db1f")
-	)
-	(hierarchical_label "right_encoder_a"
-		(shape input)
-		(at 238.76 118.11 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c4d68c87-b3c9-41bd-bb8f-5ef71314be81")
-	)
-	(hierarchical_label "+3v3"
-		(shape passive)
-		(at 214.63 93.98 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "d70c7f89-9c7d-4757-a27b-2f177737b49c")
-	)
-	(hierarchical_label "+3v3"
-		(shape passive)
-		(at 214.63 127 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "e239f9fa-f7db-4c46-b7c5-5773685167af")
-	)
-	(hierarchical_label "right_encoder_b"
-		(shape input)
-		(at 149.86 123.19 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "ea384362-48da-4752-a61c-0102bd5ad7fa")
-	)
 	(hierarchical_label "GND"
 		(shape passive)
 		(at 111.76 127 270)
@@ -2182,6 +2381,17 @@
 		)
 		(uuid "f1a0bfa0-30d0-4b20-b578-8507ed48ef49")
 	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 232.41 125.73 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f1dd5be4-d1ef-4c90-8088-58c5fe9e5c30")
+	)
 	(hierarchical_label "right_motor_a"
 		(shape input)
 		(at 92.71 111.76 180)
@@ -2192,93 +2402,6 @@
 			(justify right)
 		)
 		(uuid "f9bb2307-744f-4bf5-a198-232fd38aafc1")
-	)
-	(symbol
-		(lib_id "Diode:PTVS5V0Z1USK")
-		(at 214.63 99.06 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "01eb82b8-2254-4948-a609-7f608e652425")
-		(property "Reference" "D6"
-			(at 217.17 100.838 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "PTVS5V0S1UR-FS"
-			(at 219.71 100.838 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 210.185 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
-			(at 214.63 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
-			(at 214.63 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB_CORRECTION" "0; 0; 0"
-			(at 214.63 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C5380694"
-			(at 214.63 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "e1ac934f-c8b1-47c7-bb13-ae3237b6622d")
-		)
-		(pin "2"
-			(uuid "328bb70f-53e6-4c4e-904f-7b24e8cf5a7d")
-		)
-		(instances
-			(project "mote-hardware"
-				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/332292ea-bd81-44ca-9f8d-1cb79fb18ef4"
-					(reference "D6")
-					(unit 1)
-				)
-			)
-		)
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -2542,95 +2665,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Diode:PTVS5V0Z1USK")
-		(at 234.95 99.06 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "547a2705-e8c9-407a-b03c-a757f4794a1f")
-		(property "Reference" "D8"
-			(at 237.236 97.536 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "PTVS5V0S1UR-FS"
-			(at 237.236 100.076 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 230.505 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
-			(at 234.95 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
-			(at 234.95 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB_CORRECTION" "0; 0; 0"
-			(at 234.95 99.06 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C5380694"
-			(at 234.95 99.06 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d651b465-480e-4ad2-a635-8c15b232bd1b")
-		)
-		(pin "2"
-			(uuid "652de32b-e733-4328-9f35-25a637b8f119")
-		)
-		(instances
-			(project "mote-hardware"
-				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/332292ea-bd81-44ca-9f8d-1cb79fb18ef4"
-					(reference "D8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector_Generic:Conn_01x06")
-		(at 157.48 123.19 0)
+		(at 165.1 123.19 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2639,7 +2675,7 @@
 		(fields_autoplaced yes)
 		(uuid "5e20061f-198f-497f-9125-1a119c0afb58")
 		(property "Reference" "J8"
-			(at 160.02 123.1899 0)
+			(at 167.64 123.1899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2648,7 +2684,7 @@
 			)
 		)
 		(property "Value" "JST_PH_B6B"
-			(at 160.02 125.7299 0)
+			(at 167.64 125.7299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2657,7 +2693,7 @@
 			)
 		)
 		(property "Footprint" "Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical"
-			(at 157.48 123.19 0)
+			(at 165.1 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2666,7 +2702,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 157.48 123.19 0)
+			(at 165.1 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2675,7 +2711,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 157.48 123.19 0)
+			(at 165.1 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2684,7 +2720,7 @@
 			)
 		)
 		(property "LCSC" "C495261"
-			(at 157.48 123.19 0)
+			(at 165.1 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2693,7 +2729,7 @@
 			)
 		)
 		(property "JLCPCB_CORRECTION" "4.8895; 0; 0"
-			(at 157.48 123.19 0)
+			(at 165.1 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2730,7 +2766,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x06")
-		(at 157.48 101.6 0)
+		(at 165.1 101.6 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2739,7 +2775,7 @@
 		(fields_autoplaced yes)
 		(uuid "6902dcfd-db28-41a8-b005-c2725a6a5229")
 		(property "Reference" "J7"
-			(at 160.02 101.5999 0)
+			(at 167.64 101.5999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2748,7 +2784,7 @@
 			)
 		)
 		(property "Value" "JST_PH_B6B"
-			(at 160.02 104.1399 0)
+			(at 167.64 104.1399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2757,7 +2793,7 @@
 			)
 		)
 		(property "Footprint" "Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical"
-			(at 157.48 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2766,7 +2802,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 157.48 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2775,7 +2811,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 157.48 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2784,7 +2820,7 @@
 			)
 		)
 		(property "LCSC" "C495261"
-			(at 157.48 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2793,7 +2829,7 @@
 			)
 		)
 		(property "JLCPCB_CORRECTION" "4.8895; 0; 0"
-			(at 157.48 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2829,52 +2865,55 @@
 		)
 	)
 	(symbol
-		(lib_id "Diode:PTVS5V0Z1USK")
-		(at 224.79 99.06 270)
+		(lib_id "Power_Protection:USBLC6-2SC6")
+		(at 232.41 82.55 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "7c1d658f-7d6b-42f4-a29a-914976cf9143")
-		(property "Reference" "D7"
-			(at 227.33 100.584 0)
+		(uuid "7b9735ed-02b0-45cb-9d17-fec03a74cc6e")
+		(property "Reference" "U11"
+			(at 235.966 87.376 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
-		(property "Value" "PTVS5V0S1UR-FS"
-			(at 229.87 100.584 0)
+		(property "Value" "USBLC6-2SC6"
+			(at 235.966 89.916 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 220.345 99.06 0)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+			(at 233.68 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
+					(italic yes)
 				)
+				(justify left)
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
-			(at 224.79 99.06 0)
+		(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
+			(at 233.68 90.805 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 				(hide yes)
 			)
 		)
-		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
-			(at 224.79 99.06 0)
+		(property "Description" "Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"
+			(at 232.41 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2883,7 +2922,7 @@
 			)
 		)
 		(property "JLCPCB_CORRECTION" "0; 0; 0"
-			(at 224.79 99.06 0)
+			(at 232.41 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2891,25 +2930,37 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C5380694"
-			(at 224.79 99.06 0)
+		(property "LCSC" "C7519"
+			(at 232.41 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
 			)
+		)
+		(pin "6"
+			(uuid "88701197-8181-4418-845e-9bc10868924b")
 		)
 		(pin "1"
-			(uuid "8a960c92-5e6a-4ccb-aef7-35cccff3b0ba")
+			(uuid "b4955319-61dd-4bf9-8ffb-795ee3116ca9")
 		)
 		(pin "2"
-			(uuid "adf833bd-a0c1-4044-a20a-ea137b16a1a9")
+			(uuid "37579b5b-1ac2-4498-9a8b-0bd6d317f389")
+		)
+		(pin "5"
+			(uuid "2e14e9ac-f2f0-4f3a-9874-09f08993e7c2")
+		)
+		(pin "3"
+			(uuid "9373dd2a-fcbc-4620-8897-d691322f4e14")
+		)
+		(pin "4"
+			(uuid "72dfd7d6-6f48-4b6c-ae86-5a2defb264d2")
 		)
 		(instances
 			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/332292ea-bd81-44ca-9f8d-1cb79fb18ef4"
-					(reference "D7")
+					(reference "U11")
 					(unit 1)
 				)
 			)
@@ -3001,190 +3052,16 @@
 		)
 	)
 	(symbol
-		(lib_id "Diode:PTVS5V0Z1USK")
-		(at 214.63 132.08 270)
+		(lib_id "Power_Protection:USBLC6-2SC6")
+		(at 232.41 115.57 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "9d735e0a-870b-4287-ac1e-b8e4fbcd9277")
-		(property "Reference" "D9"
-			(at 217.17 133.858 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "PTVS5V0S1UR-FS"
-			(at 219.71 133.858 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 210.185 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
-			(at 214.63 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
-			(at 214.63 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB_CORRECTION" "0; 0; 0"
-			(at 214.63 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C5380694"
-			(at 214.63 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "b1d78b39-0cef-4022-b4cd-fdb3f896324d")
-		)
-		(pin "2"
-			(uuid "daf30989-14f5-4017-bf5a-baaf882869d8")
-		)
-		(instances
-			(project "mote-hardware"
-				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/332292ea-bd81-44ca-9f8d-1cb79fb18ef4"
-					(reference "D9")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Diode:PTVS5V0Z1USK")
-		(at 224.79 132.08 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "b5c4dc3d-3a37-43d1-bb45-3e486e15229a")
-		(property "Reference" "D10"
-			(at 227.33 133.604 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "PTVS5V0S1UR-FS"
-			(at 229.87 133.604 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 220.345 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
-			(at 224.79 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
-			(at 224.79 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB_CORRECTION" "0; 0; 0"
-			(at 224.79 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C5380694"
-			(at 224.79 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "abb6fb6e-6ca3-4654-a319-b3f606b3114c")
-		)
-		(pin "2"
-			(uuid "6bad2443-7322-474b-951e-e63871eb4b8a")
-		)
-		(instances
-			(project "mote-hardware"
-				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/332292ea-bd81-44ca-9f8d-1cb79fb18ef4"
-					(reference "D10")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Diode:PTVS5V0Z1USK")
-		(at 234.95 132.08 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "b8c8cfc7-43ef-4b94-9441-691c49f36b58")
-		(property "Reference" "D11"
-			(at 237.236 130.556 90)
+		(uuid "a2f7b5c0-9050-40fd-8723-09a3d8d55753")
+		(property "Reference" "U12"
+			(at 235.966 120.396 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3192,8 +3069,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "PTVS5V0S1UR-FS"
-			(at 237.236 133.096 90)
+		(property "Value" "USBLC6-2SC6"
+			(at 235.966 122.936 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3201,26 +3078,29 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 230.505 132.08 0)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+			(at 233.68 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
+			(at 233.68 123.825 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PTVS5V0Z1USK.pdf"
-			(at 234.95 132.08 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "5V, 1200W TVS unidirectional diode, DSN1608-2"
-			(at 234.95 132.08 0)
+		(property "Description" "Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"
+			(at 232.41 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3229,7 +3109,7 @@
 			)
 		)
 		(property "JLCPCB_CORRECTION" "0; 0; 0"
-			(at 234.95 132.08 90)
+			(at 232.41 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3237,25 +3117,37 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C5380694"
-			(at 234.95 132.08 90)
+		(property "LCSC" "C7519"
+			(at 232.41 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
 			)
+		)
+		(pin "6"
+			(uuid "6acf6fe2-2387-4c0a-bc18-262b1415d5a8")
 		)
 		(pin "1"
-			(uuid "adf03a30-fc37-42d1-8a67-ab13c0f0f84c")
+			(uuid "d539524c-4b7c-4798-a5c2-a120fb7785c3")
 		)
 		(pin "2"
-			(uuid "af4afd01-ffe2-4c61-8af8-94a0b20b407c")
+			(uuid "f940d873-f400-475a-a370-3535c3fc4f21")
+		)
+		(pin "5"
+			(uuid "6fdd7152-5d89-49d0-9469-7a4748a8bed7")
+		)
+		(pin "3"
+			(uuid "1961b4d1-bee4-46bf-9222-e2d4f91e4594")
+		)
+		(pin "4"
+			(uuid "799595f2-1d4d-49f9-a3ee-d265129c2abb")
 		)
 		(instances
 			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/332292ea-bd81-44ca-9f8d-1cb79fb18ef4"
-					(reference "D11")
+					(reference "U12")
 					(unit 1)
 				)
 			)
