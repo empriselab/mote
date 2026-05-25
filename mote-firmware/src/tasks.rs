@@ -30,23 +30,23 @@ assign_resources! {
         usb: USB
     },
     left_encoder: LeftEncoderResources{
-        phase_a: PIN_6,
-        phase_b: PIN_7,
-    },
-    right_encoder: RightEncoderResources{
         phase_a: PIN_8,
         phase_b: PIN_9,
+    },
+    right_encoder: RightEncoderResources{
+        phase_a: PIN_6,
+        phase_b: PIN_7,
     },
     encoder_driver: EncoderDriverResources{
         pio: PIO1,
     },
     drv8833_resources: DRV8833Resources{
-        left_pwm: PWM_SLICE5,
-        left_a: PIN_10,
-        left_b: PIN_11,
-        right_pwm: PWM_SLICE6,
-        right_a: PIN_12,
-        right_b: PIN_13,
+        left_pwm: PWM_SLICE6,
+        left_a: PIN_12,
+        left_b: PIN_13,
+        right_pwm: PWM_SLICE5,
+        right_a: PIN_10,
+        right_b: PIN_11,
         sleep: PIN_18,
     },
     imu: ImuResources{

@@ -35,7 +35,7 @@ const CHIP_ID: u8 = 0x69; // FOR LSM6DS33
 const CHIP_ID_TRC: u8 = 0x6A; // FOR LSM6DS3-TRC, DIFFERENT FROM LSM6DS33 WHOAMI
 
 // Earth gravity constant for acceleration conversion
-const EARTH_GRAVITY: f32 = -9.80665;
+const EARTH_GRAVITY: f32 = 9.80665;
 
 /// 6-DoF IMU accelerometer + gyro
 pub struct Lsm6ds3TRC<I2C> {
