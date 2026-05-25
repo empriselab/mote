@@ -6,9 +6,9 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2026-04-25")
-		(rev "V0.1.0")
-		(company "github.com/empriselab/mote-core")
+		(date "2026-05-25")
+		(rev "V0.2.0")
+		(company "github.com/empriselab/mote")
 	)
 	(lib_symbols
 		(symbol "Connector_Generic:Conn_01x06"
