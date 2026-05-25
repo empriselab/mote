@@ -2,4 +2,5 @@
   (version 7)
   (lib (name "RP2350_60QFN_minimal")(type "KiCad")(uri "${KIPRJMOD}/mote-hardware.pretty")(options "")(descr ""))
   (lib (name "mote-hardware")(type "KiCad")(uri "${KIPRJMOD}/mote-hardware.pretty")(options "")(descr ""))
+  (lib (name "mote-footprint-lib")(type "KiCad")(uri "${KIPRJMOD}/mote-footprint-lib.pretty")(options "")(descr ""))
 )
