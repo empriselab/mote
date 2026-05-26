@@ -22,7 +22,7 @@ async fn handle_command(rx_message: host_to_mote::Message, link: &mut HostLink) 
             info!("Received ping response from host.");
         }
         host_to_mote::Message::DriveBaseCommand(cmd) => {
-            MOTOR_COMMAND_CHANNEL.send(cmd).await;
+            let _ = MOTOR_COMMAND_CHANNEL.try_send(cmd);
         }
         _ => {
             error!("Received unhandled message type");
