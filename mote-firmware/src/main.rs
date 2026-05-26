@@ -17,6 +17,7 @@ use embassy_executor::{Executor, Spawner};
 use embassy_rp::clocks::{ClockConfig, CoreVoltage, clk_sys_freq};
 use embassy_rp::config::Config;
 use embassy_rp::multicore::{Stack, spawn_core1};
+use embassy_time::Timer;
 use embedded_alloc::LlffHeap as Heap;
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
@@ -99,6 +100,7 @@ async fn core0_task(spawner: Spawner, r: Cyw43Resources, flash_r: FlashResources
     spawner.spawn(flash_manager::flash_manager_task(flash_r).unwrap());
     info!("Flash INIT complete");
 
+    Timer::after_millis(1000).await;
     wifi::init(spawner, r).await;
     info!("Wifi INIT complete");
 }
