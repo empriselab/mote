@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2026-05-25")
+		(date "2026-06-07")
 		(rev "V0.2.0")
 		(company "github.com/empriselab/mote")
 	)
@@ -958,16 +958,6 @@
 				(justify left top)
 			)
 		)
-		(pin "RX" input
-			(at 205.74 104.14 180)
-			(uuid "1881288e-cbbc-4692-9e41-206a679171fc")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
 		(pin "GND" passive
 			(at 205.74 107.95 180)
 			(uuid "67d749ee-f31c-40cc-97cc-5500d7c22c97")
@@ -978,9 +968,9 @@
 				(justify left)
 			)
 		)
-		(pin "TX" output
-			(at 205.74 101.6 180)
-			(uuid "1db107eb-d88f-4c8b-a083-4242c552d29a")
+		(pin "+5v" passive
+			(at 205.74 96.52 180)
+			(uuid "ebc51245-6b4a-4a9b-adf5-9b5925883cf4")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -988,9 +978,19 @@
 				(justify left)
 			)
 		)
-		(pin "+5v" passive
-			(at 205.74 96.52 180)
-			(uuid "ebc51245-6b4a-4a9b-adf5-9b5925883cf4")
+		(pin "lidar_rx" input
+			(at 205.74 104.14 180)
+			(uuid "070351ce-2b40-4d5e-85f5-422fb2f0fb8a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "lidar_tx" output
+			(at 205.74 101.6 180)
+			(uuid "3bca630e-2e6e-4b18-b6e5-960089c3efd1")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1526,16 +1526,6 @@
 				(justify left top)
 			)
 		)
-		(pin "GND" passive
-			(at 76.2 72.39 0)
-			(uuid "15022447-ec3c-4b20-89f7-2603965cc979")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
 		(pin "+3v3" passive
 			(at 76.2 53.34 0)
 			(uuid "95d57e42-9820-45ed-b30b-f939630d6d44")
@@ -1589,6 +1579,16 @@
 		(pin "CC1" output
 			(at 76.2 64.77 0)
 			(uuid "b07f2609-8556-44f1-a53e-3b303f169ddc")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GND" input
+			(at 76.2 72.39 0)
+			(uuid "2fd284d4-a50f-458f-aa0d-acebf2a4722a")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1658,9 +1658,9 @@
 				(justify left)
 			)
 		)
-		(pin "rx" input
-			(at 205.74 148.59 180)
-			(uuid "abe81828-4f67-43aa-9746-140c27cdc050")
+		(pin "+3v3" passive
+			(at 205.74 144.78 180)
+			(uuid "0a62b4b1-1c29-4902-bd64-0fa88841e9bd")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1668,9 +1668,9 @@
 				(justify left)
 			)
 		)
-		(pin "+3v3" passive
-			(at 205.74 144.78 180)
-			(uuid "0a62b4b1-1c29-4902-bd64-0fa88841e9bd")
+		(pin "LED_RX" input
+			(at 205.74 148.59 180)
+			(uuid "b979d832-a21c-4964-badf-b8e30a4aeac8")
 			(effects
 				(font
 					(size 1.27 1.27)

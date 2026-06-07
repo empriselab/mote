@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2026-05-25")
+		(date "2026-06-07")
 		(rev "V0.2.0")
 		(company "github.com/empriselab/mote")
 	)
@@ -573,107 +573,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "power:GND"
-			(power)
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "#PWR"
-				(at 0 -6.35 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Value" "GND"
-				(at 0 -3.81 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "global power"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "GND_0_1"
-				(polyline
-					(pts
-						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "GND_1_1"
-				(pin power_in line
-					(at 0 0 270)
-					(length 0)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 	)
 	(text "Neopixels"
 		(exclude_from_sim no)
@@ -735,13 +634,13 @@
 	)
 	(wire
 		(pts
-			(xy 204.47 116.84) (xy 204.47 113.03)
+			(xy 204.47 113.03) (xy 204.47 118.11)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "2ddde045-872d-45b1-80b9-978d2d80ac3c")
+		(uuid "35c781b7-0fa7-44b6-9d61-6983bfa961f9")
 	)
 	(wire
 		(pts
@@ -755,23 +654,13 @@
 	)
 	(wire
 		(pts
-			(xy 87.63 113.03) (xy 87.63 111.76)
+			(xy 87.63 111.76) (xy 87.63 113.03)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "4849f0f5-d57d-47eb-ba22-5423df2ab417")
-	)
-	(wire
-		(pts
-			(xy 215.9 113.03) (xy 215.9 116.84)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4f4d344b-ed39-44c6-a7bf-7dbce8624f0c")
+		(uuid "4656902e-d5cb-423f-8bcb-ab3dcb2ba6c9")
 	)
 	(wire
 		(pts
@@ -812,6 +701,26 @@
 			(type default)
 		)
 		(uuid "76c623c1-a221-49e2-810f-d9c5c92e6902")
+	)
+	(wire
+		(pts
+			(xy 87.63 92.71) (xy 87.63 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8a98eb6e-4f93-4328-8103-d15f8bead382")
+	)
+	(wire
+		(pts
+			(xy 215.9 113.03) (xy 215.9 118.11)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8aecf1ce-69e9-4f9c-a260-5db2aedc468d")
 	)
 	(wire
 		(pts
@@ -875,16 +784,6 @@
 	)
 	(wire
 		(pts
-			(xy 87.63 92.71) (xy 87.63 96.52)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d29f9210-ad65-4978-8a04-e650514ffefe")
-	)
-	(wire
-		(pts
 			(xy 204.47 87.63) (xy 204.47 93.98)
 		)
 		(stroke
@@ -902,6 +801,28 @@
 			(type default)
 		)
 		(uuid "ece2705c-a5dc-4044-aa74-977eaac8da45")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 204.47 118.11 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "0f98ae4c-b0cd-40f3-8798-ab86c496e809")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 215.9 118.11 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "2abf0cd8-6056-4d54-8ed6-17ce2cc026bb")
 	)
 	(hierarchical_label "+3v3"
 		(shape passive)
@@ -947,7 +868,7 @@
 		)
 		(uuid "ae1b0f2a-bfeb-44ae-94d8-0e1116e7c5ec")
 	)
-	(hierarchical_label "rx"
+	(hierarchical_label "LED_RX"
 		(shape input)
 		(at 64.77 104.14 180)
 		(effects
@@ -1650,72 +1571,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 215.9 116.84 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "a7163d0e-a647-4bc4-b212-37a96f04803e")
-		(property "Reference" "#PWR03"
-			(at 215.9 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 215.9 121.92 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 215.9 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 215.9 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 215.9 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6c77edb8-9b6f-42a0-815d-3ceadca3630d")
-		)
-		(instances
-			(project "mote-hardware"
-				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/c3d2ef9a-e125-4132-97f6-2f850bbc3296"
-					(reference "#PWR03")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:LED")
 		(at 215.9 97.79 90)
 		(unit 1)
@@ -1807,72 +1662,6 @@
 			(project "mote-hardware"
 				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/c3d2ef9a-e125-4132-97f6-2f850bbc3296"
 					(reference "D2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 204.47 116.84 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "e792ff53-abf2-4859-bf5c-3b8f7b731c57")
-		(property "Reference" "#PWR02"
-			(at 204.47 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 204.47 121.92 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 204.47 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 204.47 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 204.47 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "9663e3fa-3e08-4f8f-89c8-3c9005ada613")
-		)
-		(instances
-			(project "mote-hardware"
-				(path "/94683f5c-9cd9-448e-be96-9792537b5cb8/c3d2ef9a-e125-4132-97f6-2f850bbc3296"
-					(reference "#PWR02")
 					(unit 1)
 				)
 			)

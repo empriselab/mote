@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Mote")
-		(date "2026-05-25")
+		(date "2026-06-07")
 		(rev "V0.2.0")
 		(company "github.com/empriselab/mote")
 	)
@@ -1790,9 +1790,6 @@
 			(embedded_fonts no)
 		)
 		(symbol "Regulator_Linear:NCP1117-3.3_SOT223"
-			(pin_names
-				(offset 0.254)
-			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -2711,8 +2708,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
-			(at 233.68 99.06 0)
+		(property "Description" "1A Low drop-out regulator, Fixed Output 3.3V, SOT-223"
+			(at 234.188 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
