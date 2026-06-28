@@ -47,14 +47,10 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
             result: BITResult::Pass,
         };
         let comms_power = BIT {
-            name: "7.5W Capable (enables WIFI)".into(),
+            name: "7.5W Capable (enables WIFI and motors)".into(),
             result: BITResult::Waiting,
         };
-        let motor_power = BIT {
-            name: "15W Capable (enables drive base)".into(),
-            result: BITResult::Waiting,
-        };
-        for test in [init, comms_power, motor_power] {
+        for test in [init, comms_power] {
             configuration_state.built_in_test.power.push(test);
         }
     }
@@ -93,22 +89,13 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
             {
                 let mut configuration_state = CONFIGURATION_STATE.lock().await;
                 let mut wifi_pass = BITResult::Fail;
-                let mut drive_base_pass = BITResult::Fail;
                 if state == PowerState::Max1_5a || state == PowerState::Max3a {
                     wifi_pass = BITResult::Pass;
-                    if state == PowerState::Max3a {
-                        drive_base_pass = BITResult::Pass;
-                    }
                 };
                 update_bit_result(
                     &mut configuration_state.built_in_test.power,
-                    "7.5W Capable (enables WIFI)",
+                    "7.5W Capable (enables WIFI and motors)",
                     wifi_pass,
-                );
-                update_bit_result(
-                    &mut configuration_state.built_in_test.power,
-                    "15W Capable (enables drive base)",
-                    drive_base_pass,
                 );
             }
         }
