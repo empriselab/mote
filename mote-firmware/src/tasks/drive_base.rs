@@ -116,9 +116,9 @@ async fn motor_task(
     right_encoder_r: RightEncoderResources,
     motor_driver_r: DRV8833Resources,
 ) {
-    info!("Gating on 3A capable before starting drive base");
-    power_gate::gate_3_amp().await;
-    info!("Power supply is 3A capable");
+    info!("Gating on 1.5A capable before starting drive base");
+    power_gate::gate_1_5_amp().await;
+    info!("Power supply is 1.5A capable");
 
     // Setup PWM
     let desired_freq_hz = 25_000;
