@@ -17,3 +17,5 @@ Mote is supported by Cornell University's [EmPRISE Lab](https://empriselab.githu
 Want to build your own Mote? Check out [the hardware sourcing guide](./hardware-sourcing/acquire.md).
 
 Have a Mote? Get started by [assembling your kit](./getting_started/kit-assembly.md).
+
+Want to reconfigure your Mote? Go to the [configuration page](./configuration).

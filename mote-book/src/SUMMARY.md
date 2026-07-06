@@ -6,7 +6,7 @@
 
 - [Kit Assembly](./getting_started/kit-assembly.md)
 - [Configuration](./getting_started/configuration.md)
-- [Hello Mote](./getting_started/hello-world.md)
+- [Hello World](./getting_started/hello-world.md)
 
 # Guides
 
