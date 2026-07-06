@@ -1,4 +1,4 @@
-# Methods of Acquiring a Mote
+# Get Your Mote
 
 Mote uses a custom circuit board that must be manufactured and assembled at a factory.
 While PCBA has become remarkably affordable in recent years, setup fees make the cost per unit high for low scale runs (1 - 10 units).

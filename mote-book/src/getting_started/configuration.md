@@ -14,7 +14,7 @@ Before you can use your Mote, you must program the microcontroller on board the 
 
 ## Connecting to WiFi
 
-Mote communicates using WiFi. In order to work with Mote, log it onto your WiFi network.
+Mote communicates using WiFi. In order to work with Mote, we will log it onto a WiFi network.
 
 1. Open [the Mote configuration page](../configuration). Click `[ connect ]` and select "Mote".
 
@@ -28,17 +28,24 @@ Mote communicates using WiFi. In order to work with Mote, log it onto your WiFi 
 
 ## Give Your Mote a Name
 
-If your network supports mDNS, you can use a friendly name communicate with your Mote.
+You can use a friendly name communicate with your Mote.
 
 1. If it is not already open, open [the Mote configuration page](../configuration). Click `[ connect ]` and select "Mote".
 
-2. Next to "Unique Identifier", click `[ change ]`. 
+2. Next to "Unique Identifier", click `[ update ]`. 
 
-3. Enter your Motes name into the box. This name must be unique among all Motes on the network. If you are using your robot on the same network as other Motes, make sure your name is unique enough that it will not conflict with other robots.
+3. Enter your Mote's name in the box. 
 
 4. Press enter.
 
+> [!IMPORTANT]
+> This name must be unique among all Motes on the network. If you are using your robot on the same network as other Motes, make sure your name is unique enough that it will not conflict with other robots.
+
 ## Next Steps
 
-Your Mote is now configured to work on your local network. Continue to [Hello World](./hello-world.md) to test your robot.
+Your Mote is now configured to communicate on your local network. Move on to [Hello World](./hello-world.md) to test your robot.
+
+## Troubleshooting
+
+Having issues? Check out [the trouble shooting guide](../troubleshooting/common_issues.md).
 
