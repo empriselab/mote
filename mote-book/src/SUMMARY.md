@@ -21,7 +21,7 @@
 - [ROS Noetic (EOL)]()
     - [Visualization]()
     - [Teleop]()
-    - [Nav2]()
+    - [Navigation]()
 
 - [ROS2]()
     - [Visualization]()

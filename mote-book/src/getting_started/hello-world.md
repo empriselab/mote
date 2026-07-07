@@ -17,9 +17,15 @@ In the terminal of your choice, run the demo.
 uvx mote_link
 ```
 
-Follow the instructions in your terminal to select and connect to your Mote. The script will then open 
+Follow the instructions in your terminal to select and connect to your Mote. The script will then open your browser and you should see plots of your robots LiDAR sensor, wheel encoders, accelerometer, and gyroscope.
 
 ## Next Steps
+
+The "Guides" section contains tutorials for working with Mote using various SDKs.
+
+* [The Python guide]() will teach you how to write your own Python scripts for interfacing with Mote.
+* [The Rust guide]() is like the Python guide, but using Rust 🦀.
+* [The ROS 2 guide]() teaches how to use Mote with the Robot Operating System.
 
 ## Troubleshooting
 

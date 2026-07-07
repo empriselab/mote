@@ -71,6 +71,9 @@ Insert the 25mm screws through the holes in the motor mounts and circuit board.
 
 Place the LiDAR stand onto the 25mm screws. 
 
+> [!TIP]
+> The legs of the LiDAR stand are not all the same size. Match the radius of the legs with the radius of the motor mounts the legs are placed on.
+
 ![](./assets/assembly/9_assembly_screws_through_lidar_stand.webp)
 
 Place the LiDAR on top of the LiDAR stand, then thread the 25mm screws into the LiDARs base.

@@ -1,0 +1,12 @@
+name: Prose and Spell Check
+on: [push, pull_request]
+
+jobs:
+  prose-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Spell and Grammar Check
+        uses: leandrogaspar/spell-checker-action@v0.2.0
