@@ -40,7 +40,7 @@ The error LED indicates if sensors are powered on and communicating correctly.
 
 ## Configuration
 
-Problems occuring while updating Motes firmware or getting it to WiFi.
+Problems occurring while updating Motes firmware or getting it to WiFi.
 
 ### My network doesn't appear
 

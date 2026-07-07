@@ -99,7 +99,7 @@ Route the LiDAR's cable through the hole in the circuit board.
 
 ![](./assets/assembly/15_assembly_lidar_cable_through.webp)
 
-Connect the LiDAR's cable to the connector on the bottom of the circuit board labled "LiDAR".
+Connect the LiDAR's cable to the connector on the bottom of the circuit board labeled "LiDAR".
 
 ![](./assets/assembly/16_assembly_lidar_cable_connect.webp)
 

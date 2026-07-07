@@ -10,7 +10,7 @@ Before you can use your Mote, you must program the microcontroller on board the 
 
 2. While holding down the "BOOT" button on your Mote, connect the robot to your computer using the USB C connector. Mote will appear as a USB drive. 
 
-3. Drag and drop the mote-firmware UF2 file into the Mote USB drive. A drive will disapear a couple of seconds after dropping in the file.
+3. Drag and drop the mote-firmware UF2 file into the Mote USB drive. A drive will disappear a couple of seconds after dropping in the file.
 
 ## Connecting to WiFi
 

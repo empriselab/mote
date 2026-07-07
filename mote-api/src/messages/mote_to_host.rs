@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "schemars")]
 use schemars::JsonSchema;
 
-// RUNTIME MESSEGES
+// RUNTIME MESSAGES
 
 // Lidar Data
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]

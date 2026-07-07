@@ -1,12 +1,35 @@
-name: Prose and Spell Check
-on: [push, pull_request]
+name: Spelling and Grammar
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  prose-check:
+  spelling:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Run Spell and Grammar Check
-        uses: leandrogaspar/spell-checker-action@v0.2.0
+      - name: Run codespell
+        uses: codespell-project/actions-codespell@v2
+
+  grammar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Vale
+        run: |
+          curl -sfL https://github.com/errata-ai/vale/releases/download/v3.15.1/vale_3.15.1_Linux_64-bit.tar.gz \
+            | sudo tar -xz -C /usr/local/bin vale
+
+      - name: Run Vale
+        run: |
+          vale sync
+          vale mote-book/src README.md mote-*/README.md

@@ -33,7 +33,7 @@ Can we do better?
 Mote forgoes an onboard SBC by wirelessly offloading data processing to an external base station.
 The base station can be any computer, running any operating system, and is most often just the user's laptop.
 
-Buy omiting the SBC Mote can get away with a miniscule power and computation budget, dropping the price and greating improving runtime.
-Perfomance actually *improves* without the SBC, as even outdated laptops can outperform the average SBC.
+By omitting the SBC Mote can get away with a minuscule power and computation budget, dropping the price and greatly improving runtime.
+Performance actually *improves* without the SBC, as even outdated laptops can outperform the average SBC.
 
 ## Where?

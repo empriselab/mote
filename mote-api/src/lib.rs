@@ -123,7 +123,7 @@ where
 
     /// Receive a message from raw bytes
     pub fn handle_receive(&mut self, packet: &[u8]) {
-        // Push the recieved bytes into the serialization buffer, potentially dropping the first
+        // Push the received bytes into the serialization buffer, potentially dropping the first
         // value if the buffer is full
         packet.iter().for_each(|byte| {
             self.deserialization_buffer.push_back(*byte);
