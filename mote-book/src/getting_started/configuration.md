@@ -6,11 +6,11 @@ This page will guide you through setting up your Mote for the first time.
 
 Before you can use your Mote, you must program the microcontroller on board the robot.
 
-1. Download the latest version of mote-firware: [vX.X.X](TODO).
+1. Download the latest version of mote-firmware: [vX.X.X](TODO).
 
-2. While holding down the "BOOT" button on your Mote, connect the robot to your computer using the USB C connector. Mote will appear as a USB drive. 
+2. While holding down the "BOOT" button on your Mote, connect the robot to your computer using the USB-C connector. Mote will appear as a USB drive. 
 
-3. Drag and drop the mote-firmware UF2 file into the Mote USB drive. A drive will disappear a couple of seconds after dropping in the file.
+3. Drag and drop the mote-firmware UF2 file into the Mote USB drive. The drive will disappear a couple of seconds after dropping in the file.
 
 ## Connecting to WiFi
 
@@ -28,7 +28,7 @@ Mote communicates using WiFi. In order to work with Mote, we will log it onto a 
 
 ## Give Your Mote a Name
 
-You can use a friendly name communicate with your Mote.
+You can use a friendly name to communicate with your Mote.
 
 1. If it is not already open, open [the Mote configuration page](../configuration). Click `[ connect ]` and select "Mote Serial".
 
@@ -39,7 +39,7 @@ You can use a friendly name communicate with your Mote.
 4. Press enter.
 
 > [!IMPORTANT]
-> Only one Mote can have a given name on a single network. If you expect other Motes to be used on the same network, chose a name that is unique enough to prevent conflicts.
+> Only one Mote can have a given name on a single network. If you expect other Motes to be used on the same network, choose a name that is unique enough to prevent conflicts.
 
 ## Next Steps
 

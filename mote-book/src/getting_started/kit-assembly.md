@@ -76,18 +76,19 @@ Place the LiDAR stand onto the 25mm screws.
 
 ![](./assets/assembly/9_assembly_screws_through_lidar_stand.webp)
 
-Place the LiDAR on top of the LiDAR stand, then thread the 25mm screws into the LiDARs base.
+Place the LiDAR on top of the LiDAR stand, then thread the 25mm screws into the LiDAR's base.
 
 ![](./assets/assembly/10_assembly_lidar_on_stack.webp)
 ![](./assets/assembly/11_assembly_lidar_tighten.webp)
 
 ### Cables
 
-Using the motor cables, connect both motors to the circuit board.
+Connect both motors to the circuit board.
 
 > [!IMPORTANT]
-> Be careful to connect each motor to it's corresponding socket. 
+> It matters which motor is connected to which socket.
 > Look for the "Motor" arrows on the silkscreen.
+> The arrow points to the motor that should be connected to the respective socket.
 >
 > <img src="./assets/assembly/pcb_motor_direction.png" width="35%"/>
 
@@ -131,7 +132,7 @@ Repeat for the right wheel.
 
 ### Tail Runner
 
-Place a 6mm screw into the hole on the tail runner. Align the screw with the nut on the circuit board, then use the hex hey to secure the tail runner to the circuit board. Repeat with the second 6mm screw and hole on the tail runner.
+Place a 6mm screw into the hole on the tail runner. Align the screw with the nut on the circuit board, then use the hex key to secure the tail runner to the circuit board. Repeat with the second 6mm screw and hole on the tail runner.
 
 ![](./assets/assembly/23_assembly_tail_screw.webp)
 

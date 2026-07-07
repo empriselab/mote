@@ -44,7 +44,7 @@ Problems occurring while updating Motes firmware or getting it to WiFi.
 
 ### My network doesn't appear
 
-Mote can only connect to 2.4 GHz networks. Make sure your router has the 2.4 GHz band is enabled.
+Mote can only connect to 2.4 GHz networks. Make sure your router has the 2.4 GHz band enabled.
 
 ## General Operation
 
@@ -53,9 +53,9 @@ General issues using Mote.
 ### I can't connect to my Mote
 
 1. Check your robot's status LEDs and check the [status LED](#status-leds) reference.
-    * If the WiFi led is not green, try reconnecting your Mote using the 
+    * If the WiFi LED is not green, try reconnecting your Mote using [the configuration guide](../getting_started/configuration.html#connecting-to-wifi).
 1. Check that your computer is on the same network as Mote.
 
 ### My Mote drives backwards
 
-[Check your motor cable connections](./kit-assembly.html#cables). Are the left and right motors connections swapped?
+[Check your motor cable connections](./kit-assembly.html#cables). Are the left and right motor connections swapped?

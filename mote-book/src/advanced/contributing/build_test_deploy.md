@@ -2,7 +2,7 @@
 
 ## Setup
 
-Follow the instructions in [Development Environment](advanced/contributing/dev_env.html) to setup the required tools.
+Follow the instructions in [Development Environment](advanced/contributing/dev_env.html) to set up the required tools.
 
 Make a clone of the repository: 
 ```bash
@@ -61,7 +61,7 @@ just book::open
 Release artifacts are built and uploaded automatically via continuous integration.
 
 * `mote-firmware`
-    * Released on any tag to `mote-cote` matching the pattern `mote-firmware-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-firmware` crate.
+    * Released on any tag to `mote-core` matching the pattern `mote-firmware-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-firmware` crate.
     * Automated via [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-firmware.yaml).
 * `mote-c`
     * Released on any tag to `mote-core` matching the pattern `mote-c-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-ffi` crate.

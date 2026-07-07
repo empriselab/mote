@@ -18,4 +18,4 @@ Install the following tools:
 | node | build / run configuration webpage via typescript, vite, and svelte | [https://nodejs.org/en/download](https://nodejs.org/en/download) |
 | probe-rs | flash and debug embedded systems | [https://probe.rs/docs/getting-started/installation/](https://probe.rs/docs/getting-started/installation/) |
 | wasm-pack | used for TS - rust interop | `cargo install wasm-pack` |
-| md-book | documentation generator | [https://rust-lang.github.io/mdBook/guide/installation.html](https://rust-lang.github.io/mdBook/guide/installation.html) |
+| mdBook | documentation generator | [https://rust-lang.github.io/mdBook/guide/installation.html](https://rust-lang.github.io/mdBook/guide/installation.html) |
