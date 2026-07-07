@@ -1,7 +1,7 @@
 # Get Your Mote
 
 Mote uses a custom circuit board that must be manufactured and assembled at a factory.
-While PCBA has become remarkably affordable in recent years, setup fees make the cost per unit high for low scale runs (1 - 10 units).
+While PCBA has become remarkably affordable in recent years, setup fees make the cost per unit high for small scale runs (1 - 10 units).
 
 If you would like to order a small number of robots please take a look on [the issue tracker](https://github.com/empriselab/mote-core/issues) and see if a group buy is being coordinated.
 If you don't see a group buy posted, reach out to [a member of the Mote team](mailto:mmc323@cornell.edu) and we can help you start one.

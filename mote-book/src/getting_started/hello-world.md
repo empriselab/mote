@@ -17,7 +17,8 @@ In the terminal of your choice, run the demo.
 uvx mote_link
 ```
 
-Follow the instructions in your terminal to select and connect to your Mote. The script will then open your browser and you should see plots of your robots LiDAR sensor, wheel encoders, accelerometer, and gyroscope.
+Follow the instructions in your terminal to select and connect to your Mote. 
+Your browser will open to a dashboard showing realtime LiDAR, wheel encoder, accelerometer, and gyroscope data.
 
 ## Next Steps
 

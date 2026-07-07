@@ -35,7 +35,7 @@ Missing something? Check out [the sourcing guide](../hardware-sourcing/acquire.m
 | Item | Quantity | Picture | 
 |---|---|---|
 | 2mm Hex Key | 1 | ![](./assets/assembly/hex_key.webp) |
-| USB-C to C Cable | 1 | TODO |
+| USB-C to C Cable | 1 | ![](./assets/assembly/usb_cable.webp) |
 | 5000 mAh USB Portable Battery  | 1 | TODO |
 
 ## Assemble Your Mote
