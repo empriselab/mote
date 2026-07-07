@@ -196,7 +196,7 @@ where
         let temperature = ((hi as i16) << 8) | (lo as i16);
         // As float
         let temperature = temperature as f32;
-        // Converted given the temperature sensitively value 16 bits per C and reutrn
+        // Converted given the temperature sensitively value 16 bits per C and return
         (temperature / 16.0) + 25.0
     }
 

@@ -6,7 +6,7 @@
 
 - [Kit Assembly](./getting_started/kit-assembly.md)
 - [Configuration](./getting_started/configuration.md)
-- [Hello Mote](./getting_started/hello-world.md)
+- [Hello World](./getting_started/hello-world.md)
 
 # Guides
 
@@ -21,20 +21,23 @@
 - [ROS Noetic (EOL)]()
     - [Visualization]()
     - [Teleop]()
-    - [Nav2]()
+    - [Navigation]()
 
 - [ROS2]()
     - [Visualization]()
     - [Teleop]()
     - [Nav2]()
 
+# Troubleshooting
+
+- [Common Issues](./troubleshooting/common_issues.md)
 
 # Hardware Sourcing
 
-- [Methods of Acquiring a Mote](./hardware-sourcing/acquire.md)
-- [Bill of Materials](./hardware-sourcing/bom.md)
-- [Ordering Circuit Boards](./hardware-sourcing/circuit-boards.md)
-- [3D Printed Parts](./hardware-sourcing/printed.md)
+- [Get Your Mote](./hardware-sourcing/acquire.md)
+- [Bill of Materials]()
+- [Ordering Circuit Boards]()
+- [3D Printed Parts]()
 
 # Advanced
 
@@ -42,7 +45,3 @@
     - [Development Environment](./advanced/contributing/dev_env.md)
     - [Building, Testing, Running, and Releasing](./advanced/contributing/build_test_deploy.md)
     - [Hardware](./advanced/contributing/hardware.md)
-# Misc
-
-- [Project Philosophy]()
-- [FAQs]()

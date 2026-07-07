@@ -1,0 +1,4 @@
+[codespell]
+skip = .git,*.lock,package-lock.json,*/node_modules/*,*/build/*,*/dist/*,*/target/*,*/.venv/*,*/book/*,*/styles/*,*/jlcpcb/*,fp-info-cache,ibom.html,*.svg,*.png,*.jpg,*.jpeg,*.pdf,*.woff,*.woff2,*.ttf,*.kicad_pcb,*.kicad_sch
+ignore-words-list = mote,ser
+check-hidden = true

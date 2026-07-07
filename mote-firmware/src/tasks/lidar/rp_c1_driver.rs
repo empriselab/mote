@@ -1,6 +1,6 @@
 // This really should be an independent crate.
 // https://github.com/cnwzhjs/rplidar.rs/tree/master exists but requires std and isn't embedded_hal
-// compatable. But it does support the S3 / S2 LiDARs.
+// compatible. But it does support the S3 / S2 LiDARs.
 // This implementation only covers the C1, but could extended with a little
 // work.
 
@@ -124,7 +124,7 @@ where
                         }
                     } else {
                         error!(
-                            "LiDAR returned incorrect response to GET_HEALTH message ({:#x}), reseting...",
+                            "LiDAR returned incorrect response to GET_HEALTH message ({:#x}), resetting...",
                             resp
                         );
                     }
@@ -134,7 +134,7 @@ where
                 }
             },
             Err(err) => {
-                error!("Failed to send GET_HEALTH command to LiDAR ({}), reseting...", err);
+                error!("Failed to send GET_HEALTH command to LiDAR ({}), resetting...", err);
             }
         }
 
@@ -211,7 +211,7 @@ where
                 Ok(idx)
             }
             Ok(Err(err)) => {
-                error!("Failed to read point from LiDAR ({}), reseting...", err);
+                error!("Failed to read point from LiDAR ({}), resetting...", err);
                 Err(ReadSamplesError::IoError(err))
             }
             Err(TimeoutError) => Ok(0),

@@ -6,7 +6,7 @@ DevContainer support coming in [#13](https://github.com/empriselab/mote-core/iss
 
 ## Local Install
 
-Linux and MacOS are officially supported development platforms. See the [Windows section](#windows) for tips on attempting to develop using Windows.
+Linux and MacOS are officially supported development platforms. Developing on Windows should be possible with some tinkering. If you would like to improve Windows support, please open a [pull request](https://github.com/empriselab/mote/pulls).
 
 Install the following tools:
 
@@ -19,11 +19,3 @@ Install the following tools:
 | probe-rs | flash and debug embedded systems | [https://probe.rs/docs/getting-started/installation/](https://probe.rs/docs/getting-started/installation/) |
 | wasm-pack | used for TS - rust interop | `cargo install wasm-pack` |
 | md-book | documentation generator | [https://rust-lang.github.io/mdBook/guide/installation.html](https://rust-lang.github.io/mdBook/guide/installation.html) |
-
-
-### Windows
-
-The easiest way to develop on Windows is to install a Linux partition and dual boot. Check out of [one the many guides online](https://linuxblog.io/dual-boot-linux-windows-install-guide/).
-
-You can develop without dual booting using [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install).
-WSL2 cannot directly communicate with USB devices, so check out [this guide](https://learn.microsoft.com/en-us/windows/wsl/connect-usb) for a work around.
