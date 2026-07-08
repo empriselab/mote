@@ -3,18 +3,26 @@
     import ShortSpinner from "./ShortSpinner.svelte";
 
     import { set_uid } from "./link";
+    import { push_error } from "./errors.svelte";
+    import {
+        open_entry,
+        open_entry_field,
+        close_entry_field,
+    } from "./entry.svelte";
 
     let { uid, ip, mac } = $props();
 
-    let input_open = $state(false);
+    const ENTRY_KEY = "identification";
+
+    let input_open = $derived(open_entry.key === ENTRY_KEY);
     let input_value = $state("");
     let input_ref: HTMLElement;
 
     function submit() {
         set_uid(input_value, () => {
-            console.log("set uid error");
+            push_error("UID must be longer than 3 characters");
         });
-        input_open = false;
+        close_entry_field(ENTRY_KEY);
     }
 
     function handle_key(event: KeyboardEvent) {
@@ -28,20 +36,20 @@
 
 <li>
     Unique ID: {uid}
-    <span style="float: right; margin: 0px;">
+    <span class="actions">
         <button
             onclick={async () => {
                 if (input_open) {
                     set_uid(input_value, () => {
-                        console.log("set uid error");
+                        push_error("UID must be longer than 3 characters");
                     });
-                    input_open = false;
+                    close_entry_field(ENTRY_KEY);
                 } else {
-                    input_open = true;
+                    open_entry_field(ENTRY_KEY);
                     await tick();
                     input_ref.focus();
                 }
-            }}>[ update ]</button
+            }}><span class="press">[ update ]</span></button
         ></span
     >
     <ul hidden={!input_open}>

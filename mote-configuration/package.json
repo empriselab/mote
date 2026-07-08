@@ -8,10 +8,14 @@
         "build": "vite build",
         "preview": "vite preview",
         "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
-        "generate-types": "node scripts/generate-types.mjs"
+        "generate-types": "node scripts/generate-types.mjs",
+        "test": "vitest",
+        "test:run": "vitest run"
     },
     "devDependencies": {
         "json-schema-to-typescript": "^15.0.4",
+        "jsdom": "^25.0.1",
+        "vitest": "^3.2.4",
         "@sveltejs/vite-plugin-svelte": "^6.2.1",
         "@tsconfig/svelte": "^5.0.5",
         "@types/node": "^24.6.0",

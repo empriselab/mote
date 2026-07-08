@@ -57,11 +57,7 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
             name: "mDNS UP".into(),
             result: BITResult::Waiting,
         };
-        let client = BIT {
-            name: "Client Connected".into(),
-            result: BITResult::Waiting,
-        };
-        for test in [init, connection, ip_v4, multicast, client] {
+        for test in [init, connection, ip_v4, multicast] {
             configuration_state.built_in_test.wifi.push(test);
         }
     }

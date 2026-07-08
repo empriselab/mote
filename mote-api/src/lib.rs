@@ -210,7 +210,7 @@ mod tests {
                 uid: String::from("mote-test"),
                 ip: Some(String::from("192.168.1.100")),
                 mac: Some(String::from("aa:bb:cc:dd:ee:ff")),
-                current_network_connection: Some(String::from("MyWifi")),
+                current_network_connection: Some(Ok(String::from("MyWifi"))),
                 available_network_connections: vec![mote_to_host::NetworkConnection {
                     ssid: String::from("MyWifi"),
                     strength: 80,
@@ -254,6 +254,35 @@ mod tests {
     }
 
     // --- encode / decode ---
+
+    #[test]
+    fn test_encode_decode_failed_connection() -> Result<(), Error> {
+        let reasons = [
+            String::from("timed out"),
+            String::from(
+                "Failed to join the network (incorrect password or the network refused the connection)",
+            ),
+        ];
+        for reason in reasons {
+            let mut state = mote_to_host::State::default();
+            state.current_network_connection = Some(Err(reason));
+            let msg = mote_to_host::Message::State(alloc::boxed::Box::new(state));
+
+            // Direct codec round-trip.
+            let recv: mote_to_host::Message = from_bytes(&to_slice(&msg)?)?;
+            assert_eq!(msg, recv);
+
+            // Full serial-link round-trip (mote -> host) with MTU-64 fragmentation.
+            let mut host_l = HostConfigLink::new();
+            host_l.send(msg.clone())?;
+            let mut mote_l = MoteConfigLink::new();
+            while let Some(payload) = host_l.poll_transmit() {
+                mote_l.handle_receive(&payload);
+            }
+            assert_eq!(mote_l.poll_receive()?.unwrap(), msg);
+        }
+        Ok(())
+    }
 
     #[test]
     fn test_encode_decode_all_variants() -> Result<(), Error> {

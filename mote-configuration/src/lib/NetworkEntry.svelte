@@ -1,6 +1,13 @@
 <script lang="ts">
     import { tick } from "svelte";
+    import ShortSpinner from "./ShortSpinner.svelte";
     import { network_connect } from "./link";
+    import {
+        open_entry,
+        open_entry_field,
+        close_entry_field,
+    } from "./entry.svelte";
+    import { connecting, start_connecting } from "./connecting.svelte";
 
     let { ssid, strength, is_current_connection } = $props();
 
@@ -18,13 +25,24 @@
         ];
     }
 
-    let input_open = $state(false);
+    let input_open = $derived(open_entry.key === ssid);
+    let is_connecting = $derived(connecting.ssid === ssid);
     let input_value = $state("");
+    let show_password = $state(false);
     let input_ref: HTMLInputElement | undefined;
+
+    // Svelte forbids a dynamic `type` attribute alongside `bind:value`, so
+    // toggle visibility by flipping the type on the element imperatively.
+    $effect(() => {
+        if (input_ref) {
+            input_ref.type = show_password ? "text" : "password";
+        }
+    });
 
     function submit() {
         network_connect(ssid, input_value);
-        input_open = false;
+        close_entry_field(ssid);
+        start_connecting(ssid);
     }
 
     function handle_key(event: KeyboardEvent) {
@@ -37,38 +55,73 @@
 </script>
 
 <li class:success={is_current_connection}>
-    <span style="margin: 0px;">
+    <span class="label">
         {ssid}
     </span>
-    <span style="float: right; margin: 0px" hidden={!is_current_connection}
+    <span class="actions" hidden={!is_current_connection}
         >&lt;~~ currently connected</span
     >
-    <span style="float: right; margin: 0px" hidden={is_current_connection}>
+    <span class="actions" hidden={is_current_connection}>
         <pre>{get_indicator(strength)}</pre>
-        |<button
-            id={ssid}
-            onclick={async () => {
-                if (input_open) {
-                    submit();
-                } else {
-                    input_open = true;
-                    await tick();
-                    input_ref?.focus();
-                }
-            }}>[ connect ]</button
-        >
+        |{#if is_connecting}
+            <span class="connect-slot"><ShortSpinner /></span>
+        {:else}
+            <button
+                id={ssid}
+                onclick={async () => {
+                    if (input_open) {
+                        submit();
+                    } else {
+                        open_entry_field(ssid);
+                        await tick();
+                        input_ref?.focus();
+                    }
+                }}><span class="press">[ connect ]</span></button
+            >
+        {/if}
     </span>
     <ul hidden={!input_open}>
         <li>
-            <input
-                type="text"
-                name="uid"
-                placeholder="enter new UID"
-                autocomplete="off"
-                bind:this={input_ref}
-                bind:value={input_value}
-                onkeydown={handle_key}
-            />
+            <div class="password-row">
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="enter password"
+                    autocomplete="off"
+                    bind:this={input_ref}
+                    bind:value={input_value}
+                    onkeydown={handle_key}
+                />
+                <button onclick={() => (show_password = !show_password)}
+                    ><span class="press"
+                        >{show_password ? "[ hide ]" : "[ show ]"}</span
+                    ></button
+                >
+            </div>
         </li>
     </ul>
 </li>
+
+<style>
+    .password-row {
+        display: flex;
+        align-items: baseline;
+        gap: 1ch;
+    }
+
+    .password-row input {
+        flex: 1;
+        width: auto;
+    }
+
+    .password-row > * {
+        margin-top: 0;
+    }
+
+    .connect-slot {
+        display: inline-block;
+        width: 11ch;
+        text-align: center;
+        margin-top: 0;
+    }
+</style>

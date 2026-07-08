@@ -20,8 +20,13 @@ pub static WIFI_REQUEST_CONNECT: Channel<CriticalSectionRawMutex, SetNetworkConn
 pub static WIFI_REQUEST_RESCAN: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
 async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetNetworkConnectionConfig) -> bool {
-    async fn update_network_bit(current_network: Option<String>, result: BITResult) {
+    async fn update_network_bit(current_network: Option<Result<String, String>>, result: BITResult) {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        // A failed connection leaves us without a valid address. Clear the
+        // stale IP
+        if result == BITResult::Fail {
+            configuration_state.ip = None;
+        }
         configuration_state.current_network_connection = current_network;
         update_bit_result(
             &mut configuration_state.built_in_test.wifi,
@@ -31,6 +36,18 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
     }
 
     update_network_bit(None, BITResult::Waiting).await;
+
+    // Joining a new network tears down the existing IPv4 lease and mDNS
+    // responder, so reset those checks to Waiting until they come back up on the
+    // new network.
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        for name in ["IPV4 UP", "mDNS UP"] {
+            update_bit_result(&mut configuration_state.built_in_test.wifi, name, BITResult::Waiting);
+        }
+    }
+
+    let mut last_error = String::from("Failed to connect to the network");
 
     for attempt in 1..=3 {
         if config.password.len() >= 8 {
@@ -43,10 +60,14 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
             {
                 Err(_) => {
                     info!("join timed out, attempt {} / 3", attempt);
+                    last_error = String::from("Connection attempt timed out");
                     continue;
                 }
                 Ok(Err(err)) => {
                     info!("join failed: {}, attempt {} / 3", err, attempt);
+                    last_error = String::from(
+                        "Failed to join the network (incorrect password or the network refused the connection)",
+                    );
                     continue;
                 }
                 Ok(Ok(_)) => {}
@@ -61,10 +82,14 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
             {
                 Err(_) => {
                     info!("join timed out, attempt {} / 3", attempt);
+                    last_error = String::from("Connection attempt timed out");
                     continue;
                 }
                 Ok(Err(err)) => {
                     info!("join failed: {}, attempt {} / 3", err, attempt);
+                    last_error = String::from(
+                        "Failed to join the network (incorrect password or the network refused the connection)",
+                    );
                     continue;
                 }
                 Ok(Ok(_)) => {}
@@ -72,11 +97,11 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
         }
 
         flash_config::save_wifi(config.clone()).await;
-        update_network_bit(Some(config.ssid), BITResult::Pass).await;
+        update_network_bit(Some(Ok(config.ssid)), BITResult::Pass).await;
         return true;
     }
 
-    update_network_bit(Some(config.ssid), BITResult::Fail).await;
+    update_network_bit(Some(Err(last_error)), BITResult::Fail).await;
     false
 }
 

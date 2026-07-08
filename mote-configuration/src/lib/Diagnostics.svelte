@@ -22,7 +22,7 @@
 
 {#each subsystems as system}
     <li>
-        <p style="margin: 0px;">{system.name}</p>
+        <p class="label">{system.name}</p>
         <ul>
             {#if system.tests.length > 0}
                 {#each system.tests as check}

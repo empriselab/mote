@@ -1,6 +1,6 @@
 import type { MoteToHostMessage, State } from './mote_api_types';
-
-type PollReceiveResult = { Ok: MoteToHostMessage | null } | { Err: unknown };
+import { push_error } from './errors.svelte';
+import { stop_connecting } from './connecting.svelte';
 
 interface MoteTelem {
     latest: Partial<State>
@@ -9,9 +9,30 @@ interface MoteTelem {
 export let mote_telem: MoteTelem = $state({ latest: {} });
 
 
-export function handle_telem_recv(telem: PollReceiveResult) {
-    if ('Ok' in telem && telem.Ok !== null && typeof telem.Ok === 'object' && 'State' in telem.Ok) {
-        Object.assign(mote_telem.latest, telem.Ok.State);
+export function handle_telem_recv(telem: MoteToHostMessage) {
+    if (telem !== null && typeof telem === 'object' && 'State' in telem) {
+        // Capture the prior connection result before merging so we can detect a
+        // transition into a failure and alert the user only once per new error,
+        // rather than on every telemetry frame that repeats the same failure.
+        const previous = mote_telem.latest.current_network_connection;
+        Object.assign(mote_telem.latest, telem.State);
+
+        const current = mote_telem.latest.current_network_connection;
+        if (current && 'Err' in current) {
+            const previous_error =
+                previous && 'Err' in previous ? previous.Err : null;
+            if (current.Err !== previous_error) {
+                // A newly-failed attempt: alert the user and end the spinner.
+                push_error('Failed to connect to network:\n' + current.Err);
+                stop_connecting();
+            }
+        } else if (current && 'Ok' in current) {
+            const previous_ok = previous && 'Ok' in previous ? previous.Ok : null;
+            if (current.Ok !== previous_ok) {
+                // A newly-established connection: end the spinner.
+                stop_connecting();
+            }
+        }
     }
 }
 

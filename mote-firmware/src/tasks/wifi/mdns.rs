@@ -66,96 +66,121 @@ impl rand_core::TryRng for RoscRnd {
 
 #[embassy_executor::task]
 pub async fn mdns_task(stack: Stack<'static>) -> ! {
-    // Wait for IPV4 to come up
-    stack.wait_link_up().await;
-    stack.wait_config_up().await;
-    let ip = stack.config_v4().unwrap().address.address();
-    let mut hostname: String;
-    info!("Got ip: {}", ip);
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BITResult::Pass);
-        hostname = configuration_state.uid.clone();
-        configuration_state.ip = Some(ip.to_string());
-    }
-
-    info!(
-        "Running mDNS responder. It will be addressable using {}.local, so try to `ping {}.local`.",
-        hostname, hostname
-    );
-
-    let udp_buffers = UdpBuffers::<4, 1500, 1500, 2>::new();
-    let udp_stack = Udp::new(stack, &udp_buffers);
-
-    let mut socket = io::bind(&udp_stack, IPV4_DEFAULT_SOCKET, Some(Ipv4Addr::UNSPECIFIED), None)
-        .await
-        .unwrap();
-
-    let (recv_buf, send_buf) = (
-        VecBufAccess::<NoopRawMutex, 1500>::new(),
-        VecBufAccess::<NoopRawMutex, 1500>::new(),
-    );
-
-    let (recv, send) = socket.split();
-
-    let command_service = Service {
-        name: "Mote Server",
-        priority: 1,
-        weight: 5,
-        service: "_mote-api",
-        protocol: "_udp",
-        port: UDP_SERVER_PORT,
-        service_subtypes: &[],
-        txt_kvs: &[],
-    };
-
-    let signal: Signal<NoopRawMutex, ()> = Signal::new();
-
-    let mdns = io::Mdns::new(
-        Some(Ipv4Addr::UNSPECIFIED),
-        None,
-        recv,
-        send,
-        recv_buf,
-        send_buf,
-        RoscRnd,
-        &signal,
-    );
-
-    // Periodic timer for refreshing
-    let mut ticker = Ticker::every(Duration::from_secs(15));
-
-    // Update mdns status
-    {
-        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.wifi, "mDNS UP", BITResult::Pass);
-    }
-
     loop {
-        let host = Host {
-            hostname: &hostname,
-            ipv4: ip,
-            ipv6: Ipv6Addr::UNSPECIFIED,
-            ttl: Ttl::from_secs(60),
+        // Wait for IPV4 to come up
+        stack.wait_link_up().await;
+        stack.wait_config_up().await;
+        let ip = stack.config_v4().unwrap().address.address();
+        let mut hostname: String;
+        info!("Got ip: {}", ip);
+        {
+            let mut configuration_state = CONFIGURATION_STATE.lock().await;
+            update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BITResult::Pass);
+            hostname = configuration_state.uid.clone();
+            configuration_state.ip = Some(ip.to_string());
+        }
+
+        info!(
+            "Running mDNS responder. It will be addressable using {}.local, so try to `ping {}.local`.",
+            hostname, hostname
+        );
+
+        let udp_buffers = UdpBuffers::<4, 1500, 1500, 2>::new();
+        let udp_stack = Udp::new(stack, &udp_buffers);
+
+        let mut socket = io::bind(&udp_stack, IPV4_DEFAULT_SOCKET, Some(Ipv4Addr::UNSPECIFIED), None)
+            .await
+            .unwrap();
+
+        let (recv_buf, send_buf) = (
+            VecBufAccess::<NoopRawMutex, 1500>::new(),
+            VecBufAccess::<NoopRawMutex, 1500>::new(),
+        );
+
+        let (recv, send) = socket.split();
+
+        let command_service = Service {
+            name: "Mote Server",
+            priority: 1,
+            weight: 5,
+            service: "_mote-api",
+            protocol: "_udp",
+            port: UDP_SERVER_PORT,
+            service_subtypes: &[],
+            txt_kvs: &[],
         };
 
-        match select(
-            mdns.run(HostAnswersMdnsHandler::new(ServiceAnswers::new(
-                &host,
-                &command_service,
-            ))),
-            ticker.next(),
-        )
-        .await
+        let signal: Signal<NoopRawMutex, ()> = Signal::new();
+
+        let mdns = io::Mdns::new(
+            Some(Ipv4Addr::UNSPECIFIED),
+            None,
+            recv,
+            send,
+            recv_buf,
+            send_buf,
+            RoscRnd,
+            &signal,
+        );
+
+        // Periodic timer for refreshing
+        let mut ticker = Ticker::every(Duration::from_secs(15));
+
+        // Update mdns status
         {
-            Either::First(Ok(())) => {}
-            Either::First(Err(e)) => {
-                warn!("mDNS exited with error: {:?}", e);
+            let mut configuration_state = CONFIGURATION_STATE.lock().await;
+            update_bit_result(&mut configuration_state.built_in_test.wifi, "mDNS UP", BITResult::Pass);
+        }
+
+        // Run the responder until the network config drops.
+        let responder = async {
+            loop {
+                let host = Host {
+                    hostname: &hostname,
+                    ipv4: ip,
+                    ipv6: Ipv6Addr::UNSPECIFIED,
+                    ttl: Ttl::from_secs(60),
+                };
+
+                match select(
+                    mdns.run(HostAnswersMdnsHandler::new(ServiceAnswers::new(
+                        &host,
+                        &command_service,
+                    ))),
+                    ticker.next(),
+                )
+                .await
+                {
+                    Either::First(Ok(())) => {}
+                    Either::First(Err(e)) => {
+                        warn!("mDNS exited with error: {:?}", e);
+                    }
+                    Either::Second(_) => {
+                        hostname = CONFIGURATION_STATE.lock().await.uid.clone();
+                        signal.signal(());
+                    }
+                }
             }
-            Either::Second(_) => {
-                hostname = CONFIGURATION_STATE.lock().await.uid.clone();
-                signal.signal(());
-            }
+        };
+
+        select(responder, stack.wait_config_down()).await;
+
+        // Network dropped: mark the connectivity checks as pending and clear the
+        // reported IP until the link comes back up
+        info!("Network config dropped, tearing down mDNS responder");
+        {
+            let mut configuration_state = CONFIGURATION_STATE.lock().await;
+            update_bit_result(
+                &mut configuration_state.built_in_test.wifi,
+                "IPV4 UP",
+                BITResult::Waiting,
+            );
+            update_bit_result(
+                &mut configuration_state.built_in_test.wifi,
+                "mDNS UP",
+                BITResult::Waiting,
+            );
+            configuration_state.ip = None;
         }
     }
 }

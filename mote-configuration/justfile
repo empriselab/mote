@@ -10,8 +10,12 @@ build:
 run-dev: build
     npx vite
 
+test: build
+    npm run test:run
+
 ci: build
     npm run check
+    npm run test:run
 
 ci-build: build
     npm ci
