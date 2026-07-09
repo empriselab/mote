@@ -2,7 +2,7 @@
 
 ## DevContainer
 
-DevContainer support coming in [#13](https://github.com/empriselab/mote-core/issues/13). DevContainers do not support USB passthrough (outside of Linux), so you'll need to follow the local install directions if you wish to develop firmware.
+DevContainer support coming in [#13](https://github.com/empriselab/mote/issues/13). DevContainers do not support USB passthrough (outside of Linux), so you'll need to follow the local install directions if you wish to develop firmware.
 
 ## Local Install
 

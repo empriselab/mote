@@ -6,11 +6,11 @@ Follow the instructions in [Development Environment](advanced/contributing/dev_e
 
 Make a clone of the repository: 
 ```bash
-git clone git@github.com:empriselab/mote-core.git
+git clone git@github.com:empriselab/mote.git
 ```
 or 
 ```bash
-git clone https://github.com/empriselab/mote-core.git
+git clone https://github.com/empriselab/mote.git
 ```
 
 ## Build
