@@ -53,6 +53,26 @@ jobs:
       - name: Test Book
         run: just book::test
 
+      - name: Substitute latest firmware download link
+        run: |
+          LATEST_FW_TAG=$(gh release list \
+            --repo "$GITHUB_REPOSITORY" \
+            --json tagName \
+            --jq '[.[] | select(.tagName | startswith("mote-firmware-"))] | first | .tagName' \
+            2>/dev/null || echo "")
+          if [ -z "$LATEST_FW_TAG" ]; then
+            echo "No firmware release found, leaving placeholder"
+            exit 0
+          fi
+          echo "Using firmware release $LATEST_FW_TAG"
+          VERSION="${LATEST_FW_TAG#mote-firmware-v}"
+          VERSION_US="${VERSION//./_}"
+          URL="https://github.com/$GITHUB_REPOSITORY/releases/download/$LATEST_FW_TAG/mote-firmware-v${VERSION_US}.uf2"
+          sed -i "s|__MOTE_FW_TAG__|$LATEST_FW_TAG|g; s|__MOTE_FW_URL__|$URL|g" \
+            mote-book/src/getting_started/updating.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Run CI web build
         run: just ci-web-artifact
 
