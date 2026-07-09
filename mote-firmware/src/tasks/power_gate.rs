@@ -47,7 +47,7 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
             result: BITResult::Pass,
         };
         let comms_power = BIT {
-            name: "7.5W Capable (enables WIFI and motors)".into(),
+            name: "7.5W Capable (enables motors)".into(),
             result: BITResult::Waiting,
         };
         for test in [init, comms_power] {
@@ -94,7 +94,7 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
                 };
                 update_bit_result(
                     &mut configuration_state.built_in_test.power,
-                    "7.5W Capable (enables WIFI and motors)",
+                    "7.5W Capable (enables motors)",
                     wifi_pass,
                 );
             }

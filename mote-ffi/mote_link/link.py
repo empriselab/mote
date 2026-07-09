@@ -34,6 +34,22 @@ class NetworkConnection:
     strength: int  # rssi
 
 
+@dataclass
+class NetworkConnected:
+    ssid: str
+
+
+@dataclass
+class NetworkConnectionFailed:
+    reason: str
+
+
+# Result of the most recent network connection attempt: either connected to a
+# network, or the last attempt failed with a human-readable reason. A value of
+# `None` means idle or a connection is in progress.
+NetworkConnectionResult = Union[NetworkConnected, NetworkConnectionFailed]
+
+
 class BITResult(Enum):
     Waiting = "Waiting"
     Pass = "Pass"
@@ -59,7 +75,7 @@ class BITCollection:
 class MoteState:
     uid: str
     ip: str | None
-    current_network_connection: str | None
+    current_network_connection: NetworkConnectionResult | None
     available_network_connections: list[NetworkConnection]
     built_in_test: BITCollection
 
@@ -172,6 +188,19 @@ def _serialize_host_message(msg: HostMessage) -> str:
     raise TypeError(f"Unknown host message type: {type(msg)}")
 
 
+# Parses the serialized `Option<Result<String, String>>` network connection
+# result: `None`, `{"Ok": ssid}`, or `{"Err": reason}`.
+def _parse_network_connection(value) -> NetworkConnectionResult | None:
+    if value is None:
+        return None
+    if isinstance(value, dict):
+        if "Ok" in value:
+            return NetworkConnected(ssid=value["Ok"])
+        if "Err" in value:
+            return NetworkConnectionFailed(reason=value["Err"])
+    raise ValueError(f"Unknown network connection result: {value!r}")
+
+
 # Python native types into mote_ffi json based messages
 def _deserialize_mote_message(data) -> MoteMessage:
     if data == "Ping":
@@ -199,7 +228,9 @@ def _deserialize_mote_message(data) -> MoteMessage:
                 data=MoteState(
                     uid=s["uid"],
                     ip=s.get("ip"),
-                    current_network_connection=s.get("current_network_connection"),
+                    current_network_connection=_parse_network_connection(
+                        s.get("current_network_connection")
+                    ),
                     available_network_connections=[
                         NetworkConnection(**nc)
                         for nc in s["available_network_connections"]

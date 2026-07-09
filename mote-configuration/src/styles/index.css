@@ -15,3 +15,53 @@ pre {
     display: inline;
     margin: 0px;
 }
+
+body {
+    margin: 0 auto;
+}
+
+.success {
+    color: lightgreen;
+}
+
+.waiting {
+    color: #fdfd96;
+}
+
+.failed {
+    color: salmon;
+}
+
+.section {
+    margin-top: 10ch;
+    margin-bottom: 10ch;
+}
+
+.tree li {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.dimmed {
+    opacity: 0.4;
+}
+
+.label {
+    margin: 0;
+}
+
+.actions {
+    float: right;
+    margin: 0;
+}
+
+button:active {
+    transform: none;
+}
+
+.press {
+    display: inline-block;
+}
+
+button:active .press {
+    transform: translate(2px, 2px);
+}

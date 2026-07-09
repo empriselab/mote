@@ -3,11 +3,8 @@ use embassy_futures::select::{Either, select};
 use embassy_net::Stack;
 use embassy_net::udp::{PacketMetadata, UdpMetadata, UdpSocket};
 use mote_api::HostLink;
-use mote_api::messages::mote_to_host::BITResult;
 use mote_api::messages::{host_to_mote, mote_to_host};
 
-use crate::helpers::update_bit_result;
-use crate::tasks::CONFIGURATION_STATE;
 use crate::tasks::wifi::{DATA_OFFLOAD_CHANNEL, MOTOR_COMMAND_CHANNEL};
 
 pub const UDP_SERVER_PORT: u16 = 7475;
@@ -56,12 +53,6 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
                 let new_client = match client {
                     None => {
                         info!("Client connected: {}", ep);
-                        let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                        update_bit_result(
-                            &mut configuration_state.built_in_test.wifi,
-                            "Client Connected",
-                            BITResult::Pass,
-                        );
                         true
                     }
                     Some(ref current) if *current != ep => {
@@ -97,12 +88,6 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
                             if matches!(err, embassy_net::udp::SendError::NoRoute) {
                                 info!("Client disconnected: {}", ep);
                                 client = None;
-                                let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                                update_bit_result(
-                                    &mut configuration_state.built_in_test.wifi,
-                                    "Client Connected",
-                                    BITResult::Waiting,
-                                );
                             } else {
                                 error!("UDP send error: {}", err);
                             }

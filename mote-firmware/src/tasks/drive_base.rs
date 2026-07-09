@@ -5,14 +5,16 @@ use embassy_rp::pio::{Instance, Pio};
 use embassy_rp::pwm::SetDutyCycle;
 use embassy_rp::{gpio, pwm};
 use embassy_time::{Duration, Instant, Ticker, Timer};
-use mote_api::messages::mote_to_host::{DriveBaseState, Message, WheelJointState};
+use mote_api::messages::mote_to_host::{BIT, BITResult, DriveBaseState, Message, WheelJointState};
 use pid::Pid;
 
+use crate::helpers::update_bit_result;
 use crate::tasks::drive_base::encoder::PioEncoder;
 use crate::tasks::drive_base::hbridge::PwmBridge;
 use crate::tasks::wifi::{DATA_OFFLOAD_CHANNEL, MOTOR_COMMAND_CHANNEL};
 use crate::tasks::{
-    DRV8833Resources, EncoderDriverResources, Irqs, LeftEncoderResources, RightEncoderResources, power_gate,
+    CONFIGURATION_STATE, DRV8833Resources, EncoderDriverResources, Irqs, LeftEncoderResources, RightEncoderResources,
+    power_gate,
 };
 
 mod encoder;
@@ -34,6 +36,18 @@ const PID_CONTROL_LOOP_PERIOD_MS: u64 = 20;
 const TELEMETRY_LOOP_PERIOD_MS: u64 = 100;
 /// Seconds of not receiving a command before deactivating the drive base.
 const WATCH_DOG_TIMEOUT: u64 = 1;
+
+/// Name of the encoder initialization built-in-test check.
+const ENCODER_INIT_BIT: &str = "Init";
+/// Names of the per-wheel encoder motion built-in-test checks.
+const LEFT_ENCODER_BIT: &str = "Left Wheel";
+const RIGHT_ENCODER_BIT: &str = "Right Wheel";
+
+/// Update the result of one of the encoder built-in-test checks.
+async fn set_encoder_bit(name: &'static str, result: BITResult) {
+    let mut configuration_state = CONFIGURATION_STATE.lock().await;
+    update_bit_result(&mut configuration_state.built_in_test.encoders, name, result);
+}
 
 /// Convert encoder pulses into radians
 fn encoder_pulses_to_rad(pulses: i32) -> f32 {
@@ -153,6 +167,7 @@ async fn motor_task(
     );
     let (Some(left_a), Some(left_b)) = left_pwm.split() else {
         error!("Unable to init drive base PWM. Drive-base disabled.");
+        set_encoder_bit(ENCODER_INIT_BIT, BITResult::Fail).await;
         return;
     };
     let left_pwm_bridge = PwmBridge::new(left_b, left_a, 0);
@@ -174,6 +189,7 @@ async fn motor_task(
     );
     let (Some(right_a), Some(right_b)) = right_pwm.split() else {
         error!("Unable to init drive base PWM. Drive-base disabled.");
+        set_encoder_bit(ENCODER_INIT_BIT, BITResult::Fail).await;
         return;
     };
     let right_pwm_bridge = PwmBridge::new(right_b, right_a, 0);
@@ -181,6 +197,9 @@ async fn motor_task(
 
     // Init sleep pin
     let mut sleep = gpio::Output::new(motor_driver_r.sleep, gpio::Level::High);
+
+    // Both wheels configured successfully.
+    set_encoder_bit(ENCODER_INIT_BIT, BITResult::Pass).await;
 
     // PID, telem and watchdog timers
     let mut pid_ticker = Ticker::every(Duration::from_millis(PID_CONTROL_LOOP_PERIOD_MS));
@@ -190,6 +209,11 @@ async fn motor_task(
     // Motors start with 0 velocity
     left_motor.set_setpoint_rad_per_s(0.0);
     right_motor.set_setpoint_rad_per_s(0.0);
+
+    // Each wheel's encoder check stays pending until we observe it produce a
+    // non-zero count (i.e. the encoder is wired up and registering motion).
+    let mut left_counted = false;
+    let mut right_counted = false;
 
     loop {
         match select4(
@@ -204,6 +228,16 @@ async fn motor_task(
                 // Run PID update
                 left_motor.step(PID_CONTROL_LOOP_PERIOD_MS).await;
                 right_motor.step(PID_CONTROL_LOOP_PERIOD_MS).await;
+
+                // Mark each encoder check as passed once it reports a count.
+                if !left_counted && left_motor.encoder_value != 0 {
+                    set_encoder_bit(LEFT_ENCODER_BIT, BITResult::Pass).await;
+                    left_counted = true;
+                }
+                if !right_counted && right_motor.encoder_value != 0 {
+                    set_encoder_bit(RIGHT_ENCODER_BIT, BITResult::Pass).await;
+                    right_counted = true;
+                }
             }
             embassy_futures::select::Either4::Second(_) => {
                 // Send a value to the data offload link
@@ -239,5 +273,15 @@ pub async fn init(
     left_encoder_r: LeftEncoderResources,
     right_encoder_r: RightEncoderResources,
 ) {
+    {
+        let mut configuration_state = CONFIGURATION_STATE.lock().await;
+        for name in [ENCODER_INIT_BIT, LEFT_ENCODER_BIT, RIGHT_ENCODER_BIT] {
+            configuration_state.built_in_test.encoders.push(BIT {
+                name: name.into(),
+                result: BITResult::Waiting,
+            });
+        }
+    }
+
     spawner.spawn(motor_task(encoder_driver_r, left_encoder_r, right_encoder_r, motor_driver_r).unwrap());
 }

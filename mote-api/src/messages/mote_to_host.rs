@@ -92,7 +92,11 @@ pub struct State {
     pub uid: UID,
     pub ip: Option<String>,
     pub mac: Option<String>,
-    pub current_network_connection: Option<String>,
+    /// Result of the most recent network connection attempt:
+    /// `Some(Ok(ssid))` when connected to `ssid`, `Some(Err(reason))` when the
+    /// last attempt failed (the string describes why), or `None` when idle or
+    /// while a connection is in progress.
+    pub current_network_connection: Option<Result<String, String>>,
     pub available_network_connections: Vec<NetworkConnection>,
     pub built_in_test: BITCollection,
 }

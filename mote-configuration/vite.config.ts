@@ -1,4 +1,6 @@
-import { defineConfig, searchForWorkspaceRoot } from 'vite'
+/// <reference types="vitest/config" />
+import { searchForWorkspaceRoot } from 'vite'
+import { defineConfig } from 'vitest/config'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import wasm from "vite-plugin-wasm";
 
@@ -19,5 +21,10 @@ export default defineConfig({
     },
     optimizeDeps: {
         exclude: ['mote-ffi']
+    },
+    test: {
+        environment: 'jsdom',
+        globals: true,
+        include: ['src/**/*.{test,spec}.{ts,svelte.ts}'],
     },
 })
