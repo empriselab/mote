@@ -9,7 +9,7 @@ Missing something? Check out [the sourcing guide](../hardware-sourcing/acquire.m
 
 ![Required parts](./assets/assembly/all_parts.webp)
 
-### Custom Parts
+### Custom
 
 | Item | Quantity | Picture | 
 |---|---|---|
@@ -20,7 +20,7 @@ Missing something? Check out [the sourcing guide](../hardware-sourcing/acquire.m
 | LiDAR Mount | 1 | ![](./assets/assembly/lidar_stand.webp) |
 | Wheel Spacers | 2 | ![](./assets/assembly/wheel_spacers.webp) |
 
-### Off the Shelf Parts
+### Off the Shelf
 
 | Item | Quantity | Picture | 
 |---|---|---|
@@ -30,7 +30,7 @@ Missing something? Check out [the sourcing guide](../hardware-sourcing/acquire.m
 | 25mm M2.5 Hex Head Machine Screws | 6 | ![](./assets/assembly/25mm_screws.webp) |
 | 6mm M2.5 Hex Head Machine Screws | 2 | ![](./assets/assembly/6mm_screws.webp) |
 
-### Miscellaneous Parts
+### Miscellaneous
 
 | Item | Quantity | Picture | 
 |---|---|---|
@@ -136,8 +136,12 @@ Place a 6mm screw into the hole on the tail runner. Align the screw with the nut
 
 ![](./assets/assembly/23_assembly_tail_screw.webp)
 
-## Next Steps
-
-You've successfully assembled your Mote! Move on to [configuration](./configuration.md) to get your robot ready to use.
+### Success
+You've successfully assembled your Mote!
 
 ![](./assets/assembly/24_assembly_complete.webp)
+
+## Next Steps
+
+* [Update Firmware](./updating.md) - Update your Mote to the latest firmware version
+
