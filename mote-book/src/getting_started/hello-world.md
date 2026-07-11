@@ -14,7 +14,7 @@ This example uses [uv](https://docs.astral.sh/uv/) to run a Python program. Inst
 In the terminal of your choice, run the demo.
 
 ```bash
-uvx mote_link
+uvx mote_link rerun-demo
 ```
 
 Follow the instructions in your terminal to select and connect to your Mote. 
@@ -22,12 +22,12 @@ Your browser will open to a dashboard showing realtime LiDAR, wheel encoder, acc
 
 ## Next Steps
 
-The "Guides" section contains tutorials for working with Mote using various SDKs.
-
-* [The Python guide]() will teach you how to write your own Python scripts for interfacing with Mote.
-* [The Rust guide]() is like the Python guide, but using Rust 🦀.
-* [The ROS 2 guide]() teaches how to use Mote with the Robot Operating System.
+* [Python guide]() - learn how to write your own Python scripts for interfacing with Mote.
+* [The Rust guide]() - like the Python guide, but using Rust 🦀.
+* [The ROS 2 guide]() - learn how to use Mote with the Robot Operating System.
 
 ## Troubleshooting
 
-Having issues? Check out [the trouble shooting guide](../troubleshooting/common_issues.md).
+### My Mote drives backwards
+
+[Check your motor cable connections](./kit-assembly.html#cables). Are the left and right motor connections swapped?

@@ -5,6 +5,7 @@
 # Getting Started
 
 - [Kit Assembly](./getting_started/kit-assembly.md)
+- [Updating Firmware](./getting_started/updating.md)
 - [Configuration](./getting_started/configuration.md)
 - [Hello World](./getting_started/hello-world.md)
 
@@ -31,6 +32,7 @@
 # Troubleshooting
 
 - [Common Issues](./troubleshooting/common_issues.md)
+- [Debugging](./troubleshooting/debugging.md)
 
 # Hardware Sourcing
 

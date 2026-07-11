@@ -1,12 +1,12 @@
 # Contributing
 
-Mote is an open-source project hosted by Cornell University's [EmPRISE Lab](https://github.com/empriselab). Thoughful contributions are welcome and appreciated.
+Mote is an open-source project hosted by Cornell University's [EmPRISE Lab](https://github.com/empriselab). Thoughtful contributions are welcome and appreciated.
 
-First time contributors are recommended to read through the documentation, then check out the [open issues](https://github.com/empriselab/mote-core/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22).
+First-time contributors should read through the documentation, then check out the [open issues](https://github.com/empriselab/mote/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22).
 
 ## Project Structure
 
-`mote-core` contains the core libraries required for Mote to function. It includes the following components:
+`mote` contains the core libraries required for Mote to function. It includes the following components:
 
 - `mote-firmware`
     - Embedded firmware for the RP2354 MCU

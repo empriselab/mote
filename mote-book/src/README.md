@@ -1,6 +1,6 @@
 # Mote
 
-A low cost and high confidence mobile robot for hands-on robotics education.
+A low-cost, high-confidence mobile robot for hands-on robotics education.
 
 ![](./getting_started/assets/assembly/24_assembly_complete.webp)
 
