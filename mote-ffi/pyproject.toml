@@ -1,10 +1,13 @@
 [project]
 name = "mote_link"
-version = "0.0.0"
-description = "Python library for communicating with Mote"
-readme = "README.md"
+version = "0.1.0"
+description = "Communicating with Mote"
 requires-python = ">=3.8"
 dependencies = ["zeroconf>=0.136", "rerun-sdk>=0.21", "survey>=5.4"]
+
+[project.urls]
+Documentation = "https://empriselab.github.io/mote/"
+Repository = "https://github.com/empriselab/mote"
 
 [project.scripts]
 rerun-demo = "mote_link.examples.rerun_demo:main"
@@ -24,3 +27,7 @@ build-backend = "maturin"
 
 [dependency-groups]
 dev = ["ty>=0.0.18", "ruff>=0.15.2", "pytest>=8.0"]
+
+[tool.maturin.generate-ci.github]
+trusted-publishing = true
+publishing-environment = "pypi"
