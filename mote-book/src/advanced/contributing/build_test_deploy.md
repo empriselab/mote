@@ -63,9 +63,17 @@ Release artifacts are built and uploaded automatically via continuous integratio
 * `mote-firmware`
     * Released on any tag to `mote-cote` matching the pattern `mote-firmware-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-firmware` crate.
     * Automated via [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-firmware.yaml).
-* `mote-ffi`
-    * Released on any tag to `mote-cote` matching the pattern `mote-ffi-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-firmware` crate.
-    * C++ library released via the [GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-ffi-c.yaml)
-    * Python library released via the [GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-ffi-python.yaml)
-* `mote-book` and `mote-configuration`
-    * Deployed to GitHub pages via the [GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/deploy.yaml).
+* `mote-c`
+    * Released on any tag to `mote-core` matching the pattern `mote-c-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-ffi` crate.
+    * The static library, header, and schemas are attached to the release via [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-c.yaml).
+* `mote-python`
+    * Released on any tag to `mote-core` matching the pattern `mote-python-vX.X.X`, where `vX.X.X` matches the version in `mote-ffi/pyproject.toml`.
+    * Cross-platform wheels are built and published to [PyPI](https://pypi.org/project/mote_link/) via [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-python.yaml).
+* `mote-rust` (the `mote-api` crate)
+    * Released on any tag to `mote-core` matching the pattern `mote-rust-vX.X.X`, where `vX.X.X` matches the semantic version of the `mote-api` crate.
+    * The crate is published to [crates.io](https://crates.io/crates/mote-api) via [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-rust.yaml).
+* `mote-configuration`
+    * Released on any tag to `mote-core` matching the pattern `mote-configuration-vX.X.X`, where `vX.X.X` matches the version in `mote-configuration/package.json`.
+    * The built site is attached to the release via [this GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/release-configuration.yaml).
+* `mote-book`
+    * Built and deployed to GitHub pages on every commit to main via the [GitHub Action](https://github.com/empriselab/mote-core/blob/main/.github/workflows/deploy.yaml).
