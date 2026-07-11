@@ -21,3 +21,10 @@ ci-build: build
     npm ci
     npm run build
     npm run check
+
+# Build and package the configuration page into a release tarball tracking the
+# package.json version. Output: mote-configuration-v<version>.tar.gz
+release-package: ci-build
+    #!/usr/bin/env bash
+    VERSION=$(jq -r .version package.json)
+    tar -czf mote-configuration-v${VERSION}.tar.gz -C dist .

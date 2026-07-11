@@ -1,0 +1,133 @@
+name: Release Python Package
+
+on:
+  push:
+    tags:
+      - 'mote-python-v*.*.*'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#mote-python-v}"
+          CODE_VERSION=$(grep '^version' mote-ffi/pyproject.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          if [ "$TAG_VERSION" != "$CODE_VERSION" ]; then
+            echo "Error: Tag version ($TAG_VERSION) does not match pyproject version ($CODE_VERSION)"
+            exit 1
+          fi
+          echo "Version check passed: $CODE_VERSION"
+
+  linux:
+    needs: check-version
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [x86_64, aarch64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          working-directory: mote-ffi
+          target: ${{ matrix.target }}
+          args: --release --locked
+          manylinux: auto
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-linux-${{ matrix.target }}
+          path: mote-ffi/target/wheels/*.whl
+
+  macos:
+    needs: check-version
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        target: [x86_64, aarch64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          working-directory: mote-ffi
+          target: ${{ matrix.target }}
+          args: --release --locked
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-macos-${{ matrix.target }}
+          path: mote-ffi/target/wheels/*.whl
+
+  windows:
+    needs: check-version
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        target: [x64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          working-directory: mote-ffi
+          target: ${{ matrix.target }}
+          args: --release --locked
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-windows-${{ matrix.target }}
+          path: mote-ffi/target/wheels/*.whl
+
+  sdist:
+    needs: check-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          working-directory: mote-ffi
+          command: sdist
+          args: --out dist
+
+      - name: Upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-sdist
+          path: mote-ffi/dist/*.tar.gz
+
+  release:
+    needs: [linux, macos, windows, sdist]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      # Required for trusted publishing (OIDC) to PyPI.
+      id-token: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          merge-multiple: true
+          path: dist
+
+      - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
+        with:
+          command: upload
+          args: --non-interactive dist/*

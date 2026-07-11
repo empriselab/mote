@@ -100,7 +100,7 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
         let (recv, send) = socket.split();
 
         let command_service = Service {
-            name: "Mote Server",
+            name: &hostname.clone(),
             priority: 1,
             weight: 5,
             service: "_mote-api",

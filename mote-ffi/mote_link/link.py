@@ -277,7 +277,7 @@ async def _chose_from_mdns_service(service_name: str) -> str:
     browser = AsyncServiceBrowser(azc.zeroconf, service_name, handlers=[on_change])
 
     print("Scanning for Motes...")
-    await asyncio.sleep(15.0)
+    await asyncio.sleep(20.0)
 
     await browser.async_cancel()
     await azc.async_close()
@@ -292,14 +292,13 @@ async def _chose_from_mdns_service(service_name: str) -> str:
         print(f"Connecting to {name} at {ip}")
         return ip
 
-    loop = asyncio.get_event_loop()
-    idx = await loop.run_in_executor(
-        None,
-        lambda: survey.routines.select(
+    try:
+        idx = survey.routines.select(
             "Select a Mote: ",
             options=[f"{name} ({ip})" for name, ip in devices],
-        ),
-    )
+        )
+    except KeyboardInterrupt:
+        raise SystemExit(130) from None
     return devices[idx][1]
 
 
@@ -354,13 +353,12 @@ class MoteClient:
             self.ip = await _chose_from_mdns_service("_mote-api._udp.local.")
             await self._open_connection()
         except MoteConnectionError:
-            loop = asyncio.get_event_loop()
-            ip_str = await loop.run_in_executor(
-                None,
-                lambda: input(
+            try:
+                ip_str = input(
                     "Could not find Motes using autodiscovery. Enter Mote IP address (x.x.x.x): "
-                ),
-            )
+                )
+            except (KeyboardInterrupt, EOFError):
+                raise SystemExit(130) from None
             await self.connect_with_ip(ipaddress.IPv4Address(ip_str.strip()))
 
     async def connect_with_uid(self, uid: str):

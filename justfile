@@ -27,9 +27,8 @@ grammar:
     vale sync
     vale mote-book/src README.md mote-*/README.md
 
-# Generate a folder for uploading to gh pages
-ci-web-artifact: book::build config::ci-build
-    mkdir -p output/configuration
+# Generate a folder for uploading to gh pages.
+ci-web-artifact: book::build
+    mkdir -p output
     cp -r mote-book/book/* output
-    cp -r mote-configuration/dist/* output/configuration
 

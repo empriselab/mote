@@ -37,13 +37,6 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Set up Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: lts/*
-          cache: 'npm'
-          cache-dependency-path: 'mote-configuration/package-lock.json'
-
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: |
@@ -54,10 +47,6 @@ jobs:
         with:
           mdbook-version: 'latest'
 
-      - uses: jetli/wasm-pack-action@v0.4.0
-        with:
-          version: 'latest'
-
       - name: Install just
         uses: extractions/setup-just@v2
 
@@ -66,6 +55,30 @@ jobs:
 
       - name: Run CI web build
         run: just ci-web-artifact
+
+      - name: Fetch configuration page from latest release
+        run: |
+          LATEST_CONFIG_TAG=$(gh release list \
+            --repo "$GITHUB_REPOSITORY" \
+            --json tagName \
+            --jq '[.[] | select(.tagName | startswith("mote-configuration-"))] | first | .tagName' \
+            2>/dev/null || echo "")
+          if [ -z "$LATEST_CONFIG_TAG" ]; then
+            echo "No configuration release found, skipping configuration page"
+            exit 0
+          fi
+          echo "Fetching configuration page from $LATEST_CONFIG_TAG"
+          mkdir -p output/configuration
+          gh release download "$LATEST_CONFIG_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern 'mote-configuration-*.tar.gz' \
+            --dir output \
+            2>/dev/null \
+            && tar -xzf output/mote-configuration-*.tar.gz -C output/configuration \
+            && rm output/mote-configuration-*.tar.gz \
+            || echo "No configuration bundle in $LATEST_CONFIG_TAG yet, skipping"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Fetch hardware IBOM from latest release
         run: |
