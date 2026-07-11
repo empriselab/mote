@@ -4983,7 +4983,7 @@ dependencies = [
 
 [[package]]
 name = "mote-api"
-version = "0.0.0-prerelease"
+version = "0.0.0"
 dependencies = [
  "anyhow",
  "async-std",

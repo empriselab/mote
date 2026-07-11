@@ -1,6 +1,6 @@
 [package]
 name = "mote-api"
-version = "0.0.0-prerelease"
+version = "0.0.0"
 edition = "2024"
 description = "Message and API definitions for communicating with Mote"
 license = "MIT"
