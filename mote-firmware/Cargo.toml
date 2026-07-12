@@ -53,6 +53,14 @@ cyw43-pio = { version = "0.10", features = ["defmt"] }
 
 assign-resources = { git = "https://github.com/adamgreig/assign-resources", rev = "bd22cb7a92031fb16f74a5da42469d466c33383e" }
 
+# lsm6ds33 on crates.io (0.5.0) pins embedded-hal-async = "0.1.0-alpha.1", which predates
+# the stable 1.0 I2c trait embassy-rp implements. This fork bumps embedded-hal(-async) to
+# 1.0 so the async feature compiles against embassy_rp::i2c::I2c. No upstream PR is in
+# flight as of 2026-07-11; switch back to crates.io if/when nnarain/lsm6ds33 merges this.
+lsm6ds33 = { git = "https://github.com/tyomaiva/lsm6ds33", rev = "88d2f46cc2a690e9e0c1e7c21b3ba28d0b463bcb", default-features = false, features = [
+    "async",
+] }
+
 defmt = { version = "1.0", features = ["alloc"] }
 defmt-rtt = "1.0"
 cortex-m = { version = "0.7", features = ["inline-asm"] }
