@@ -24,8 +24,8 @@ jobs:
         with:
           workspaces: mote-firmware
 
-      - name: Install just
-        uses: extractions/setup-just@v2
+      - name: Install Task
+        uses: go-task/setup-task@v2
 
       - name: Install picotool
         run: |
@@ -47,7 +47,7 @@ jobs:
 
       - name: Build UF2
         working-directory: mote-firmware
-        run: just uf2
+        run: task uf2
 
       - name: Upload UF2 to release
         uses: softprops/action-gh-release@v2

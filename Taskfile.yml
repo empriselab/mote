@@ -1,0 +1,60 @@
+version: '3'
+
+includes:
+  firmware:
+    taskfile: ./mote-firmware/Taskfile.yml
+    dir: ./mote-firmware
+  api:
+    taskfile: ./mote-api/Taskfile.yml
+    dir: ./mote-api
+  book:
+    taskfile: ./mote-book/Taskfile.yml
+    dir: ./mote-book
+  config:
+    taskfile: ./mote-configuration/Taskfile.yml
+    dir: ./mote-configuration
+  hardware:
+    taskfile: ./mote-hardware/Taskfile.yml
+    dir: ./mote-hardware
+  ffi:
+    taskfile: ./mote-ffi/Taskfile.yml
+    dir: ./mote-ffi
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list
+
+  ci:
+    desc: Run the full CI suite
+    deps: [firmware:ci, api:ci, book:ci, _ci-config-after-ffi]
+
+  # mote-configuration builds mote-ffi's wasm target itself (via its own `ffi`
+  # include), which races with ffi:ci's own build-wasm step if both run at the
+  # same time (both invoke wasm-pack against the same mote-ffi/target output
+  # dir). Sequence config:ci after ffi:ci so it can still run concurrently
+  # with firmware/api/book instead of forcing the whole suite to serialize.
+  _ci-config-after-ffi:
+    internal: true
+    deps: [ffi:ci]
+    cmds:
+      - task: config:ci
+
+  spell:
+    desc: Check spelling across the repo (matches the spelling CI job)
+    cmds:
+      - codespell
+
+  grammar:
+    desc: Check grammar and style in prose (matches the grammar CI job)
+    cmds:
+      - vale sync
+      - vale mote-book/src README.md mote-*/README.md
+
+  ci-web-artifact:
+    desc: Generate a folder for uploading to gh pages.
+    deps: [book:build]
+    cmds:
+      - mkdir -p output
+      - cp -r mote-book/book/* output

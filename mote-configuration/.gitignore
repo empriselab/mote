@@ -15,7 +15,7 @@ dist
 dist-ssr
 *.local
 
-# Release bundle produced by `just release-package`
+# Release bundle produced by `task release-package`
 mote-configuration-v*.tar.gz
 
 # Editor directories and files

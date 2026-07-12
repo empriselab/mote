@@ -42,8 +42,8 @@ jobs:
         enable-cache: true
         version: 'latest'
 
-    - name: Install just
-      uses: extractions/setup-just@v2
+    - name: Install Task
+      uses: go-task/setup-task@v2
 
     - name: Run CI validation
-      run: just ci
+      run: task ci

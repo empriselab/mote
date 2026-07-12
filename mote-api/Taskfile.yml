@@ -1,0 +1,39 @@
+version: '3'
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list
+
+  build-examples:
+    cmds:
+      - cargo build --examples
+
+  run-example:
+    cmds:
+      - cargo run --example {{.CLI_ARGS}}
+
+  format:
+    cmds:
+      - cargo fmt
+
+  lint:
+    cmds:
+      - cmd: echo "Linting mote-api"
+        silent: true
+      - cargo clippy --all-features -- -D warnings
+
+  build:
+    deps: [build-examples]
+
+  test:
+    cmds:
+      - cargo test
+
+  format-check:
+    cmds:
+      - cargo fmt --check
+
+  ci:
+    deps: [build, lint, format-check, test]

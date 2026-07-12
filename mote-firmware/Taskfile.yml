@@ -1,0 +1,61 @@
+version: '3'
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list
+
+  build:
+    desc: Build firmware
+    cmds:
+      - cargo build --release
+
+  provision:
+    desc: First time setup. Burns the cyw43's firmware into flash, then deploys firmware
+    cmds:
+      - probe-rs download cyw43-firmware/43439A0.bin --binary-format bin --chip RP235x --base-address 0x10100000
+      - probe-rs download cyw43-firmware/43439A0_clm.bin --binary-format bin  --chip RP235x --base-address 0x10140000
+      - cargo run --release
+
+  deploy:
+    desc: Deploy firmware to Mote
+    cmds:
+      - DEFMT_LOG=info cargo run --release
+
+  debug:
+    desc: Deploy firmware to Mote and run with debug logging
+    cmds:
+      - DEFMT_LOG=debug cargo run --release
+
+  trace:
+    desc: Deploy firmware to Mote and run with trace logging
+    cmds:
+      - DEFMT_LOG=trace cargo run --release
+
+  format:
+    desc: Format all files
+    cmds:
+      - cargo fmt
+
+  lint:
+    desc: Lint all files
+    cmds:
+      - cmd: echo "Linting mote-api"
+        silent: true
+      - cargo clippy --all-features -- -D warnings
+
+  format-check:
+    cmds:
+      - cargo fmt --check
+
+  uf2:
+    cmds:
+      - |
+        set -euo pipefail
+        VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+        cargo build --release --features bake-cyw43-firmware
+        picotool uf2 convert target/thumbv8m.main-none-eabihf/release/mote-firmware -t elf "mote-firmware-v${VERSION//./_}.uf2" --family rp2350-arm-s
+
+  ci:
+    deps: [build, format-check, lint]

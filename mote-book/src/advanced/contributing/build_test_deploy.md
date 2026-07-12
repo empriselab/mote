@@ -19,11 +19,11 @@ Compile source and generate executable artifacts.
 
 ```bash
 # Build Mote's firmware
-just firmware::build 
+task firmware:build 
 # Build the configuration webpage
-just config::build 
+task config:build 
 # Build the book
-just book::build 
+task book:build 
 ```
 
 ## Test
@@ -32,11 +32,11 @@ Run unit tests.
 
 ```bash
 # Run api test cases
-just api::test
+task api:test
 # Run ffi test cases
-just ffi::test
+task ffi:test
 # Test code examples in the book
-just book::test
+task book:test
 ```
 
 ## Run
@@ -47,13 +47,13 @@ Running firmware requires connecting to Mote using [a SWD debug probe](https://w
 
 ```bash
 # Deploy firmware to Mote (first time doing so)
-just firmware::provision
+task firmware:provision
 # Deploy firmware to Mote (any time after)
-just firmware::deploy
+task firmware:deploy
 # Serve the configuration page
-just config::run-dev
+task config:run-dev
 # Serve / open the book
-just book::open
+task book:open
 ```
 
 ## Release
