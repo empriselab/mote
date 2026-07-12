@@ -3,7 +3,7 @@ name = "mote_link"
 version = "0.0.0"
 description = "Communicating with Mote"
 requires-python = ">=3.8"
-dependencies = ["zeroconf>=0.136", "rerun-sdk>=0.21", "survey>=5.4"]
+dependencies = ["zeroconf>=0.136", "rerun-sdk>=0.21", "survey>=5.4", "pyglet>=2.0"]
 
 [project.urls]
 Documentation = "https://empriselab.github.io/mote/"
