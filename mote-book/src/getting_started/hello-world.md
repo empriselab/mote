@@ -2,8 +2,8 @@
 
 In this example we'll use the mote-link Python library to stream data from and send commands to your robot.
 
-<iframe src="https://app.rerun.io/version/0.34.1/index.html?url=https://empriselab.github.io/mote/getting_started/assets/hello_world/mote-link-example-log.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe>
-<!-- <iframe src="https://app.rerun.io/version/0.34.1/index.html?url=http://localhost:8080/getting_started/assets/hello_world/mote-link-example-log.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe> -->
+<iframe src="https://app.rerun.io/version/0.34.1/index.html?url=https://empriselab.github.io/mote/getting_started/assets/hello_world/mote-link-example-roaming.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe>
+<!-- <iframe src="https://app.rerun.io/version/0.34.1/index.html?url=http://localhost:8080/getting_started/assets/hello_world/mote-link-example-roaming.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe> -->
 
 ## Setup
 
