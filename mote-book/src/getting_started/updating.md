@@ -2,7 +2,7 @@
 
 Before you can using your Mote, you must program the microcontroller on board the robot with the latest firmware.
 
-1. Download the latest version of mote-firmware: [__MOTE_FW_TAG__](__MOTE_FW_URL__).
+1. Download the latest version of mote-firmware: [MOTE_FW_TAG_PLACEHOLDER](MOTE_FW_URL_PLACEHOLDER).
 
 2. While holding down the "BOOT" button on your Mote, connect the robot to your computer using the USB-C connector. Mote will appear as a USB drive titled "RP2350". 
 
