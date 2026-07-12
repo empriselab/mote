@@ -1,9 +1,15 @@
 [project]
 name = "mote_link"
-version = "0.0.0"
+version = "0.0.1"
 description = "Communicating with Mote"
+readme = "mote_link/README.md"
 requires-python = ">=3.8"
-dependencies = ["zeroconf>=0.136", "rerun-sdk>=0.21", "survey>=5.4", "pyglet>=2.0"]
+dependencies = [
+    "zeroconf>=0.136",
+    "rerun-sdk>=0.21",
+    "survey>=5.4",
+    "pyglet>=2.0",
+]
 
 [project.urls]
 Documentation = "https://empriselab.github.io/mote/"
