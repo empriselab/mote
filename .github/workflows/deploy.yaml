@@ -47,14 +47,14 @@ jobs:
         with:
           mdbook-version: 'latest'
 
-      - name: Install just
-        uses: extractions/setup-just@v2
+      - name: Install Task
+        uses: go-task/setup-task@v2
 
       - name: Test Book
-        run: just book::test
+        run: task book:test
 
       - name: Run CI web build
-        run: just ci-web-artifact
+        run: task ci-web-artifact
 
       - name: Fill in firmware download link
         run: |

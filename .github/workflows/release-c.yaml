@@ -31,8 +31,8 @@ jobs:
         with:
           workspaces: mote-ffi
 
-      - name: Install just
-        uses: extractions/setup-just@v2
+      - name: Install Task
+        uses: go-task/setup-task@v2
 
       - name: Install cargo-zigbuild
         if: matrix.os == 'ubuntu-latest'
@@ -52,7 +52,7 @@ jobs:
 
       - name: Build and package
         working-directory: mote-ffi
-        run: just ${{ matrix.recipe }}
+        run: task ${{ matrix.recipe }}
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2

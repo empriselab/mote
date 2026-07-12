@@ -1,0 +1,52 @@
+version: '3'
+
+includes:
+  ffi:
+    taskfile: ../mote-ffi/Taskfile.yml
+    dir: ../mote-ffi
+    internal: true
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list
+
+  build:
+    cmds:
+      - task: ffi:build-wasm
+      - npm install
+      - npm run generate-types
+
+  run-dev:
+    deps: [build]
+    cmds:
+      - npx vite
+
+  test:
+    deps: [build]
+    cmds:
+      - npm run test:run
+
+  ci:
+    deps: [build]
+    cmds:
+      - npm run check
+      - npm run test:run
+
+  ci-build:
+    deps: [build]
+    cmds:
+      - npm ci
+      - npm run build
+      - npm run check
+
+  release-package:
+    desc: >-
+      Build and package the configuration page into a release tarball tracking the
+      package.json version. Output: mote-configuration-v<version>.tar.gz
+    deps: [ci-build]
+    cmds:
+      - |
+        VERSION=$(jq -r .version package.json)
+        tar -czf mote-configuration-v${VERSION}.tar.gz -C dist .

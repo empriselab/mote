@@ -35,8 +35,8 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Install just
-        uses: extractions/setup-just@v2
+      - name: Install Task
+        uses: go-task/setup-task@v2
 
       - name: Check version matches tag
         run: |
@@ -50,7 +50,7 @@ jobs:
 
       - name: Build and package
         working-directory: mote-configuration
-        run: just release-package
+        run: task release-package
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2

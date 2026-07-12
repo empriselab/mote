@@ -1,0 +1,23 @@
+version: '3'
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list
+
+  build:
+    cmds:
+      - mdbook build
+
+  open:
+    cmds:
+      - mdbook serve --open
+
+  test:
+    deps: [build]
+    cmds:
+      - mdbook test
+
+  ci:
+    deps: [test]
