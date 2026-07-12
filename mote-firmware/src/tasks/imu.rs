@@ -1,7 +1,9 @@
 use embassy_executor::Spawner;
 use embassy_rp::i2c::{Config, I2c};
 use embassy_rp::peripherals::I2C1;
-use lsm6ds33::{AccelerometerOutput, AccelerometerScale, Error as ImuError, GyroscopeFullScale, GyroscopeOutput, Lsm6ds33Async};
+use lsm6ds33::{
+    AccelerometerOutput, AccelerometerScale, Error as ImuError, GyroscopeFullScale, GyroscopeOutput, Lsm6ds33Async,
+};
 use mote_api::messages::mote_to_host;
 use mote_api::messages::mote_to_host::{BIT, BITResult, IMUAxisTriple, IMUMeasurement};
 
@@ -23,9 +25,10 @@ fn default_measurement() -> IMUMeasurement {
     }
 }
 
-// Returns temperature and (accel, gyro) IMU measurement, or None if neither sensor has
-// produced a fresh sample since the last read (expected occasionally since the poll
-// loop period doesn't evenly divide the sensor's output data rate).
+// Returns temperature and (accel, gyro) IMU measurement, or None if neither
+// sensor has produced a fresh sample since the last read (expected occasionally
+// since the poll loop period doesn't evenly divide the sensor's output data
+// rate).
 pub async fn get_sensor_data(
     imu: &mut Lsm6ds33Async<I2c<'static, I2C1, embassy_rp::i2c::Async>>,
 ) -> Option<(f32, IMUMeasurement)> {
