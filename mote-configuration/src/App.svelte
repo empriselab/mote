@@ -70,7 +70,7 @@
                                     handle_telem_recv(telem);
                                 },
                             );
-                        }}><span class="press">[ Connect ]</span></button
+                        }}><span class="press">[ connect ]</span></button
                     >
                 {/if}
             </li>
