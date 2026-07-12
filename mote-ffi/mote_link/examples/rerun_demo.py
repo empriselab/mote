@@ -79,6 +79,8 @@ class _Joystick:
         self._window = pyglet.window.Window(
             self._SIZE, self._SIZE, caption="Mote teleop"
         )
+        self._window.set_vsync(False)
+
         self._batch = pyglet.graphics.Batch()
 
         self._base = pyglet.shapes.Circle(
