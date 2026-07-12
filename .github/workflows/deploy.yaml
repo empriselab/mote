@@ -76,7 +76,7 @@ jobs:
             exit 0
           fi
           echo "Filling in firmware link: $LATEST_FW_TAG -> $FW_URL"
-          sed -i "s|__MOTE_FW_TAG__|${LATEST_FW_TAG}|g; s|__MOTE_FW_URL__|${FW_URL}|g" \
+          sed -i "s|MOTE_FW_TAG_PLACEHOLDER|${LATEST_FW_TAG}|g; s|MOTE_FW_URL_PLACEHOLDER|${FW_URL}|g" \
             output/getting_started/updating.html
         env:
           GH_TOKEN: ${{ github.token }}
