@@ -2,18 +2,21 @@
 
 ## Status LEDs
 
-The underside of Mote has three status LEDs. If Mote has powered on successfully and connected to WiFi, all three LEDs should be solid green. If they are not green, here is how to debug.
+The underside of Mote has three status LEDs indicating system faults.
 
 ### PWR LED
 
 The power LED indicates if Mote is receiving sufficient voltage and current to operate.
-Mote requires a 5V (USB standard) power supply that can deliver at least 1.5A (a total of 7.5W).
+Mote requires a 5V (USB standard) power supply that can deliver at least 1.5A.
 
-* 🟥 Not receiving sufficient power. Power supply cannot deliver 1.5A. LiDAR and motors will not operate.
-    * If the power LED is not green, check that the USB power bank you are using is capable of delivering 1.5A.
-* 🟨 Cannot read power supply current capacity. Most likely a firmware or hardware fault. LiDAR and motors will not operate.
+* 🟥 Not receiving sufficient power. 
+    * The power supply cannot deliver 1.5A. 
+    * LiDAR and motors are disabled.
+    * Check that the USB power bank you are using is capable of delivering > 1.5A.
+* 🟨 Cannot read power supply current capacity. 
+    * This is a firmware or hardware fault.
+    * LiDAR and motors are disabled.
 * 🟩 Nominal. Mote has sufficient power.
-
 
 ### WiFi LED
 
@@ -28,8 +31,13 @@ The WiFi LED indicates if WiFi is enabled and connected to a network.
 
 ### Err LED
 
-The error LED indicates if sensors are powered on and communicating correctly.
+The error LED indicates if the system's sensors are powered on and communicating correctly.
 
-* 🟥 TODO
-* 🟨 TODO
+* 🟥 IMU fault.
+    * Power cycle the robot.
+* 🟪 LiDAR fault.
+    * Check that the LiDAR's cable is securely seated.
+    * Power cycle the robot.
 * 🟩 Nominal. All sensors are operating as expected.
+
+

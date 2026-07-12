@@ -124,7 +124,7 @@ Secure the wheel with a 25mm screw.
 > [!TIP]
 > The M2.5 screw must be threaded into the hole on the wheel. You may need to apply some pressure to get the thread started.
 
-![](./assets/assembly/21_assembly_wheel_with_screw.webp)
+<img src="./assets/assembly/21_assembly_wheel_with_screw.webp" width="48%"/> <img src="./assets/assembly/21_assembly_wheel_with_screw_after.webp" width="48%"/>
 
 Repeat for the right wheel.
 
