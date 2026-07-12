@@ -1,24 +1,32 @@
 # Hello World
 
-In this example we'll use the mote-link Python library to remote control your Mote and view data streamed from the robot. You'll need:
+In this example we'll use the mote-link Python library to stream data from and send commands to your robot.
 
-* A Mote
-* A personal computer running any major operating system (MacOS, Windows, Linux)
+<iframe src="https://app.rerun.io/version/0.34.1/index.html?url=https://empriselab.github.io/mote/getting_started/assets/hello_world/mote-link-example-roaming.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe>
+
+*Example data - Mote driving around my apartment*
+
+<!-- <iframe src="https://app.rerun.io/version/0.34.1/index.html?url=http://localhost:8080/getting_started/assets/hello_world/mote-link-example-roaming.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe> -->
 
 ## Setup
 
 This example uses [uv](https://docs.astral.sh/uv/) to run a Python program. Install uv using the instructions in the [uv docs](https://docs.astral.sh/uv/getting-started/installation/).
+
+Attach the battery to your Mote. Place your Mote on the ground with enough space for it to move around.
 
 ## Running the mote-link Demo
 
 In the terminal of your choice, run the demo.
 
 ```bash
-uvx mote_link rerun-demo
+uvx --from mote-link rerun-demo
 ```
 
 Follow the instructions in your terminal to select and connect to your Mote. 
-Your browser will open to a dashboard showing realtime LiDAR, wheel encoder, accelerometer, and gyroscope data.
+
+Once connected, your browser will open to a dashboard showing realtime LiDAR, wheel encoder, accelerometer, and gyroscope data.
+
+Use the arrow keys to drive Mote around.
 
 ## Next Steps
 

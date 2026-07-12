@@ -2,8 +2,10 @@ import asyncio
 import colorsys
 import math
 
+import pyglet
 import rerun as rr
 import rerun.blueprint as rrb
+from pyglet.window import key
 
 from mote_link.link import (
     DriveBaseState,
@@ -55,6 +57,118 @@ def _log_scan(scan: Scan):
         "lidar_scan",
         rr.Points2D(positions, colors=colors, radii=10.0),
     )
+
+
+class _Joystick:
+    """A small pyglet window showing a draggable virtual joystick.
+
+    Drag the knob with the mouse or, while the window is focused, hold the arrow
+    keys to set a velocity vector inside the unit disc.
+    """
+
+    _SIZE = 300
+    _CENTER = 150
+    _RADIUS = 110
+    _KNOB_RADIUS = 30
+
+    def __init__(self):
+        self.quit = asyncio.Event()
+        self._dragging = False
+        self._offset = [0.0, 0.0]
+
+        self._window = pyglet.window.Window(
+            self._SIZE, self._SIZE, caption="Mote teleop"
+        )
+        self._batch = pyglet.graphics.Batch()
+
+        self._base = pyglet.shapes.Circle(
+            self._CENTER,
+            self._CENTER,
+            self._RADIUS,
+            color=(38, 40, 52),
+            batch=self._batch,
+        )
+        self._ring = pyglet.shapes.Arc(
+            self._CENTER,
+            self._CENTER,
+            self._RADIUS,
+            thickness=3,
+            color=(120, 130, 165),
+            batch=self._batch,
+        )
+        self._knob = pyglet.shapes.Circle(
+            self._CENTER,
+            self._CENTER,
+            self._KNOB_RADIUS,
+            color=(205, 210, 225),
+            batch=self._batch,
+        )
+        self._label = pyglet.text.Label(
+            "Drag or arrow keys · Esc quits",
+            x=self._CENTER,
+            y=16,
+            anchor_x="center",
+            font_size=10,
+            color=(200, 200, 210, 255),
+            batch=self._batch,
+        )
+
+        self._keys = key.KeyStateHandler()
+        self._window.push_handlers(self._keys)
+        self._window.push_handlers(self)
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        self._dragging = True
+        self._set_offset(x - self._CENTER, y - self._CENTER)
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        if self._dragging:
+            self._set_offset(x - self._CENTER, y - self._CENTER)
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        self._dragging = False
+        self._offset = [0.0, 0.0]
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.ESCAPE:
+            self.quit.set()
+
+    def on_close(self):
+        self.quit.set()
+
+    def _set_offset(self, off_x, off_y):
+        mag = math.hypot(off_x, off_y)
+        if mag > self._RADIUS:
+            off_x = off_x / mag * self._RADIUS
+            off_y = off_y / mag * self._RADIUS
+        self._offset = [off_x, off_y]
+
+    def read(self):
+        """Pump window events, render a frame, and return the (x, y) input.
+
+        Both components are in [-1, 1]: x is turn (right positive), y is forward
+        (up positive).
+        """
+        self._window.switch_to()
+        self._window.dispatch_events()  # fires the on_* handlers above
+
+        if not self._dragging:
+            key_x = self._keys[key.RIGHT] - self._keys[key.LEFT]
+            key_y = self._keys[key.UP] - self._keys[key.DOWN]
+            self._set_offset(key_x * self._RADIUS, key_y * self._RADIUS)
+
+        self._knob.position = (
+            self._CENTER + self._offset[0],
+            self._CENTER + self._offset[1],
+        )
+        self._window.clear()
+        self._batch.draw()
+        self._window.flip()
+
+        return self._offset[0] / self._RADIUS, self._offset[1] / self._RADIUS
+
+    def close(self):
+        self._window.close()
 
 
 # Example application that connects to Mote and logs sensor data to rerun.
@@ -146,6 +260,11 @@ async def run_main():
         print("Pinging Mote")
         await client.send(Ping())
 
+        print("Drag the joystick knob or use the arrow keys (window must be focused).")
+        print("Press Esc or close the window to quit.")
+
+        joystick = _Joystick()
+
         async def recv_loop():
             while True:
                 message = await client.recv()
@@ -164,30 +283,37 @@ async def run_main():
                 elif isinstance(message, State):
                     print(f"Got system state {message}")
 
-        async def sine_wave_command_loop():
-            amplitude = 6.0  # rad/s
-            period = 4.0  # seconds
+        async def command_loop():
+            speed = 10.0  # rad/s, forward/back
+            turn = 4.0  # rad/s, differential turn component
             dt = 0.05  # 20 Hz command rate
-            t = 0.0
-            while True:
-                velocity = amplitude * math.sin(2 * math.pi * t / period)
+            while not joystick.quit.is_set():
+                turn_x, forward_y = joystick.read()
+                left = forward_y * speed + turn_x * turn
+                right = forward_y * speed - turn_x * turn
+
                 await client.send(
                     SetDriveBaseVelocity(
-                        left_velocity_rad=velocity,
-                        right_velocity_rad=-velocity,
+                        left_velocity_rad=left,
+                        right_velocity_rad=right,
                     )
                 )
-                rr.log(
-                    "drive_base/left/velocity_command_rad_per_s", rr.Scalars(velocity)
-                )
-                rr.log(
-                    "drive_base/right/velocity_command_rad_per_s",
-                    rr.Scalars(-velocity),
-                )
-                t += dt
+                rr.log("drive_base/left/velocity_command_rad_per_s", rr.Scalars(left))
+                rr.log("drive_base/right/velocity_command_rad_per_s", rr.Scalars(right))
+
                 await asyncio.sleep(dt)
 
-        await asyncio.gather(recv_loop(), sine_wave_command_loop())
+        recv_task = asyncio.create_task(recv_loop())
+        try:
+            await command_loop()
+        finally:
+            recv_task.cancel()
+            await asyncio.gather(recv_task, return_exceptions=True)
+            # Make sure the rover stops when we exit.
+            await client.send(
+                SetDriveBaseVelocity(left_velocity_rad=0.0, right_velocity_rad=0.0)
+            )
+            joystick.close()
 
 
 def main():

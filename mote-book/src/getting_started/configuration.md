@@ -16,6 +16,8 @@ Mote communicates using WiFi. In order to work with Mote, we will log it onto a 
 
 5. Under "Identification", take note your Mote's IP. You will need the IP later to establish communication with your robot.
 
+![](./assets/configuration/connecting_to_wifi.webp)
+
 ## Give Your Mote a Name
 
 You can use a friendly name to communicate with your Mote.
@@ -27,6 +29,8 @@ You can use a friendly name to communicate with your Mote.
 3. Enter your Mote's name in the box. 
 
 4. Press enter.
+
+![](./assets/configuration/naming_your_mote.webp)
 
 > [!IMPORTANT]
 > Only one Mote can have a given name on a single network. If you expect other Motes to be used on the same network, choose a name that is unique enough to prevent conflicts.
