@@ -56,6 +56,31 @@ jobs:
       - name: Run CI web build
         run: just ci-web-artifact
 
+      - name: Fill in firmware download link
+        run: |
+          LATEST_FW_TAG=$(gh release list \
+            --repo "$GITHUB_REPOSITORY" \
+            --json tagName \
+            --jq '[.[] | select(.tagName | startswith("mote-firmware-"))] | first | .tagName' \
+            2>/dev/null || echo "")
+          if [ -z "$LATEST_FW_TAG" ]; then
+            echo "No firmware release found, leaving placeholders in updating.md"
+            exit 0
+          fi
+          FW_URL=$(gh release view "$LATEST_FW_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json assets \
+            --jq '[.assets[] | select(.name | endswith(".uf2"))] | first | .url')
+          if [ -z "$FW_URL" ]; then
+            echo "No UF2 asset found in $LATEST_FW_TAG, leaving placeholders in updating.md"
+            exit 0
+          fi
+          echo "Filling in firmware link: $LATEST_FW_TAG -> $FW_URL"
+          sed -i "s|__MOTE_FW_TAG__|${LATEST_FW_TAG}|g; s|__MOTE_FW_URL__|${FW_URL}|g" \
+            output/getting_started/updating.html
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Fetch configuration page from latest release
         run: |
           LATEST_CONFIG_TAG=$(gh release list \
