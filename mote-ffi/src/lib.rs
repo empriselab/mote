@@ -21,9 +21,9 @@ pub mod c;
 /// Error type
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("Internal comms error")]
+    #[error("mote-api error: {0}")]
     MoteCommsError(#[from] MoteCommsError),
-    #[error("Serde JSON error")]
+    #[error("Serde JSON error: {0}")]
     SerdeJson(#[from] serde_json::Error),
 }
 
@@ -59,8 +59,8 @@ where
 #[allow(dead_code)]
 impl<const MTU: usize, I, O> MoteCommsFFI<MTU, I, O>
 where
-    I: Serialize + for<'de> Deserialize<'de>, // Input type
-    O: Serialize + for<'de> Deserialize<'de>, // Output type
+    I: Serialize + for<'de> Deserialize<'de> + mote_api::MessageRole, // Input type
+    O: Serialize + for<'de> Deserialize<'de>,                         // Output type
 {
     pub(crate) fn new(link: MoteComms<MTU, I, O>) -> Self {
         Self {

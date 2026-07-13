@@ -7,6 +7,7 @@ use mote_api::{
     MoteLink,
     messages::{host_to_mote, mote_to_host},
 };
+use serde::Serialize;
 
 use crate::MoteCommsFFI;
 
@@ -14,6 +15,39 @@ type MoteLinkFFI = MoteCommsFFI<1400, mote_to_host::Message, host_to_mote::Messa
 
 pub struct MoteLinkHandle {
     inner: MoteLinkFFI,
+}
+
+#[derive(Serialize)]
+struct ErrorPayload<'a> {
+    error: &'a str,
+}
+
+/// Write a JSON-encoded error object (`{"error": "<message>"}`) as a
+/// null-terminated string into `buf`.
+///
+/// Returns the number of bytes written including the null terminator, or -1 if the
+/// error itself could not be written (e.g. `buf` is too small). This is the only
+/// case where a caller should treat `-1` as "no information available" — for every
+/// other failure, the error text itself is written to `buf` and a positive length
+/// is returned.
+///
+/// # Safety
+/// `buf` must point to a writable buffer of at least `buf_len` bytes.
+unsafe fn write_error_json(buf: *mut c_char, buf_len: c_int, message: &str) -> c_int {
+    let json = match serde_json::to_string(&ErrorPayload { error: message }) {
+        Ok(j) => j,
+        Err(_) => return -1,
+    };
+    let cstr = match CString::new(json) {
+        Ok(s) => s,
+        Err(_) => return -1,
+    };
+    let bytes = cstr.as_bytes_with_nul();
+    if bytes.len() > buf_len as usize {
+        return -1;
+    }
+    unsafe { std::ptr::copy_nonoverlapping(bytes.as_ptr() as *const c_char, buf, bytes.len()) };
+    bytes.len() as c_int
 }
 
 /// Create a new MoteLink handle. The returned pointer must be freed with `mote_link_free`.
@@ -37,23 +71,31 @@ pub unsafe extern "C" fn mote_link_free(handle: *mut MoteLinkHandle) {
 
 /// Queue a JSON-encoded host-to-mote message for transmission.
 ///
-/// Returns 0 on success, -1 on error.
+/// Returns 0 on success. On failure, writes a JSON-encoded error object
+/// (`{"error": "<message>"}`) as a null-terminated string into `buf` and returns
+/// the number of bytes written, or -1 if not even the error could be written (e.g.
+/// `buf` is too small).
 ///
 /// # Safety
 /// `handle` must be a valid non-null pointer. `json_message` must be a valid null-terminated UTF-8 string.
+/// `buf` must point to a writable buffer of at least `buf_len` bytes.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn mote_link_send(
     handle: *mut MoteLinkHandle,
     json_message: *const c_char,
+    buf: *mut c_char,
+    buf_len: c_int,
 ) -> c_int {
     let handle = unsafe { &mut *handle };
     let json = match unsafe { CStr::from_ptr(json_message) }.to_str() {
         Ok(s) => s,
-        Err(_) => return -1,
+        Err(_) => {
+            return unsafe { write_error_json(buf, buf_len, "invalid UTF-8 in json_message") };
+        }
     };
     match handle.inner.send(json) {
         Ok(_) => 0,
-        Err(_) => -1,
+        Err(e) => unsafe { write_error_json(buf, buf_len, &e.to_string()) },
     }
 }
 
@@ -103,8 +145,12 @@ pub unsafe extern "C" fn mote_link_handle_receive(
 
 /// Copy the next decoded mote-to-host message as a null-terminated JSON string into `buf`.
 ///
-/// Returns the number of bytes written including the null terminator, 0 if no message is ready,
-/// or -1 on error or if `buf` is too small.
+/// Returns the number of bytes written including the null terminator, or 0 if no
+/// message is ready. On a decode error, writes a JSON-encoded error object
+/// (`{"error": "<message>"}`) into `buf` instead and returns its byte length — the
+/// caller distinguishes a message from an error by inspecting the JSON shape, since
+/// no message variant is ever a JSON object with a top-level `error` key. Returns -1
+/// only if not even the error could be written (e.g. `buf` is too small).
 ///
 /// # Safety
 /// `handle` must be a valid non-null pointer. `buf` must point to a writable buffer of at least `buf_len` bytes.
@@ -119,11 +165,15 @@ pub unsafe extern "C" fn mote_link_poll_receive(
         Ok(Some(json)) => {
             let cstr = match CString::new(json) {
                 Ok(s) => s,
-                Err(_) => return -1,
+                Err(_) => {
+                    return unsafe {
+                        write_error_json(buf, buf_len, "message contained an embedded null byte")
+                    };
+                }
             };
             let bytes = cstr.as_bytes_with_nul();
             if bytes.len() > buf_len as usize {
-                return -1;
+                return unsafe { write_error_json(buf, buf_len, "message too large for buffer") };
             }
             unsafe {
                 std::ptr::copy_nonoverlapping(bytes.as_ptr() as *const c_char, buf, bytes.len())
@@ -131,7 +181,7 @@ pub unsafe extern "C" fn mote_link_poll_receive(
             bytes.len() as c_int
         }
         Ok(None) => 0,
-        Err(_) => -1,
+        Err(e) => unsafe { write_error_json(buf, buf_len, &e.to_string()) },
     }
 }
 
@@ -142,8 +192,22 @@ mod tests {
 
     unsafe fn send_ping(handle: *mut MoteLinkHandle) {
         let json = c"\"Ping\"";
-        let ret = unsafe { mote_link_send(handle, json.as_ptr()) };
+        let mut buf = [0i8; 256];
+        let ret =
+            unsafe { mote_link_send(handle, json.as_ptr(), buf.as_mut_ptr(), buf.len() as c_int) };
         assert_eq!(ret, 0);
+    }
+
+    /// Parses `buf` (as written by an error-returning FFI call) as `{"error": "..."}`
+    /// and returns the message text, panicking if the shape doesn't match.
+    unsafe fn parse_error_json(buf: &[i8]) -> String {
+        let json = unsafe { CStr::from_ptr(buf.as_ptr()) }.to_str().unwrap();
+        let value: serde_json::Value = serde_json::from_str(json).unwrap();
+        value
+            .get("error")
+            .and_then(|v| v.as_str())
+            .unwrap_or_else(|| panic!("expected {{\"error\": ...}}, got {json}"))
+            .to_string()
     }
 
     #[test]
@@ -191,8 +255,61 @@ mod tests {
         unsafe {
             let handle = mote_link_new();
             let bad = c"not valid json";
-            let ret = mote_link_send(handle, bad.as_ptr());
+            let mut buf = [0i8; 256];
+            let ret = mote_link_send(handle, bad.as_ptr(), buf.as_mut_ptr(), buf.len() as c_int);
+            // A recoverable failure: the error itself is reported as JSON, not a bare -1.
+            assert!(ret > 0);
+            let message = parse_error_json(&buf);
+            assert!(!message.is_empty());
+            mote_link_free(handle);
+        }
+    }
+
+    #[test]
+    fn test_c_ffi_send_error_buffer_too_small() {
+        unsafe {
+            let handle = mote_link_new();
+            let bad = c"not valid json";
+            let mut buf = [0i8; 1];
+            let ret = mote_link_send(handle, bad.as_ptr(), buf.as_mut_ptr(), buf.len() as c_int);
+            // Truly unrecoverable: not even the error JSON fits.
             assert_eq!(ret, -1);
+            mote_link_free(handle);
+        }
+    }
+
+    #[test]
+    fn test_c_ffi_poll_receive_decode_error_returns_json() {
+        unsafe {
+            let handle = mote_link_new();
+            // A lone non-zero, non-terminated byte followed by a terminator is not a
+            // valid COBS frame long enough to contain a version header.
+            let bad_frame = [0x01u8, 0x00];
+            let ret =
+                mote_link_handle_receive(handle, bad_frame.as_ptr(), bad_frame.len() as c_int);
+            assert_eq!(ret, 0);
+
+            let mut buf = [0i8; 256];
+            let n = mote_link_poll_receive(handle, buf.as_mut_ptr(), buf.len() as c_int);
+            assert!(n > 0);
+            let message = parse_error_json(&buf);
+            assert!(!message.is_empty());
+
+            mote_link_free(handle);
+        }
+    }
+
+    #[test]
+    fn test_c_ffi_poll_receive_decode_error_buffer_too_small() {
+        unsafe {
+            let handle = mote_link_new();
+            let bad_frame = [0x01u8, 0x00];
+            mote_link_handle_receive(handle, bad_frame.as_ptr(), bad_frame.len() as c_int);
+
+            let mut buf = [0i8; 1];
+            let n = mote_link_poll_receive(handle, buf.as_mut_ptr(), buf.len() as c_int);
+            assert_eq!(n, -1);
+
             mote_link_free(handle);
         }
     }

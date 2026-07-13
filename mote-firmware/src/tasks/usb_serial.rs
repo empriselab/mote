@@ -1,6 +1,6 @@
 use alloc::boxed::Box;
 
-use defmt::{info, trace};
+use defmt::{info, trace, warn};
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, select};
 use embassy_rp::peripherals::USB;
@@ -74,8 +74,32 @@ async fn handle_serial<'d, T: UsbInstance + 'd>(
 
                 trace!("USB Serial got: {:x}", serial_buffer[..bytes_read]);
 
-                while let Ok(Some(message)) = link.poll_receive() {
-                    handle_host_message(message).await;
+                loop {
+                    match link.poll_receive() {
+                        Ok(Some(message)) => handle_host_message(message).await,
+                        Ok(None) => break,
+                        Err(mote_api::Error::VersionMismatch {
+                            local,
+                            remote,
+                            local_role,
+                            remote_role,
+                            behind,
+                        }) => {
+                            warn!(
+                                "Dropped message: mote-api version mismatch ({} v{}.{}.{}, {} v{}.{}.{}) — update {}",
+                                local_role.as_str(),
+                                local.major,
+                                local.minor,
+                                local.patch,
+                                remote_role.as_str(),
+                                remote.major,
+                                remote.minor,
+                                remote.patch,
+                                behind.as_str(),
+                            );
+                        }
+                        Err(_) => warn!("Dropped undecodable message"),
+                    }
                 }
                 Ok(())
             }

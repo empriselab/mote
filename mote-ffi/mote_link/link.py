@@ -7,6 +7,7 @@ import mote_link.mote_ffi as mote_ffi  # ty:ignore[unresolved-import]
 import asyncio
 import ipaddress
 import json
+import logging
 import socket
 from dataclasses import dataclass
 from enum import Enum
@@ -14,6 +15,8 @@ from typing import Union
 
 
 UDP_PORT = 7475
+
+_logger = logging.getLogger(__name__)
 
 
 class MoteConnectionError(Exception):
@@ -421,7 +424,11 @@ class MoteClient:
         while True:
             data = await self._protocol._queue.get()
             self._link.handle_receive(json.dumps(list(data)))
-            message_json = self._link.poll_receive()
+            try:
+                message_json = self._link.poll_receive()
+            except OSError as e:
+                _logger.warning("Discarded undecodable message from Mote: %s", e)
+                continue
             if message_json is not None:
                 return _deserialize_mote_message(json.loads(message_json))
 

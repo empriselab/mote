@@ -66,8 +66,32 @@ pub async fn udp_server_task(stack: Stack<'static>) -> ! {
                 }
 
                 link.handle_receive(&message_buffer[..bytes_read]);
-                while let Ok(Some(message)) = link.poll_receive() {
-                    handle_command(message, &mut link).await;
+                loop {
+                    match link.poll_receive() {
+                        Ok(Some(message)) => handle_command(message, &mut link).await,
+                        Ok(None) => break,
+                        Err(mote_api::Error::VersionMismatch {
+                            local,
+                            remote,
+                            local_role,
+                            remote_role,
+                            behind,
+                        }) => {
+                            warn!(
+                                "Dropped message: mote-api version mismatch ({} v{}.{}.{}, {} v{}.{}.{}) — update {}",
+                                local_role.as_str(),
+                                local.major,
+                                local.minor,
+                                local.patch,
+                                remote_role.as_str(),
+                                remote.major,
+                                remote.minor,
+                                remote.patch,
+                                behind.as_str(),
+                            );
+                        }
+                        Err(_) => warn!("Dropped undecodable message"),
+                    }
                 }
 
                 while let Some(payload) = link.poll_transmit() {
