@@ -25,11 +25,8 @@ struct ErrorPayload<'a> {
 /// Write a JSON-encoded error object (`{"error": "<message>"}`) as a
 /// null-terminated string into `buf`.
 ///
-/// Returns the number of bytes written including the null terminator, or -1 if the
-/// error itself could not be written (e.g. `buf` is too small). This is the only
-/// case where a caller should treat `-1` as "no information available" — for every
-/// other failure, the error text itself is written to `buf` and a positive length
-/// is returned.
+/// On success, returns the number of bytes written including the null terminator,
+/// On error, returns -1
 ///
 /// # Safety
 /// `buf` must point to a writable buffer of at least `buf_len` bytes.
@@ -145,12 +142,9 @@ pub unsafe extern "C" fn mote_link_handle_receive(
 
 /// Copy the next decoded mote-to-host message as a null-terminated JSON string into `buf`.
 ///
-/// Returns the number of bytes written including the null terminator, or 0 if no
-/// message is ready. On a decode error, writes a JSON-encoded error object
-/// (`{"error": "<message>"}`) into `buf` instead and returns its byte length — the
-/// caller distinguishes a message from an error by inspecting the JSON shape, since
-/// no message variant is ever a JSON object with a top-level `error` key. Returns -1
-/// only if not even the error could be written (e.g. `buf` is too small).
+/// Returns the number of bytes written including the null terminator
+/// Returns 0 if no message is ready.
+/// Returns -1 on json encoding error.
 ///
 /// # Safety
 /// `handle` must be a valid non-null pointer. `buf` must point to a writable buffer of at least `buf_len` bytes.

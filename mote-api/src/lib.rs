@@ -58,11 +58,7 @@ impl MessageRole for host_to_mote::Message {
 }
 
 /// The number of raw (non-bitcode, non-serde) bytes reserved at the start of every
-/// message frame for the version header. This layout is a permanent wire-format
-/// invariant: it must always be parseable via plain byte slicing alone, independent
-/// of any future change to `bitcode`'s encoding or to the `Message` enums, so that a
-/// version mismatch can always be detected and reported even across breaking changes
-/// to the rest of the message format.
+/// message frame for the version header.
 const VERSION_HEADER_LEN: usize = 6;
 
 /// The mote-api crate version embedded in every message header.
@@ -97,10 +93,7 @@ impl Version {
     }
 
     /// The (major, minor, patch) key that must match exactly for two versions to be
-    /// considered wire-compatible, per semver's caret-compatibility rules:
-    /// - major >= 1: only `major` is breaking (`^1.2.3` allows any `1.x.y`)
-    /// - major == 0, minor >= 1: `minor` is breaking (`^0.2.3` allows any `0.2.y`)
-    /// - major == 0, minor == 0: `patch` is breaking (`^0.0.3` allows only `0.0.3`)
+    /// considered wire-compatible, per semver's caret-compatibility rules.
     const fn breaking_key(self) -> (u16, u16, u16) {
         if self.major != 0 {
             (self.major, 0, 0)
@@ -356,7 +349,7 @@ mod tests {
     use super::*;
     use alloc::{boxed::Box, string::String, vec};
 
-    // Returns all mote_to_host message variants including heap-allocated ones.
+    // Returns all mote_to_host message variants
     fn all_mote_messages() -> Vec<mote_to_host::Message> {
         vec![
             mote_to_host::Message::Ping,
@@ -731,8 +724,6 @@ mod tests {
         ));
 
         // A normally-encoded (LOCAL-versioned) good frame appended right behind it.
-        // MoteConfigLink is used here purely as an encoder for a host_to_mote::Message
-        // (the type HostConfigLink decodes) — it plays the role of "host" sending.
         let mut good = MoteConfigLink::new();
         good.send(host_to_mote::Message::Pong)?;
         while let Some(payload) = good.poll_transmit() {
