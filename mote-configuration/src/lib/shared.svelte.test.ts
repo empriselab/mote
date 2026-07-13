@@ -39,7 +39,7 @@ describe('handle_telem_recv', () => {
 
     it('pushes an error when a connection attempt fails', () => {
         handle_telem_recv({
-            State: { current_network_connection: { Err: "timed out" } },
+            State: { current_network_connection: { Err: { Other: "timed out" } } },
         } as unknown as MoteToHostMessage);
         expect(errors).toHaveLength(1);
         expect(errors[0].message).toContain("timed out");
@@ -47,7 +47,7 @@ describe('handle_telem_recv', () => {
 
     it('does not repeat the error on subsequent identical failures', () => {
         const msg = {
-            State: { current_network_connection: { Err: "timed out" } },
+            State: { current_network_connection: { Err: { Other: "timed out" } } },
         } as unknown as MoteToHostMessage;
         handle_telem_recv(msg);
         handle_telem_recv(msg);
@@ -72,7 +72,7 @@ describe('handle_telem_recv', () => {
     it('stops the connecting spinner once a connection fails', () => {
         start_connecting("MyWifi");
         handle_telem_recv({
-            State: { current_network_connection: { Err: "timed out" } },
+            State: { current_network_connection: { Err: { Other: "timed out" } } },
         } as unknown as MoteToHostMessage);
         expect(connecting.ssid).toBeNull();
     });

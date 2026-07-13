@@ -182,7 +182,7 @@ def _serialize_host_message(msg: HostMessage) -> str:
     if isinstance(msg, SetDriveBaseVelocity):
         return json.dumps(
             {
-                "DriveBaseCommand": {
+                "SetDriveBaseVelocity": {
                     "left_velocity_rad": msg.left_velocity_rad,
                     "right_velocity_rad": msg.right_velocity_rad,
                 }
@@ -191,8 +191,8 @@ def _serialize_host_message(msg: HostMessage) -> str:
     raise TypeError(f"Unknown host message type: {type(msg)}")
 
 
-# Parses the serialized `Option<Result<String, String>>` network connection
-# result: `None`, `{"Ok": ssid}`, or `{"Err": reason}`.
+# Parses the serialized `Option<Result<String, ConnectionError>>` network
+# connection result: `None`, `{"Ok": ssid}`, or `{"Err": <ConnectionError>}`.
 def _parse_network_connection(value) -> NetworkConnectionResult | None:
     if value is None:
         return None
@@ -200,8 +200,20 @@ def _parse_network_connection(value) -> NetworkConnectionResult | None:
         if "Ok" in value:
             return NetworkConnected(ssid=value["Ok"])
         if "Err" in value:
-            return NetworkConnectionFailed(reason=value["Err"])
+            return NetworkConnectionFailed(reason=_parse_connection_error(value["Err"]))
     raise ValueError(f"Unknown network connection result: {value!r}")
+
+
+# Parses the serialized `ConnectionError`: "Timeout", "AuthOrRefused", or
+# {"Other": reason}.
+def _parse_connection_error(value) -> str:
+    if value == "Timeout":
+        return "Connection attempt timed out"
+    if value == "AuthOrRefused":
+        return "Failed to join the network (incorrect password or the network refused the connection)"
+    if isinstance(value, dict) and "Other" in value:
+        return value["Other"]
+    raise ValueError(f"Unknown connection error: {value!r}")
 
 
 # Python native types into mote_ffi json based messages

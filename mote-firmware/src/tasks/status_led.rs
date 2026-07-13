@@ -42,6 +42,8 @@ fn worst_result(results: &BITList) -> LedState {
             BITResult::Fail => return LedState::Fail,
             BITResult::Waiting => state = LedState::Waiting,
             BITResult::Pass => {}
+            // Unrecognized future result: not yet known-good.
+            _ => state = LedState::Waiting,
         }
     }
     state

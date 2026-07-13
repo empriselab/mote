@@ -51,7 +51,7 @@ async fn handle_host_message(msg: host_to_mote::Message) {
             WIFI_REQUEST_RESCAN.signal(());
             info!("Requesting network scan");
         }
-        _ => todo!(),
+        _ => warn!("Received unhandled host message type"),
     }
 }
 

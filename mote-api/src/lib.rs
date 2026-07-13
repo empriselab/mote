@@ -1,6 +1,23 @@
 #![no_std]
+#![warn(missing_docs)]
 
 //! Messages used by Mote for firmware <--> host communication
+//!
+//! # Example
+//!
+//! ```
+//! use mote_api::{HostLink, MoteLink};
+//! use mote_api::messages::host_to_mote;
+//!
+//! let mut host_side = MoteLink::new();
+//! let mut mote_side = HostLink::new();
+//!
+//! host_side.send(host_to_mote::Message::Ping).unwrap();
+//! while let Some(packet) = host_side.poll_transmit() {
+//!     mote_side.handle_receive(&packet);
+//! }
+//! assert_eq!(mote_side.poll_receive().unwrap(), Some(host_to_mote::Message::Ping));
+//! ```
 
 // I'd prefer to move away from alloc, but it's here for now.
 extern crate alloc;
@@ -11,6 +28,7 @@ use alloc::{collections::vec_deque::VecDeque, vec::Vec};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use thiserror::Error;
 
+/// Message type definitions sent over the mote/host link.
 pub mod messages;
 
 use crate::messages::{host_to_mote, mote_to_host};
@@ -18,7 +36,9 @@ use crate::messages::{host_to_mote, mote_to_host};
 /// Which side of the mote/host link a piece of code represents.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Role {
+    /// The embedded firmware side.
     Mote,
+    /// The host driver side.
     Host,
 }
 
@@ -30,6 +50,7 @@ impl Role {
         }
     }
 
+    /// Returns `"mote"` or `"host"`.
     pub const fn as_str(self) -> &'static str {
         match self {
             Role::Mote => "mote",
@@ -46,6 +67,7 @@ impl core::fmt::Display for Role {
 
 /// Identifies which side of the mote/host link decodes a given message type.
 pub trait MessageRole {
+    /// Which side receives (decodes) this message type.
     const RECEIVER: Role;
 }
 
@@ -57,15 +79,18 @@ impl MessageRole for host_to_mote::Message {
     const RECEIVER: Role = Role::Mote;
 }
 
-/// The number of raw (non-bitcode, non-serde) bytes reserved at the start of every
+/// The number of raw (non-postcard, non-serde) bytes reserved at the start of every
 /// message frame for the version header.
 const VERSION_HEADER_LEN: usize = 6;
 
 /// The mote-api crate version embedded in every message header.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Version {
+    /// Semver major component.
     pub major: u16,
+    /// Semver minor component.
     pub minor: u16,
+    /// Semver patch component.
     pub patch: u16,
 }
 
@@ -134,21 +159,32 @@ const fn parse_u16(s: &str) -> u16 {
 
 /// Error type
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum Error {
-    #[error("Bitcode ser/de failed")]
-    BitCodeError(#[from] bitcode::Error),
+    /// The message body failed to encode or decode.
+    #[error("message decode failed: {0}")]
+    DecodeError(alloc::string::String),
+    /// COBS framing failed to encode or decode.
     #[error("Cobs pack/unpack failed")]
     CobsError(corncobs::CobsError),
+    /// The frame was too short to contain a version header.
     #[error("Message frame too short to contain a version header")]
     MalformedHeader,
+    /// The sender and receiver are running incompatible mote-api versions;
+    /// the frame was rejected without attempting to decode it.
     #[error(
         "mote-api version mismatch: {local_role} is v{local}, {remote_role} is v{remote} — update {behind} to a compatible version"
     )]
     VersionMismatch {
+        /// This side's mote-api version.
         local: Version,
+        /// The other side's mote-api version, read from the frame header.
         remote: Version,
+        /// Which side `local` is.
         local_role: Role,
+        /// Which side `remote` is.
         remote_role: Role,
+        /// Which side is on the older version and needs updating.
         behind: Role,
     },
 }
@@ -159,12 +195,19 @@ impl From<corncobs::CobsError> for Error {
     }
 }
 
+impl From<postcard::Error> for Error {
+    fn from(value: postcard::Error) -> Self {
+        use alloc::string::ToString;
+        Self::DecodeError(value.to_string())
+    }
+}
+
 /// Implements encoding of message types.
 fn to_slice<M>(message: &M) -> Result<Vec<u8>, Error>
 where
     M: Serialize + ?Sized,
 {
-    let body = bitcode::serialize(message)?;
+    let body = postcard::to_allocvec(message)?;
     let mut plain_buf: Vec<u8> = Vec::with_capacity(VERSION_HEADER_LEN + body.len());
     plain_buf.extend_from_slice(&Version::LOCAL.to_wire_bytes());
     plain_buf.extend_from_slice(&body);
@@ -215,7 +258,7 @@ where
         });
     }
 
-    Ok(bitcode::deserialize::<M>(body)?)
+    Ok(postcard::from_bytes::<M>(body)?)
 }
 
 // Sets the capacity for the deserialization ringbuffer
@@ -410,6 +453,10 @@ mod tests {
             host_to_mote::Message::SetUID(host_to_mote::SetUID {
                 uid: String::from("mote-abc"),
             }),
+            host_to_mote::Message::SetDriveBaseVelocity(host_to_mote::SetDriveBaseVelocity {
+                left_velocity_rad: 1.5,
+                right_velocity_rad: -1.5,
+            }),
         ]
     }
 
@@ -418,10 +465,9 @@ mod tests {
     #[test]
     fn test_encode_decode_failed_connection() -> Result<(), Error> {
         let reasons = [
-            String::from("timed out"),
-            String::from(
-                "Failed to join the network (incorrect password or the network refused the connection)",
-            ),
+            mote_to_host::ConnectionError::Timeout,
+            mote_to_host::ConnectionError::AuthOrRefused,
+            mote_to_host::ConnectionError::Other(String::from("radio hardware fault")),
         ];
         for reason in reasons {
             let mut state = mote_to_host::State::default();
@@ -669,7 +715,7 @@ mod tests {
     /// bypassing `to_slice`'s use of `Version::LOCAL`, so mismatch behavior can be
     /// tested directly.
     fn encode_with_version(version: Version, message: &host_to_mote::Message) -> Vec<u8> {
-        let body = bitcode::serialize(message).unwrap();
+        let body = postcard::to_allocvec(message).unwrap();
         let mut plain = Vec::with_capacity(VERSION_HEADER_LEN + body.len());
         plain.extend_from_slice(&version.to_wire_bytes());
         plain.extend_from_slice(&body);

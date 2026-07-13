@@ -242,8 +242,8 @@ async fn motor_task(
             embassy_futures::select::Either4::Second(_) => {
                 // Send a value to the data offload link
                 let _ = DATA_OFFLOAD_CHANNEL.try_send(Message::DriveBaseState(DriveBaseState {
-                    left: left_motor.joint_state.clone(),
-                    right: right_motor.joint_state.clone(),
+                    left: left_motor.joint_state,
+                    right: right_motor.joint_state,
                 }));
             }
             embassy_futures::select::Either4::Third(_) => {

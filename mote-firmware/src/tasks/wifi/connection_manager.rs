@@ -9,7 +9,7 @@ use embassy_sync::channel::Channel;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, with_timeout};
 use mote_api::messages::host_to_mote::SetNetworkConnectionConfig;
-use mote_api::messages::mote_to_host::{BITResult, NetworkConnection};
+use mote_api::messages::mote_to_host::{BITResult, ConnectionError, NetworkConnection};
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::flash_config;
@@ -20,7 +20,7 @@ pub static WIFI_REQUEST_CONNECT: Channel<CriticalSectionRawMutex, SetNetworkConn
 pub static WIFI_REQUEST_RESCAN: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
 async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetNetworkConnectionConfig) -> bool {
-    async fn update_network_bit(current_network: Option<Result<String, String>>, result: BITResult) {
+    async fn update_network_bit(current_network: Option<Result<String, ConnectionError>>, result: BITResult) {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         // A failed connection leaves us without a valid address. Clear the
         // stale IP
@@ -47,7 +47,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
         }
     }
 
-    let mut last_error = String::from("Failed to connect to the network");
+    let mut last_error = ConnectionError::Other(String::from("Failed to connect to the network"));
 
     for attempt in 1..=3 {
         if config.password.len() >= 8 {
@@ -60,14 +60,12 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
             {
                 Err(_) => {
                     info!("join timed out, attempt {} / 3", attempt);
-                    last_error = String::from("Connection attempt timed out");
+                    last_error = ConnectionError::Timeout;
                     continue;
                 }
                 Ok(Err(err)) => {
                     info!("join failed: {}, attempt {} / 3", err, attempt);
-                    last_error = String::from(
-                        "Failed to join the network (incorrect password or the network refused the connection)",
-                    );
+                    last_error = ConnectionError::AuthOrRefused;
                     continue;
                 }
                 Ok(Ok(_)) => {}
@@ -82,14 +80,12 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
             {
                 Err(_) => {
                     info!("join timed out, attempt {} / 3", attempt);
-                    last_error = String::from("Connection attempt timed out");
+                    last_error = ConnectionError::Timeout;
                     continue;
                 }
                 Ok(Err(err)) => {
                     info!("join failed: {}, attempt {} / 3", err, attempt);
-                    last_error = String::from(
-                        "Failed to join the network (incorrect password or the network refused the connection)",
-                    );
+                    last_error = ConnectionError::AuthOrRefused;
                     continue;
                 }
                 Ok(Ok(_)) => {}

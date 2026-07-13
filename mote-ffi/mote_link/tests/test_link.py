@@ -45,7 +45,10 @@ class TestSerializeHostMessage:
         msg = SetDriveBaseVelocity(left_velocity_rad=1.5, right_velocity_rad=-0.5)
         data = json.loads(_serialize_host_message(msg))
         assert data == {
-            "DriveBaseCommand": {"left_velocity_rad": 1.5, "right_velocity_rad": -0.5}
+            "SetDriveBaseVelocity": {
+                "left_velocity_rad": 1.5,
+                "right_velocity_rad": -0.5,
+            }
         }
 
     def test_unknown_type_raises(self):

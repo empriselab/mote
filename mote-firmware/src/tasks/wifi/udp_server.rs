@@ -18,7 +18,7 @@ async fn handle_command(rx_message: host_to_mote::Message, link: &mut HostLink) 
         host_to_mote::Message::Pong => {
             info!("Received ping response from host.");
         }
-        host_to_mote::Message::DriveBaseCommand(cmd) => {
+        host_to_mote::Message::SetDriveBaseVelocity(cmd) => {
             let _ = MOTOR_COMMAND_CHANNEL.try_send(cmd);
         }
         _ => {
