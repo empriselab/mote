@@ -30,7 +30,7 @@ tasks:
 
   test:
     cmds:
-      - cargo test
+      - cargo test --all-features
       - uv run pytest
 
   format:

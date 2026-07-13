@@ -90,7 +90,15 @@ fn main() -> anyhow::Result<()> {
                 let num_read = socket.recv(&mut buf).unwrap();
                 link.handle_receive(&mut buf[..num_read]);
 
-                while let Ok(Some(message)) = link.poll_receive() {
+                loop {
+                    let message = match link.poll_receive() {
+                        Ok(Some(message)) => message,
+                        Ok(None) => break,
+                        Err(e) => {
+                            eprintln!("Warning: discarded undecodable message: {e}");
+                            continue;
+                        }
+                    };
                     match message {
                         mote_to_host::Message::Pong => {
                             println!("Got pong from Mote.");

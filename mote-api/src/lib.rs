@@ -15,6 +15,123 @@ pub mod messages;
 
 use crate::messages::{host_to_mote, mote_to_host};
 
+/// Which side of the mote/host link a piece of code represents.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Role {
+    Mote,
+    Host,
+}
+
+impl Role {
+    const fn other(self) -> Role {
+        match self {
+            Role::Mote => Role::Host,
+            Role::Host => Role::Mote,
+        }
+    }
+
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Role::Mote => "mote",
+            Role::Host => "host",
+        }
+    }
+}
+
+impl core::fmt::Display for Role {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}", self.as_str())
+    }
+}
+
+/// Identifies which side of the mote/host link decodes a given message type.
+pub trait MessageRole {
+    const RECEIVER: Role;
+}
+
+impl MessageRole for mote_to_host::Message {
+    const RECEIVER: Role = Role::Host;
+}
+
+impl MessageRole for host_to_mote::Message {
+    const RECEIVER: Role = Role::Mote;
+}
+
+/// The number of raw (non-bitcode, non-serde) bytes reserved at the start of every
+/// message frame for the version header.
+const VERSION_HEADER_LEN: usize = 6;
+
+/// The mote-api crate version embedded in every message header.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Version {
+    pub major: u16,
+    pub minor: u16,
+    pub patch: u16,
+}
+
+impl Version {
+    /// The version of the mote-api crate this binary was compiled against.
+    pub const LOCAL: Version = Version {
+        major: parse_u16(env!("CARGO_PKG_VERSION_MAJOR")),
+        minor: parse_u16(env!("CARGO_PKG_VERSION_MINOR")),
+        patch: parse_u16(env!("CARGO_PKG_VERSION_PATCH")),
+    };
+
+    const fn to_wire_bytes(self) -> [u8; VERSION_HEADER_LEN] {
+        let [a0, a1] = self.major.to_le_bytes();
+        let [b0, b1] = self.minor.to_le_bytes();
+        let [c0, c1] = self.patch.to_le_bytes();
+        [a0, a1, b0, b1, c0, c1]
+    }
+
+    fn from_wire_bytes(bytes: [u8; VERSION_HEADER_LEN]) -> Self {
+        Self {
+            major: u16::from_le_bytes([bytes[0], bytes[1]]),
+            minor: u16::from_le_bytes([bytes[2], bytes[3]]),
+            patch: u16::from_le_bytes([bytes[4], bytes[5]]),
+        }
+    }
+
+    /// The (major, minor, patch) key that must match exactly for two versions to be
+    /// considered wire-compatible, per semver's caret-compatibility rules.
+    const fn breaking_key(self) -> (u16, u16, u16) {
+        if self.major != 0 {
+            (self.major, 0, 0)
+        } else if self.minor != 0 {
+            (0, self.minor, 0)
+        } else {
+            (0, 0, self.patch)
+        }
+    }
+
+    fn is_compatible_with(self, other: Version) -> bool {
+        self.breaking_key() == other.breaking_key()
+    }
+}
+
+impl core::fmt::Display for Version {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}.{}.{}", self.major, self.minor, self.patch)
+    }
+}
+
+/// Parses a decimal digit string (as produced by Cargo's `CARGO_PKG_VERSION_*` env
+/// vars) into a `u16`, at compile time.
+const fn parse_u16(s: &str) -> u16 {
+    let bytes = s.as_bytes();
+    let mut value: u16 = 0;
+    let mut i = 0;
+    while i < bytes.len() {
+        assert!(
+            bytes[i].is_ascii_digit(),
+            "CARGO_PKG_VERSION component must be decimal digits"
+        );
+        value = value * 10 + (bytes[i] - b'0') as u16;
+        i += 1;
+    }
+    value
+}
+
 /// Error type
 #[derive(Error, Debug)]
 pub enum Error {
@@ -22,6 +139,18 @@ pub enum Error {
     BitCodeError(#[from] bitcode::Error),
     #[error("Cobs pack/unpack failed")]
     CobsError(corncobs::CobsError),
+    #[error("Message frame too short to contain a version header")]
+    MalformedHeader,
+    #[error(
+        "mote-api version mismatch: {local_role} is v{local}, {remote_role} is v{remote} — update {behind} to a compatible version"
+    )]
+    VersionMismatch {
+        local: Version,
+        remote: Version,
+        local_role: Role,
+        remote_role: Role,
+        behind: Role,
+    },
 }
 
 impl From<corncobs::CobsError> for Error {
@@ -35,11 +164,15 @@ fn to_slice<M>(message: &M) -> Result<Vec<u8>, Error>
 where
     M: Serialize + ?Sized,
 {
-    let ser_buff = bitcode::serialize(message)?;
-    let encoded_size = corncobs::max_encoded_len(ser_buff.len());
+    let body = bitcode::serialize(message)?;
+    let mut plain_buf: Vec<u8> = Vec::with_capacity(VERSION_HEADER_LEN + body.len());
+    plain_buf.extend_from_slice(&Version::LOCAL.to_wire_bytes());
+    plain_buf.extend_from_slice(&body);
+
+    let encoded_size = corncobs::max_encoded_len(plain_buf.len());
     let mut cobs_buff: Vec<u8> = Vec::with_capacity(encoded_size);
     cobs_buff.resize(encoded_size, 10);
-    let encoded_size = corncobs::encode_buf(&ser_buff, &mut cobs_buff);
+    let encoded_size = corncobs::encode_buf(&plain_buf, &mut cobs_buff);
     cobs_buff.truncate(encoded_size);
 
     Ok(cobs_buff)
@@ -48,14 +181,41 @@ where
 /// Implements decoding of message types.
 fn from_bytes<M>(bytes: &[u8]) -> Result<M, Error>
 where
-    M: DeserializeOwned,
+    M: DeserializeOwned + MessageRole,
 {
     let mut cobs_buff: Vec<u8> = Vec::with_capacity(bytes.len());
     cobs_buff.resize(bytes.len(), 10);
     let decoded_size = corncobs::decode_buf(bytes, &mut cobs_buff)?;
     cobs_buff.truncate(decoded_size);
 
-    Ok(bitcode::deserialize::<M>(&cobs_buff)?)
+    if cobs_buff.len() < VERSION_HEADER_LEN {
+        return Err(Error::MalformedHeader);
+    }
+    let (header, body) = cobs_buff.split_at(VERSION_HEADER_LEN);
+    let remote = Version::from_wire_bytes(
+        header
+            .try_into()
+            .expect("split_at guarantees len == VERSION_HEADER_LEN"),
+    );
+
+    if !Version::LOCAL.is_compatible_with(remote) {
+        let local_role = M::RECEIVER;
+        let remote_role = local_role.other();
+        let behind = if Version::LOCAL.breaking_key() < remote.breaking_key() {
+            local_role
+        } else {
+            remote_role
+        };
+        return Err(Error::VersionMismatch {
+            local: Version::LOCAL,
+            remote,
+            local_role,
+            remote_role,
+            behind,
+        });
+    }
+
+    Ok(bitcode::deserialize::<M>(body)?)
 }
 
 // Sets the capacity for the deserialization ringbuffer
@@ -134,20 +294,20 @@ where
     }
 
     /// Poll for new messages in the recv buffer
-    pub fn poll_receive(&mut self) -> Result<Option<I>, Error> {
+    pub fn poll_receive(&mut self) -> Result<Option<I>, Error>
+    where
+        I: MessageRole,
+    {
         if let Some(end) = self.deserialization_buffer.iter().position(|&x| x == 0) {
             let linear_buf: Vec<u8> = self.deserialization_buffer.drain(0..=end).collect();
             match from_bytes::<I>(&linear_buf) {
                 Ok(msg) => Ok(Some(msg)),
-                Err(Error::BitCodeError(err)) => Err(err.into()),
-                Err(Error::CobsError(corncobs::CobsError::Corrupt)) => {
-                    Err(Error::CobsError(corncobs::CobsError::Corrupt))
-                }
                 Err(Error::CobsError(corncobs::CobsError::Truncated)) => {
                     // We checked for this in the if above, so it shouldn't happen.
                     // But it isn't an error.
                     Ok(None)
                 }
+                Err(other) => Err(other),
             }
         } else {
             // No end byte = no message
@@ -189,7 +349,7 @@ mod tests {
     use super::*;
     use alloc::{boxed::Box, string::String, vec};
 
-    // Returns all mote_to_host message variants including heap-allocated ones.
+    // Returns all mote_to_host message variants
     fn all_mote_messages() -> Vec<mote_to_host::Message> {
         vec![
             mote_to_host::Message::Ping,
@@ -450,10 +610,138 @@ mod tests {
     fn test_empty_cobs_payload_returns_error() {
         let mut link = MoteLink::new();
         // [0x01, 0x00] is a valid COBS frame (overhead byte 0x01 = no data, then
-        // terminator), but the empty decoded payload cannot be deserialized as a
-        // message — bitcode returns an error.
+        // terminator), but the empty decoded payload is too short to even contain a
+        // version header — this returns MalformedHeader before bitcode ever runs.
         link.handle_receive(&[0x01, 0x00]);
-        assert!(link.poll_receive().is_err());
+        assert!(matches!(link.poll_receive(), Err(Error::MalformedHeader)));
+    }
+
+    // --- Version header ---
+
+    #[test]
+    fn test_version_wire_roundtrip() {
+        for v in [
+            Version {
+                major: 0,
+                minor: 0,
+                patch: 0,
+            },
+            Version {
+                major: 1,
+                minor: 2,
+                patch: 3,
+            },
+            Version {
+                major: 65535,
+                minor: 65535,
+                patch: 65535,
+            },
+        ] {
+            assert_eq!(Version::from_wire_bytes(v.to_wire_bytes()), v);
+        }
+    }
+
+    #[test]
+    fn test_version_is_compatible_with() {
+        let v = |major, minor, patch| Version {
+            major,
+            minor,
+            patch,
+        };
+        let cases = [
+            (v(1, 2, 3), v(1, 9, 9), true),
+            (v(1, 2, 3), v(2, 0, 0), false),
+            (v(0, 3, 1), v(0, 3, 9), true),
+            (v(0, 3, 1), v(0, 4, 0), false),
+            (v(0, 0, 1), v(0, 0, 2), false),
+            (v(0, 0, 1), v(0, 0, 1), true),
+        ];
+        for (a, b, expected) in cases {
+            assert_eq!(
+                a.is_compatible_with(b),
+                expected,
+                "{a} vs {b} expected compatible={expected}"
+            );
+        }
+    }
+
+    /// Hand-encodes a frame with an arbitrary (possibly non-LOCAL) version header,
+    /// bypassing `to_slice`'s use of `Version::LOCAL`, so mismatch behavior can be
+    /// tested directly.
+    fn encode_with_version(version: Version, message: &host_to_mote::Message) -> Vec<u8> {
+        let body = bitcode::serialize(message).unwrap();
+        let mut plain = Vec::with_capacity(VERSION_HEADER_LEN + body.len());
+        plain.extend_from_slice(&version.to_wire_bytes());
+        plain.extend_from_slice(&body);
+        let encoded_size = corncobs::max_encoded_len(plain.len());
+        let mut cobs_buf = vec![0u8; encoded_size];
+        let n = corncobs::encode_buf(&plain, &mut cobs_buf);
+        cobs_buf.truncate(n);
+        cobs_buf
+    }
+
+    #[test]
+    fn test_version_mismatch_detected() {
+        let mismatched = Version {
+            major: Version::LOCAL.major,
+            minor: Version::LOCAL.minor.wrapping_add(1),
+            patch: Version::LOCAL.patch,
+        };
+        let mut link = HostConfigLink::new();
+        link.handle_receive(&encode_with_version(
+            mismatched,
+            &host_to_mote::Message::Ping,
+        ));
+
+        match link.poll_receive() {
+            Err(Error::VersionMismatch {
+                local,
+                remote,
+                local_role,
+                remote_role,
+                ..
+            }) => {
+                assert_eq!(local, Version::LOCAL);
+                assert_eq!(remote, mismatched);
+                assert_eq!(local_role, Role::Mote);
+                assert_eq!(remote_role, Role::Host);
+            }
+            other => panic!("expected VersionMismatch, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn test_version_mismatch_does_not_strand_a_good_frame_behind_it() -> Result<(), Error> {
+        let mismatched = Version {
+            major: Version::LOCAL.major,
+            minor: Version::LOCAL.minor.wrapping_add(1),
+            patch: Version::LOCAL.patch,
+        };
+        let mut link = HostConfigLink::new();
+        link.handle_receive(&encode_with_version(
+            mismatched,
+            &host_to_mote::Message::Ping,
+        ));
+
+        // A normally-encoded (LOCAL-versioned) good frame appended right behind it.
+        let mut good = MoteConfigLink::new();
+        good.send(host_to_mote::Message::Pong)?;
+        while let Some(payload) = good.poll_transmit() {
+            link.handle_receive(&payload);
+        }
+
+        assert!(matches!(
+            link.poll_receive(),
+            Err(Error::VersionMismatch { .. })
+        ));
+        assert_eq!(link.poll_receive()?, Some(host_to_mote::Message::Pong));
+        Ok(())
+    }
+
+    #[test]
+    fn test_message_role_matches_link_direction() {
+        assert_eq!(<mote_to_host::Message as MessageRole>::RECEIVER, Role::Host);
+        assert_eq!(<host_to_mote::Message as MessageRole>::RECEIVER, Role::Mote);
     }
 
     // --- Receive buffer is capped at MAX_MESSAGE_LENGTH ---
