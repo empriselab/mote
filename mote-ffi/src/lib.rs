@@ -1,4 +1,4 @@
-//! Foreign function interfaces for Python and TypeScript (WASM)
+//! Foreign function interfaces for Python, TypeScript (WASM), and C++
 
 use std::marker::PhantomData;
 use std::string::String;
@@ -15,8 +15,8 @@ pub mod python;
 #[cfg(feature = "wasm_ffi")]
 pub mod wasm;
 
-#[cfg(feature = "c_ffi")]
-pub mod c;
+#[cfg(feature = "cxx_ffi")]
+pub mod cpp;
 
 /// Error type
 #[derive(Error, Debug)]

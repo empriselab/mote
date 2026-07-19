@@ -3,7 +3,7 @@ name = "mote-ffi"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
-description = "FFI glue exposing mote-api's message protocol to Python, WASM, and C"
+description = "FFI glue exposing mote-api's message protocol to Python, WASM, and C++"
 license = "MIT"
 repository = "https://github.com/empriselab/mote"
 keywords = ["robotics", "embedded", "protocol", "ffi"]
@@ -13,17 +13,17 @@ categories = ["embedded", "network-programming", "wasm"]
 default = ["wasm_ffi"]
 python_ffi = ["serde_json", "pyo3"]
 wasm_ffi = ["serde_json", "wasm-bindgen", "gloo-utils", "js-sys"]
-c_ffi = ["serde_json", "cbindgen"]
+cxx_ffi = ["serde_json", "cxx", "cxx-build"]
 
 [lib]
 name = "mote_ffi"
 # cdylib and rlib are required here (rather than passing --crate-type) because wasm-pack doesn't
 # support that flag: https://github.com/drager/wasm-pack/issues/1297
-# staticlib is included to support C/C++ linking via `build-c`.
+# staticlib is included to support C++ linking via `build-cxx`.
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 [build-dependencies]
-cbindgen = { version = "0.28", optional = true }
+cxx-build = { version = "1.0", optional = true }
 mote-api = { path = "../mote-api", features = ["schemars"] }
 schemars = "1.2"
 serde_json = "1.0"
@@ -36,6 +36,7 @@ pyo3 = { version = "0.28.0", features = ["abi3-py38"], optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 gloo-utils = { version = "0.2", features = ["serde"], optional = true }
 js-sys = { version = "0.3", optional = true }
+cxx = { version = "1.0", optional = true }
 
 schemars = "1.2"
 anyhow = "1.0.102"
