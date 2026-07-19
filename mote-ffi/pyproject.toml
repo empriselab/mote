@@ -12,7 +12,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Rust",
-    "Topic :: Scientific/Engineering :: Robotics",
+    "Topic :: Software Development :: Embedded Systems",
 ]
 dependencies = [
     "zeroconf>=0.136",
