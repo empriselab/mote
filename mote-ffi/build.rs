@@ -26,9 +26,9 @@ fn generate_schemas() {
 fn generate_cxx_bridge() {
     use std::path::PathBuf;
 
-    println!("cargo:rerun-if-changed=src/cpp.rs");
+    println!("cargo:rerun-if-changed=src/mote_cxx.rs");
 
-    cxx_build::bridge("src/cpp.rs")
+    cxx_build::bridge("src/mote_cxx.rs")
         .std("c++17")
         .compile("mote-ffi-cxx");
 
@@ -41,8 +41,8 @@ fn generate_cxx_bridge() {
     let dest_root = PathBuf::from(&crate_dir).join("include");
 
     copy_generated_header(
-        &out_dir.join("cxxbridge/include/mote-ffi/src/cpp.rs.h"),
-        &dest_root.join("mote-ffi/src/cpp.rs.h"),
+        &out_dir.join("cxxbridge/include/mote-ffi/src/mote_cxx.rs.h"),
+        &dest_root.join("mote-ffi/src/mote_cxx.rs.h"),
     );
     copy_generated_header(
         &out_dir.join("cxxbridge/include/rust/cxx.h"),

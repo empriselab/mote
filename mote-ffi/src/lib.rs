@@ -16,7 +16,7 @@ pub mod python;
 pub mod wasm;
 
 #[cfg(feature = "cxx_ffi")]
-pub mod cpp;
+pub mod mote_cxx;
 
 /// Error type
 #[derive(Error, Debug)]

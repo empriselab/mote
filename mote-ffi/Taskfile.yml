@@ -13,7 +13,7 @@ tasks:
       - wasm-pack build --out-dir target/pkg-node --target bundler --features wasm_ffi
 
   build-cxx:
-    desc: "Build the C++ static library. Output: target/release/libmote_ffi.a  (headers: include/mote-ffi/src/cpp.rs.h, include/rust/cxx.h)"
+    desc: "Build the C++ static library. Output: target/release/libmote_ffi.a  (headers: include/mote-ffi/src/mote_cxx.rs.h, include/rust/cxx.h)"
     cmds:
       - cargo build --release --no-default-features --features cxx_ffi
 
@@ -79,7 +79,7 @@ tasks:
   format-check:
     cmds:
       - cargo fmt --check
-      - uv format --check --preview-features format
+      - uv format --all-extras --check --preview-features format
 
   ci:
     deps: [build, lint, test, format-check]

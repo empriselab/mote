@@ -27,9 +27,9 @@ task build-cxx
 ```
 
 Builds a static library (`target/release/libmote_ffi.a`) and cxx-generated headers
-(`include/mote-ffi/src/cpp.rs.h`, `include/rust/cxx.h`). `#include "mote-ffi/src/cpp.rs.h"`
+(`include/mote-ffi/src/mote_cxx.rs.h`, `include/rust/cxx.h`). `#include "mote-ffi/src/mote_cxx.rs.h"`
 to get the `mote::MoteLink` class, `mote::SendResult`/`mote::ReceiveResult`, and
-`mote::MoteLinkErrorCode`. See the doc comments in `src/cpp.rs` for the bridge's error
+`mote::MoteLinkErrorCode`. See the doc comments in `src/mote_cxx.rs` for the bridge's error
 convention — every fallible call returns a result struct pairing a `MoteLinkErrorCode`
 with either an `error_message` or the requested data; `MoteLinkErrorCode::None` means
 success.
