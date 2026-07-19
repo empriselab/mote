@@ -58,3 +58,10 @@ tasks:
     cmds:
       - mkdir -p output
       - cp -r mote-book/book/* output
+
+  upgrade:
+    desc: >-
+      Upgrade locked dependency versions across every crate/package (cargo update for
+      mote-firmware/mote-api/mote-ffi, uv lock --upgrade for mote-ffi's Python package, npm
+      update for mote-configuration).
+    deps: [firmware:upgrade, api:upgrade, ffi:upgrade, config:upgrade]

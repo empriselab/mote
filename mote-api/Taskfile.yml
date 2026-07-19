@@ -35,5 +35,10 @@ tasks:
     cmds:
       - cargo fmt --check
 
+  upgrade:
+    desc: Upgrade locked Rust dependency versions
+    cmds:
+      - cargo update
+
   ci:
     deps: [build, lint, format-check, test]

@@ -41,6 +41,11 @@ tasks:
       - npm run build
       - npm run check
 
+  upgrade:
+    desc: Upgrade locked npm dependency versions
+    cmds:
+      - npm update
+
   release-package:
     desc: >-
       Build and package the configuration page into a release tarball tracking the

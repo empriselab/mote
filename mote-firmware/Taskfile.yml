@@ -49,6 +49,11 @@ tasks:
     cmds:
       - cargo fmt --check
 
+  upgrade:
+    desc: Upgrade locked Rust dependency versions
+    cmds:
+      - cargo update
+
   uf2:
     cmds:
       - |
