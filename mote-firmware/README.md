@@ -1,6 +1,6 @@
 # mote-firmware
 
-Embassy firmware for the RP2530 that runs mote.
+Embassy firmware for the RP2534 that runs mote.
 
 ## Build and Deploy
 
