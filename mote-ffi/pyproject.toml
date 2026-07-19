@@ -1,6 +1,6 @@
 [project]
 name = "mote_link"
-version = "0.1.0"
+version = "0.1.1"
 description = "Communicating with Mote"
 readme = "mote_link/README.md"
 requires-python = ">=3.8"
@@ -14,16 +14,10 @@ classifiers = [
     "Programming Language :: Rust",
     "Topic :: Software Development :: Embedded Systems",
 ]
-dependencies = [
-    "zeroconf>=0.136",
-    "survey>=5.4",
-]
+dependencies = ["zeroconf>=0.136", "survey>=5.4"]
 
 [project.optional-dependencies]
-demo = [
-    "rerun-sdk>=0.21",
-    "pyglet>=2.0",
-]
+demo = ["rerun-sdk>=0.21", "pyglet>=2.0"]
 
 [project.urls]
 Documentation = "https://empriselab.github.io/mote/"

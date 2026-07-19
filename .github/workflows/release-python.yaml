@@ -34,6 +34,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Generate Python bindings
+        working-directory: mote-ffi
+        run: |
+          cargo build --quiet
+          python3 scripts/generate_python_types.py
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -57,6 +63,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Generate Python bindings
+        working-directory: mote-ffi
+        run: |
+          cargo build --quiet
+          python3 scripts/generate_python_types.py
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -79,6 +91,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Generate Python bindings
+        working-directory: mote-ffi
+        run: |
+          cargo build --quiet
+          python3 scripts/generate_python_types.py
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -97,6 +115,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Generate Python bindings
+        working-directory: mote-ffi
+        run: |
+          cargo build --quiet
+          python3 scripts/generate_python_types.py
 
       - name: Build sdist
         uses: PyO3/maturin-action@v1
