@@ -230,7 +230,8 @@ class Generator:
             ftype = self.resolve_type(props[fname])
             if fname not in required and not ftype.startswith("Optional["):
                 ftype = f"Optional[{ftype}]"
-            lines.append(f"    {fname}: {ftype}")
+            default = " = None" if fname not in required else ""
+            lines.append(f"    {fname}: {ftype}{default}")
         self.emitted[name] = "\n".join(lines)
 
     def _emit_union(self, name: str, schema: dict) -> str:

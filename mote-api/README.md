@@ -7,16 +7,16 @@ sans-io message and wire-protocol definitions for the Mote firmware <--> host dr
 
 ```rust
 use mote_api::{HostLink, MoteLink};
-use mote_api::messages::{host_to_mote, mote_to_host};
+use mote_api::messages::host_to_mote;
 
-let mut host = HostLink::new();
-let mut mote = MoteLink::new();
+let mut host_side = MoteLink::new();
+let mut mote_side = HostLink::new();
 
-host.send(host_to_mote::Message::Ping).unwrap();
-while let Some(packet) = host.poll_transmit() {
-    mote.handle_receive(&packet);
+host_side.send(host_to_mote::Message::Ping).unwrap();
+while let Some(packet) = host_side.poll_transmit() {
+    mote_side.handle_receive(&packet);
 }
-assert_eq!(mote.poll_receive().unwrap(), Some(host_to_mote::Message::Ping));
+assert_eq!(mote_side.poll_receive().unwrap(), Some(host_to_mote::Message::Ping));
 ```
 
 See [docs.rs/mote-api](https://docs.rs/mote-api) for the full API.

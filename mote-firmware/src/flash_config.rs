@@ -17,10 +17,9 @@ const SCRATCH_SIZE: usize = ERASE_SIZE;
 
 const MAX_SAVED_WIFI_NETWORKS: usize = 3;
 
-/// All data persisted to flash. Fields are encoded in this fixed order; add new
+/// All data persisted to flash. Fields are encoded in this fixed order. Add new
 /// fields only at the end of `to_bytes`/`from_bytes`, and only remove fields
-/// from the end. Never reorder or insert in the middle — older/newer firmware
-/// reading each other's flash blob relies on positional, append-only decoding.
+/// from the end.
 #[non_exhaustive]
 #[derive(Default)]
 struct StoredConfig {
@@ -37,24 +36,10 @@ impl StoredConfig {
         buf
     }
 
-    /// Always succeeds. Fields the blob predates (older firmware wrote it
-    /// before they existed) come back as their `Default`; trailing bytes
-    /// left over from a blob written by *newer* firmware (fields this
-    /// version doesn't know about yet) are simply left unread.
-    fn from_bytes(mut data: &[u8]) -> Self {
-        let wifi = postcard::take_from_bytes(data)
-            .map(|(v, rest)| {
-                data = rest;
-                v
-            })
-            .unwrap_or_default();
-        let uid = postcard::take_from_bytes(data)
-            .map(|(v, rest)| {
-                data = rest;
-                v
-            })
-            .unwrap_or_default();
-        Self { wifi, uid }
+    fn from_bytes(data: &[u8]) -> Option<Self> {
+        let (wifi, data) = postcard::take_from_bytes(data).ok()?;
+        let (uid, _) = postcard::take_from_bytes(data).ok()?;
+        Some(Self { wifi, uid })
     }
 }
 
@@ -127,7 +112,7 @@ impl FlashConfig {
             .blocking_read(CONFIG_OFFSET + HEADER_SIZE as u32, &mut self.scratch[..data_len])
             .ok()?;
 
-        Some(StoredConfig::from_bytes(&self.scratch[..data_len]))
+        StoredConfig::from_bytes(&self.scratch[..data_len])
     }
 
     fn save(&mut self, config: StoredConfig) {

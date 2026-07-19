@@ -11,11 +11,6 @@ mod mote_ffi {
         messages::{host_to_mote, mote_to_host},
     };
 
-    // `ValueError`, not `OSError`/`IOError`: every `Error` variant is a decode/
-    // protocol problem with the data itself (mirroring how `json.loads` raises
-    // `ValueError` for malformed JSON), never an actual I/O failure. Catch this
-    // explicitly on the Python side rather than relying on which builtin
-    // exception class a given PyO3 helper happens to subclass.
     impl std::convert::From<Error> for PyErr {
         fn from(err: Error) -> PyErr {
             PyValueError::new_err(err.to_string())
@@ -25,8 +20,7 @@ mod mote_ffi {
     /// The Rust <-> JSON link underlying `mote_link.link.MoteClient`.
     ///
     /// Every method takes or returns JSON strings matching mote-api's wire
-    /// format (see the schemas in mote-ffi/schemas/). This is low-level
-    /// glue — most users should use `MoteClient` instead.
+    /// format (see the schemas in mote-ffi/schemas/).
     #[pyclass]
     struct Link {
         link: MoteCommsFFI<1400, mote_to_host::Message, host_to_mote::Message>,

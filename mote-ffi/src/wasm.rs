@@ -8,8 +8,6 @@ use crate::Error;
 use mote_api::MoteConfigLink;
 use mote_api::messages::{host_to_mote, mote_to_host};
 
-// Let wasm-bindgen throw a real JS `Error` object (so `catch (e) { e.message }`
-// works on the JS/TS side) rather than a bare string.
 impl From<Error> for JsValue {
     fn from(err: Error) -> JsValue {
         js_sys::Error::new(&err.to_string()).into()
@@ -17,14 +15,6 @@ impl From<Error> for JsValue {
 }
 
 /// WASM/TS binding for the mote-configuration web UI's wifi-setup link.
-///
-/// This wraps [`MoteConfigLink`] (the serial/USB-MTU link), not [`MoteLink`]
-/// (mote-api's UDP-MTU link, used by the Python and C bindings) — the
-/// configuration UI talks to Mote over the same USB-serial connection used to
-/// initially set up wifi (see mote-book's "Configuration" page), not over the
-/// network, so it needs the small-MTU framing.
-///
-/// [`MoteLink`]: mote_api::MoteLink
 #[wasm_bindgen]
 pub struct Link {
     link: MoteConfigLink,
@@ -71,10 +61,6 @@ impl Default for Link {
     }
 }
 
-// wasm-bindgen's JsValue conversions call into imported JS functions and only
-// work under an actual JS host, so this module only builds for wasm32 and only
-// runs for real via `wasm-pack test --node --features wasm_ffi` (wired into
-// `task ffi:test-wasm`) -- not plain `cargo test`, which targets the host arch.
 #[cfg(all(test, target_arch = "wasm32"))]
 mod tests {
     use super::*;
