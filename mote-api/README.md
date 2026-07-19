@@ -7,9 +7,20 @@ link. `no_std` + `alloc`.
 
 Two layers, matching how the crate handles growth:
 
-- **Source level.** `Message` enums (and a few result types like `BITResult`)
-  are `#[non_exhaustive]`. Code that matches on them must handle unknown
-  variants — new message types can be added without a semver-major bump.
+- **Source level.** The `Message` enums, and the aggregate types that are
+  expected to grow as new sensors or state fields land (`State`,
+  `BitCollection`), are `#[non_exhaustive]`. Code that matches on them must
+  handle unknown variants — new message types or state fields can be added
+  without a semver-major bump.
+
+  `BitResult` and `ConnectionError` are **not** `#[non_exhaustive]`: each is a
+  closed, fully-enumerated set of outcomes, not expected to grow.
+
+  Leaf payload structs (`Point`, `WheelJointState`, `SetUid`, and similar) are
+  also **not** `#[non_exhaustive]`: every field is `pub` and they're built via
+  struct-literal syntax, so there's no constructor to keep stable instead.
+  Adding a field to one of these is a semver-major change, same as any other
+  breaking change to a public struct.
 - **Wire level.** Messages are encoded with [`postcard`](https://docs.rs/postcard),
   which varint-encodes enum discriminants and collection lengths. Appending a
   new field or a new enum variant at the end doesn't change how existing data

@@ -15,7 +15,7 @@ use embassy_rp::pac;
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, Ticker};
-use mote_api::messages::mote_to_host::BITResult;
+use mote_api::messages::mote_to_host::BitResult;
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::helpers::update_bit_result;
@@ -75,7 +75,7 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
         info!("Got ip: {}", ip);
         {
             let mut configuration_state = CONFIGURATION_STATE.lock().await;
-            update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BITResult::Pass);
+            update_bit_result(&mut configuration_state.built_in_test.wifi, "IPV4 UP", BitResult::Pass);
             hostname = configuration_state.uid.clone();
             configuration_state.ip = Some(ip.to_string());
         }
@@ -129,7 +129,7 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
         // Update mdns status
         {
             let mut configuration_state = CONFIGURATION_STATE.lock().await;
-            update_bit_result(&mut configuration_state.built_in_test.wifi, "mDNS UP", BITResult::Pass);
+            update_bit_result(&mut configuration_state.built_in_test.wifi, "mDNS UP", BitResult::Pass);
         }
 
         // Run the responder until the network config drops.
@@ -173,12 +173,12 @@ pub async fn mdns_task(stack: Stack<'static>) -> ! {
             update_bit_result(
                 &mut configuration_state.built_in_test.wifi,
                 "IPV4 UP",
-                BITResult::Waiting,
+                BitResult::Waiting,
             );
             update_bit_result(
                 &mut configuration_state.built_in_test.wifi,
                 "mDNS UP",
-                BITResult::Waiting,
+                BitResult::Waiting,
             );
             configuration_state.ip = None;
         }

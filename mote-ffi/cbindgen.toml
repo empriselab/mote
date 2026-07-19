@@ -1,3 +1,22 @@
+header = """
+/*
+ * Return-code convention
+ *
+ * Each function below documents its own return values, but the meaning of a
+ * given number is NOT the same across functions:
+ *   - mote_link_send / mote_link_poll_receive: 0 = success/no message ready,
+ *     a positive number = an error was written to `buf` as JSON, -1 = not
+ *     even the error fit in `buf` (or `buf_len` was negative).
+ *   - mote_link_poll_transmit: a positive number = bytes of packet written to
+ *     `buf`, 0 = no packet ready (not an error), -1 = `buf` too small (or
+ *     `buf_len` was negative).
+ *   - mote_link_handle_receive: always 0 today; the return value is reserved
+ *     for a future error path and should not be relied on to mean "success".
+ * All four functions treat a negative `buf_len` as invalid input and return
+ * -1 without touching `buf`.
+ */
+"""
+
 [export]
 # Exclude `log` from wasm.rs — cbindgen parses all source files regardless of feature flags
 exclude = ["log"]

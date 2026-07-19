@@ -2,12 +2,16 @@
 name = "mote-api"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
 description = "Message and API definitions for communicating with Mote"
 license = "MIT"
 repository = "https://github.com/empriselab/mote"
 documentation = "https://docs.rs/mote-api"
 keywords = ["robotics", "embedded", "protocol", "serialization"]
 categories = ["embedded", "no-std", "network-programming"]
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
 
 [dependencies]
 postcard = { version = "1", default-features = false, features = ["alloc"] }

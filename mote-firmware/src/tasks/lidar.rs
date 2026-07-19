@@ -4,7 +4,7 @@ use defmt::info;
 use embassy_executor::Spawner;
 use embassy_rp::uart::{BufferedUart, Config, DataBits, Parity, StopBits};
 use mote_api::messages::mote_to_host;
-use mote_api::messages::mote_to_host::{BIT, BITResult};
+use mote_api::messages::mote_to_host::{Bit, BitResult};
 use static_cell::StaticCell;
 
 use super::{Irqs, RplidarC1Resources};
@@ -28,16 +28,16 @@ impl From<Point> for mote_to_host::Point {
 
 #[embassy_executor::task]
 async fn lidar_state_machine_task(r: RplidarC1Resources) {
-    // Init BIT
+    // Init Bit
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        let init = BIT {
+        let init = Bit {
             name: "Init".into(),
-            result: BITResult::Waiting,
+            result: BitResult::Waiting,
         };
-        let check_health = BIT {
+        let check_health = Bit {
             name: "Check Health".into(),
-            result: BITResult::Waiting,
+            result: BitResult::Waiting,
         };
         for test in [init, check_health] {
             configuration_state.built_in_test.lidar.push(test);
@@ -70,7 +70,7 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
     // Update init state
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.lidar, "Init", BITResult::Pass);
+        update_bit_result(&mut configuration_state.built_in_test.lidar, "Init", BitResult::Pass);
     }
 
     loop {
@@ -86,9 +86,9 @@ async fn lidar_state_machine_task(r: RplidarC1Resources) {
                         &mut configuration_state.built_in_test.lidar,
                         "Check Health",
                         if next_state == LidarState::Reset {
-                            BITResult::Fail
+                            BitResult::Fail
                         } else {
-                            BITResult::Pass
+                            BitResult::Pass
                         },
                     );
                 }

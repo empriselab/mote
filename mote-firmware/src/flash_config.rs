@@ -84,12 +84,12 @@ pub async fn load_wifi() -> Vec<SetNetworkConnectionConfig> {
         .unwrap_or_default()
 }
 
-/// Load the saved UID from flash, if any.
+/// Load the saved Uid from flash, if any.
 pub async fn load_uid() -> Option<String> {
     FLASH_CONFIG.lock().await.as_mut()?.load_uid()
 }
 
-/// Save the UID to flash.
+/// Save the Uid to flash.
 pub async fn save_uid(uid: String) {
     if let Some(config) = FLASH_CONFIG.lock().await.as_mut() {
         config.save_uid(uid);

@@ -17,9 +17,25 @@ tasks:
     cmds:
       - cargo build --release --no-default-features --features c_ffi
 
+  test-wasm:
+    desc: "Run the WASM binding's tests under Node (requires wasm-pack)."
+    cmds:
+      - wasm-pack test --node --features wasm_ffi
+
+  # Python
+
+  generate-python-types:
+    desc: "Regenerate mote_link/_generated.py from mote-ffi's JSON schemas (schemas/*.json)."
+    cmds:
+      - cargo build --quiet
+      # Uses only the standard library, so this doesn't need `uv run` / a synced venv --
+      # safe to run before `dev-setup`'s `uv sync` on a fresh checkout.
+      - python3 scripts/generate_python_types.py
+
   # General
 
   dev-setup:
+    deps: [generate-python-types]
     cmds:
       - uv sync --all-extras --cache-dir .uv_cache
       - uv run maturin develop --features python_ffi
@@ -29,8 +45,10 @@ tasks:
       - uv sync --all-extras --no-dev --cache-dir .uv_cache
 
   test:
+    deps: [generate-python-types]
     cmds:
       - cargo test --all-features
+      - task: test-wasm
       - uv run pytest
 
   format:
@@ -39,6 +57,7 @@ tasks:
       - uv format --preview-features format
 
   lint:
+    deps: [generate-python-types]
     cmds:
       - cmd: echo "Linting mote-api"
         silent: true

@@ -5,7 +5,7 @@ use embassy_rp::pio::{Instance, Pio};
 use embassy_rp::pwm::SetDutyCycle;
 use embassy_rp::{gpio, pwm};
 use embassy_time::{Duration, Instant, Ticker, Timer};
-use mote_api::messages::mote_to_host::{BIT, BITResult, DriveBaseState, Message, WheelJointState};
+use mote_api::messages::mote_to_host::{Bit, BitResult, DriveBaseState, Message, WheelJointState};
 use pid::Pid;
 
 use crate::helpers::update_bit_result;
@@ -44,7 +44,7 @@ const LEFT_ENCODER_BIT: &str = "Left Wheel";
 const RIGHT_ENCODER_BIT: &str = "Right Wheel";
 
 /// Update the result of one of the encoder built-in-test checks.
-async fn set_encoder_bit(name: &'static str, result: BITResult) {
+async fn set_encoder_bit(name: &'static str, result: BitResult) {
     let mut configuration_state = CONFIGURATION_STATE.lock().await;
     update_bit_result(&mut configuration_state.built_in_test.encoders, name, result);
 }
@@ -167,7 +167,7 @@ async fn motor_task(
     );
     let (Some(left_a), Some(left_b)) = left_pwm.split() else {
         error!("Unable to init drive base PWM. Drive-base disabled.");
-        set_encoder_bit(ENCODER_INIT_BIT, BITResult::Fail).await;
+        set_encoder_bit(ENCODER_INIT_BIT, BitResult::Fail).await;
         return;
     };
     let left_pwm_bridge = PwmBridge::new(left_b, left_a, 0);
@@ -189,7 +189,7 @@ async fn motor_task(
     );
     let (Some(right_a), Some(right_b)) = right_pwm.split() else {
         error!("Unable to init drive base PWM. Drive-base disabled.");
-        set_encoder_bit(ENCODER_INIT_BIT, BITResult::Fail).await;
+        set_encoder_bit(ENCODER_INIT_BIT, BitResult::Fail).await;
         return;
     };
     let right_pwm_bridge = PwmBridge::new(right_b, right_a, 0);
@@ -199,7 +199,7 @@ async fn motor_task(
     let mut sleep = gpio::Output::new(motor_driver_r.sleep, gpio::Level::High);
 
     // Both wheels configured successfully.
-    set_encoder_bit(ENCODER_INIT_BIT, BITResult::Pass).await;
+    set_encoder_bit(ENCODER_INIT_BIT, BitResult::Pass).await;
 
     // PID, telem and watchdog timers
     let mut pid_ticker = Ticker::every(Duration::from_millis(PID_CONTROL_LOOP_PERIOD_MS));
@@ -231,11 +231,11 @@ async fn motor_task(
 
                 // Mark each encoder check as passed once it reports a count.
                 if !left_counted && left_motor.encoder_value != 0 {
-                    set_encoder_bit(LEFT_ENCODER_BIT, BITResult::Pass).await;
+                    set_encoder_bit(LEFT_ENCODER_BIT, BitResult::Pass).await;
                     left_counted = true;
                 }
                 if !right_counted && right_motor.encoder_value != 0 {
-                    set_encoder_bit(RIGHT_ENCODER_BIT, BITResult::Pass).await;
+                    set_encoder_bit(RIGHT_ENCODER_BIT, BitResult::Pass).await;
                     right_counted = true;
                 }
             }
@@ -276,9 +276,9 @@ pub async fn init(
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         for name in [ENCODER_INIT_BIT, LEFT_ENCODER_BIT, RIGHT_ENCODER_BIT] {
-            configuration_state.built_in_test.encoders.push(BIT {
+            configuration_state.built_in_test.encoders.push(Bit {
                 name: name.into(),
-                result: BITResult::Waiting,
+                result: BitResult::Waiting,
             });
         }
     }

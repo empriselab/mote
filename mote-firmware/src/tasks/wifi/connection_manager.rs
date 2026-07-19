@@ -9,7 +9,7 @@ use embassy_sync::channel::Channel;
 use embassy_sync::signal::Signal;
 use embassy_time::{Duration, with_timeout};
 use mote_api::messages::host_to_mote::SetNetworkConnectionConfig;
-use mote_api::messages::mote_to_host::{BITResult, ConnectionError, NetworkConnection};
+use mote_api::messages::mote_to_host::{BitResult, ConnectionError, NetworkConnection};
 use {defmt_rtt as _, panic_probe as _};
 
 use crate::flash_config;
@@ -20,11 +20,11 @@ pub static WIFI_REQUEST_CONNECT: Channel<CriticalSectionRawMutex, SetNetworkConn
 pub static WIFI_REQUEST_RESCAN: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
 async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetNetworkConnectionConfig) -> bool {
-    async fn update_network_bit(current_network: Option<Result<String, ConnectionError>>, result: BITResult) {
+    async fn update_network_bit(current_network: Option<Result<String, ConnectionError>>, result: BitResult) {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         // A failed connection leaves us without a valid address. Clear the
         // stale IP
-        if result == BITResult::Fail {
+        if result == BitResult::Fail {
             configuration_state.ip = None;
         }
         configuration_state.current_network_connection = current_network;
@@ -35,7 +35,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
         );
     }
 
-    update_network_bit(None, BITResult::Waiting).await;
+    update_network_bit(None, BitResult::Waiting).await;
 
     // Joining a new network tears down the existing IPv4 lease and mDNS
     // responder, so reset those checks to Waiting until they come back up on the
@@ -43,7 +43,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         for name in ["IPV4 UP", "mDNS UP"] {
-            update_bit_result(&mut configuration_state.built_in_test.wifi, name, BITResult::Waiting);
+            update_bit_result(&mut configuration_state.built_in_test.wifi, name, BitResult::Waiting);
         }
     }
 
@@ -93,11 +93,11 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
         }
 
         flash_config::save_wifi(config.clone()).await;
-        update_network_bit(Some(Ok(config.ssid)), BITResult::Pass).await;
+        update_network_bit(Some(Ok(config.ssid)), BitResult::Pass).await;
         return true;
     }
 
-    update_network_bit(Some(Err(last_error)), BITResult::Fail).await;
+    update_network_bit(Some(Err(last_error)), BitResult::Fail).await;
     false
 }
 

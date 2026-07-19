@@ -105,13 +105,17 @@ name = "mote-link"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "survey" },
+    { name = "zeroconf", version = "0.136.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "zeroconf", version = "0.148.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
+]
+
+[package.optional-dependencies]
+demo = [
     { name = "pyglet" },
     { name = "rerun-sdk", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "rerun-sdk", version = "0.26.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
     { name = "rerun-sdk", version = "0.30.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
-    { name = "survey" },
-    { name = "zeroconf", version = "0.136.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
-    { name = "zeroconf", version = "0.148.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
 ]
 
 [package.dev-dependencies]
@@ -125,11 +129,12 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "pyglet", specifier = ">=2.0" },
-    { name = "rerun-sdk", specifier = ">=0.21" },
+    { name = "pyglet", marker = "extra == 'demo'", specifier = ">=2.0" },
+    { name = "rerun-sdk", marker = "extra == 'demo'", specifier = ">=0.21" },
     { name = "survey", specifier = ">=5.4" },
     { name = "zeroconf", specifier = ">=0.136" },
 ]
+provides-extras = ["demo"]
 
 [package.metadata.requires-dev]
 dev = [

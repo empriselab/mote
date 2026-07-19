@@ -7,7 +7,7 @@ use embassy_rp::gpio::Pull;
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::watch::Watch;
 use embassy_time::Timer;
-use mote_api::messages::mote_to_host::{BIT, BITResult};
+use mote_api::messages::mote_to_host::{Bit, BitResult};
 
 use crate::helpers::update_bit_result;
 use crate::tasks::{CONFIGURATION_STATE, Irqs, UsbPowerDetectionResources};
@@ -39,16 +39,16 @@ static POWER_GATE_WATCH: Watch<CriticalSectionRawMutex, PowerState, 3> = Watch::
 
 #[embassy_executor::task]
 async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
-    // Init BIT
+    // Init Bit
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        let init = BIT {
+        let init = Bit {
             name: "Init".into(),
-            result: BITResult::Pass,
+            result: BitResult::Pass,
         };
-        let comms_power = BIT {
+        let comms_power = Bit {
             name: "7.5W Capable (enables motors)".into(),
-            result: BITResult::Waiting,
+            result: BitResult::Waiting,
         };
         for test in [init, comms_power] {
             configuration_state.built_in_test.power.push(test);
@@ -88,9 +88,9 @@ async fn power_gate_task(r: UsbPowerDetectionResources) -> ! {
         if state != last_state {
             {
                 let mut configuration_state = CONFIGURATION_STATE.lock().await;
-                let mut wifi_pass = BITResult::Fail;
+                let mut wifi_pass = BitResult::Fail;
                 if state == PowerState::Max1_5a || state == PowerState::Max3a {
-                    wifi_pass = BITResult::Pass;
+                    wifi_pass = BitResult::Pass;
                 };
                 update_bit_result(
                     &mut configuration_state.built_in_test.power,

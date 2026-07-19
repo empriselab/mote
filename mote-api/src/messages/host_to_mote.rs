@@ -10,7 +10,7 @@ use schemars::JsonSchema;
 
 /// Requests Mote join a WiFi network with the given credentials.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct SetNetworkConnectionConfig {
     /// Network SSID to join.
     pub ssid: String,
@@ -20,8 +20,8 @@ pub struct SetNetworkConnectionConfig {
 
 /// Sets Mote's user-assigned device identifier.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct SetUID {
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct SetUid {
     /// The new device identifier.
     pub uid: String,
 }
@@ -52,7 +52,7 @@ pub enum Message {
     /// Requests Mote join a WiFi network.
     SetNetworkConnectionConfig(SetNetworkConnectionConfig),
     /// Sets Mote's device identifier.
-    SetUID(SetUID),
+    SetUid(SetUid),
     /// Commands the drive base's wheel velocities.
     SetDriveBaseVelocity(SetDriveBaseVelocity),
 }

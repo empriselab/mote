@@ -22,6 +22,17 @@ struct ErrorPayload<'a> {
     error: &'a str,
 }
 
+/// Converts a caller-provided buffer length to `usize`, rejecting negative values.
+///
+/// `buf_len` arrives as a signed `c_int` from C callers. Casting a negative value
+/// straight to `usize` wraps it into a huge number, silently defeating every
+/// "buffer too small" bounds check below it and enabling out-of-bounds reads/writes
+/// through `copy_nonoverlapping`/`slice::from_raw_parts`. Every function that turns
+/// `buf_len` into a `usize` must go through this first.
+fn checked_buf_len(buf_len: c_int) -> Option<usize> {
+    usize::try_from(buf_len).ok()
+}
+
 /// Write a JSON-encoded error object (`{"error": "<message>"}`) as a
 /// null-terminated string into `buf`.
 ///
@@ -31,6 +42,9 @@ struct ErrorPayload<'a> {
 /// # Safety
 /// `buf` must point to a writable buffer of at least `buf_len` bytes.
 unsafe fn write_error_json(buf: *mut c_char, buf_len: c_int, message: &str) -> c_int {
+    let Some(buf_len) = checked_buf_len(buf_len) else {
+        return -1;
+    };
     let json = match serde_json::to_string(&ErrorPayload { error: message }) {
         Ok(j) => j,
         Err(_) => return -1,
@@ -40,7 +54,7 @@ unsafe fn write_error_json(buf: *mut c_char, buf_len: c_int, message: &str) -> c
         Err(_) => return -1,
     };
     let bytes = cstr.as_bytes_with_nul();
-    if bytes.len() > buf_len as usize {
+    if bytes.len() > buf_len {
         return -1;
     }
     unsafe { std::ptr::copy_nonoverlapping(bytes.as_ptr() as *const c_char, buf, bytes.len()) };
@@ -109,10 +123,13 @@ pub unsafe extern "C" fn mote_link_poll_transmit(
     buf: *mut u8,
     buf_len: c_int,
 ) -> c_int {
+    let Some(buf_len) = checked_buf_len(buf_len) else {
+        return -1;
+    };
     let handle = unsafe { &mut *handle };
     match handle.inner.link.poll_transmit() {
         Some(bytes) => {
-            if bytes.len() > buf_len as usize {
+            if bytes.len() > buf_len {
                 return -1;
             }
             unsafe { std::ptr::copy_nonoverlapping(bytes.as_ptr(), buf, bytes.len()) };
@@ -124,7 +141,7 @@ pub unsafe extern "C" fn mote_link_poll_transmit(
 
 /// Feed a received packet into the link.
 ///
-/// Returns 0 on success.
+/// Returns 0 on success, or -1 if `buf_len` is negative.
 ///
 /// # Safety
 /// `handle` must be a valid non-null pointer. `buf` must point to a readable buffer of at least `buf_len` bytes.
@@ -134,8 +151,11 @@ pub unsafe extern "C" fn mote_link_handle_receive(
     buf: *const u8,
     buf_len: c_int,
 ) -> c_int {
+    let Some(buf_len) = checked_buf_len(buf_len) else {
+        return -1;
+    };
     let handle = unsafe { &mut *handle };
-    let bytes = unsafe { std::slice::from_raw_parts(buf, buf_len as usize) };
+    let bytes = unsafe { std::slice::from_raw_parts(buf, buf_len) };
     handle.inner.link.handle_receive(bytes);
     0
 }
@@ -154,6 +174,9 @@ pub unsafe extern "C" fn mote_link_poll_receive(
     buf: *mut c_char,
     buf_len: c_int,
 ) -> c_int {
+    let Some(checked_len) = checked_buf_len(buf_len) else {
+        return -1;
+    };
     let handle = unsafe { &mut *handle };
     match handle.inner.poll_receive() {
         Ok(Some(json)) => {
@@ -166,7 +189,7 @@ pub unsafe extern "C" fn mote_link_poll_receive(
                 }
             };
             let bytes = cstr.as_bytes_with_nul();
-            if bytes.len() > buf_len as usize {
+            if bytes.len() > checked_len {
                 return unsafe { write_error_json(buf, buf_len, "message too large for buffer") };
             }
             unsafe {
@@ -334,6 +357,78 @@ mod tests {
             mote.handle_receive(&packet_buf[..n as usize]);
             let received = mote.poll_receive().unwrap().unwrap();
             assert_eq!(received, host_to_mote::Message::Ping);
+
+            mote_link_free(handle);
+        }
+    }
+
+    // --- Negative buf_len must not bypass bounds checks ---
+    //
+    // Casting a negative `c_int` straight to `usize` wraps it into a huge number,
+    // which would defeat every "buffer too small" check below it. Every function
+    // that takes a `buf_len` must reject negative values outright.
+
+    #[test]
+    fn test_c_ffi_send_negative_buf_len() {
+        // mote_link_send only touches buf/buf_len on its error path (a successful
+        // send never writes into buf), so use invalid JSON to reach that path.
+        unsafe {
+            let handle = mote_link_new();
+            let bad = c"not valid json";
+            let mut buf = [0i8; 256];
+            let ret = mote_link_send(handle, bad.as_ptr(), buf.as_mut_ptr(), -1);
+            assert_eq!(ret, -1);
+            mote_link_free(handle);
+        }
+    }
+
+    #[test]
+    fn test_c_ffi_poll_transmit_negative_buf_len() {
+        unsafe {
+            let handle = mote_link_new();
+            send_ping(handle);
+
+            let mut buf = [0u8; 256];
+            let n = mote_link_poll_transmit(handle, buf.as_mut_ptr(), -1);
+            assert_eq!(n, -1);
+
+            mote_link_free(handle);
+        }
+    }
+
+    #[test]
+    fn test_c_ffi_handle_receive_negative_buf_len() {
+        unsafe {
+            let handle = mote_link_new();
+            let mut mote = HostLink::new();
+            mote.send(mote_to_host::Message::Pong).unwrap();
+            let payload = mote.poll_transmit().unwrap();
+
+            let ret = mote_link_handle_receive(handle, payload.as_ptr(), -1);
+            assert_eq!(ret, -1);
+
+            // The (would-be out-of-bounds) read never happened, so nothing was queued.
+            let mut buf = [0i8; 256];
+            let n = mote_link_poll_receive(handle, buf.as_mut_ptr(), buf.len() as c_int);
+            assert_eq!(n, 0);
+
+            mote_link_free(handle);
+        }
+    }
+
+    #[test]
+    fn test_c_ffi_poll_receive_negative_buf_len() {
+        unsafe {
+            let mut mote = HostLink::new();
+            mote.send(mote_to_host::Message::Pong).unwrap();
+            let payload = mote.poll_transmit().unwrap();
+
+            let handle = mote_link_new();
+            mote_link_handle_receive(handle, payload.as_ptr(), payload.len() as c_int);
+
+            let mut buf = [0i8; 256];
+            let n = mote_link_poll_receive(handle, buf.as_mut_ptr(), -1);
+            assert_eq!(n, -1);
 
             mote_link_free(handle);
         }

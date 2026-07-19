@@ -36,7 +36,7 @@ pub struct WheelJointState {
 
 /// Encoder-derived state of both drive wheels.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
 pub struct DriveBaseState {
     /// Left wheel state.
     pub left: WheelJointState,
@@ -48,7 +48,7 @@ pub struct DriveBaseState {
 /// A 3-axis IMU reading (used for both acceleration and angular velocity).
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
-pub struct IMUAxisTriple {
+pub struct ImuAxisTriple {
     /// X axis.
     pub x: f32,
     /// Y axis.
@@ -59,19 +59,19 @@ pub struct IMUAxisTriple {
 
 /// A single IMU sample.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub struct IMUMeasurement {
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
+pub struct ImuMeasurement {
     /// Linear acceleration.
-    pub accel: IMUAxisTriple,
+    pub accel: ImuAxisTriple,
     /// Angular velocity.
-    pub gyro: IMUAxisTriple,
+    pub gyro: ImuAxisTriple,
 }
 
 // CONFIGURATION MESSAGES
 
 /// A WiFi network visible to Mote during a scan.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct NetworkConnection {
     /// Network SSID.
     pub ssid: String,
@@ -81,9 +81,8 @@ pub struct NetworkConnection {
 
 /// Outcome of a single built-in test.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[non_exhaustive]
-pub enum BITResult {
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum BitResult {
     /// The test hasn't completed yet.
     Waiting,
     /// The test passed.
@@ -94,34 +93,34 @@ pub enum BITResult {
 
 /// A single named built-in test and its outcome.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub struct BIT {
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Bit {
     /// Human-readable test name.
     pub name: String,
     /// Test outcome.
-    pub result: BITResult,
+    pub result: BitResult,
 }
 /// A list of built-in tests for one subsystem.
-pub type BITList = Vec<BIT>;
+pub type BitList = Vec<Bit>;
 
 /// Built-in test results, grouped by subsystem.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default)]
 #[non_exhaustive]
-pub struct BITCollection {
+pub struct BitCollection {
     /// Power subsystem tests.
-    pub power: BITList,
+    pub power: BitList,
     /// WiFi subsystem tests.
-    pub wifi: BITList,
+    pub wifi: BitList,
     /// Lidar subsystem tests.
-    pub lidar: BITList,
+    pub lidar: BitList,
     /// IMU subsystem tests.
-    pub imu: BITList,
+    pub imu: BitList,
     /// Drive base encoder tests.
-    pub encoders: BITList,
+    pub encoders: BitList,
 }
 
-impl BITCollection {
+impl BitCollection {
     /// Const-constructible equivalent of `Default::default()`, for use in
     /// `const`/`static` contexts where `Default::default()` isn't callable.
     pub const fn new() -> Self {
@@ -136,12 +135,11 @@ impl BITCollection {
 }
 
 /// Mote's user-assigned device identifier.
-pub type UID = String;
+pub type Uid = String;
 
 /// Why the most recent network connection attempt failed.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[non_exhaustive]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ConnectionError {
     /// The join attempt didn't complete within the retry timeout.
     Timeout,
@@ -154,11 +152,11 @@ pub enum ConnectionError {
 
 /// Mote's current aggregate state, as telemetered to the host.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default)]
 #[non_exhaustive]
 pub struct State {
     /// Device identifier.
-    pub uid: UID,
+    pub uid: Uid,
     /// Current IP address, if connected to a network.
     pub ip: Option<String>,
     /// Device MAC address.
@@ -171,7 +169,7 @@ pub struct State {
     /// WiFi networks visible in the most recent scan.
     pub available_network_connections: Vec<NetworkConnection>,
     /// Built-in test results.
-    pub built_in_test: BITCollection,
+    pub built_in_test: BitCollection,
 }
 
 impl State {
@@ -179,12 +177,12 @@ impl State {
     /// `const`/`static` contexts where `Default::default()` isn't callable.
     pub const fn new() -> Self {
         Self {
-            uid: UID::new(),
+            uid: Uid::new(),
             ip: None,
             mac: None,
             current_network_connection: None,
             available_network_connections: Vec::new(),
-            built_in_test: BITCollection::new(),
+            built_in_test: BitCollection::new(),
         }
     }
 }
@@ -203,7 +201,7 @@ pub enum Message {
     /// Drive base wheel state.
     DriveBaseState(DriveBaseState),
     /// An IMU sample.
-    IMUMeasurement(IMUMeasurement),
+    ImuMeasurement(ImuMeasurement),
     /// Full aggregate device state.
     State(Box<State>),
 }

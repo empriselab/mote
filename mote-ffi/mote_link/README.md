@@ -10,12 +10,15 @@ Python client for talking to [Mote](https://empriselab.github.io/mote/) robots o
 pip install mote_link
 ```
 
+Add the `demo` extra (`pip install mote_link[demo]`) to also install `rerun-sdk` and
+`pyglet`, needed only by the bundled `rerun-demo` example.
+
 ## Example
 
 ```python
 import asyncio
 
-from mote_link.link import MoteClient, SetDriveBaseVelocity, DriveBaseState
+from mote_link import MoteClient, SetDriveBaseVelocity, DriveBaseState
 
 
 async def main():

@@ -65,7 +65,7 @@ fn main() -> anyhow::Result<()> {
     // Both commands and data use the same UDP socket
     'socket_error: loop {
         if let Ok(socket) = UdpSocket::bind("0.0.0.0:0") {
-            if let Err(_) = socket.connect((ip, 7475)) {
+            if socket.connect((ip, 7475)).is_err() {
                 println!("Failed to connect to Mote");
                 continue;
             }
@@ -79,7 +79,7 @@ fn main() -> anyhow::Result<()> {
             loop {
                 // Retrieve and transmit all messages queued to be sent
                 while let Some(payload) = link.poll_transmit() {
-                    if let Err(_) = socket.send(&payload) {
+                    if socket.send(&payload).is_err() {
                         continue 'socket_error;
                     }
                     continue;
@@ -88,7 +88,7 @@ fn main() -> anyhow::Result<()> {
                 // Read a message from the socket
                 let mut buf = vec![0u8; 2000];
                 let num_read = socket.recv(&mut buf).unwrap();
-                link.handle_receive(&mut buf[..num_read]);
+                link.handle_receive(&buf[..num_read]);
 
                 loop {
                     let message = match link.poll_receive() {
@@ -136,7 +136,12 @@ fn main() -> anyhow::Result<()> {
                             )
                             .unwrap();
                         }
-                        _ => todo!(),
+                        // `Message` is #[non_exhaustive]: this example only visualizes lidar
+                        // scans, so other message types (including any added later) are just
+                        // logged rather than causing a panic.
+                        other => {
+                            println!("Ignoring unhandled message: {other:?}");
+                        }
                     }
                 }
             }

@@ -9,7 +9,7 @@ from pyglet.window import key
 
 from mote_link.link import (
     DriveBaseState,
-    IMUMeasurement,
+    ImuMeasurement,
     MoteClient,
     MoteConnectionError,
     Ping,
@@ -30,7 +30,7 @@ def _log_drive_base_state(state: DriveBaseState):
         rr.log(f"drive_base/{side}/position_rad", rr.Scalars(wheel.position_rad))
 
 
-def _log_imu_measurement(imu: IMUMeasurement):
+def _log_imu_measurement(imu: ImuMeasurement):
     rr.log("imu/accel/x", rr.Scalars(imu.accel.x))
     rr.log("imu/accel/y", rr.Scalars(imu.accel.y))
     rr.log("imu/accel/z", rr.Scalars(imu.accel.z))
@@ -45,10 +45,10 @@ def _log_scan(scan: Scan):
             math.cos(p.angle_rad) * p.distance_mm,
             math.sin(p.angle_rad) * p.distance_mm,
         ]
-        for p in scan.points
+        for p in scan.value
     ]
     colors = []
-    for p in scan.points:
+    for p in scan.value:
         h = (p.distance_mm / (20.0 * 360.0)) % 1.0
         r, g, b = colorsys.hsv_to_rgb(h, 1.0, 1.0)
         colors.append([int(r * 255), int(g * 255), int(b * 255)])
@@ -280,7 +280,7 @@ async def run_main():
                     _log_scan(message)
                 elif isinstance(message, DriveBaseState):
                     _log_drive_base_state(message)
-                elif isinstance(message, IMUMeasurement):
+                elif isinstance(message, ImuMeasurement):
                     _log_imu_measurement(message)
                 elif isinstance(message, State):
                     print(f"Got system state {message}")

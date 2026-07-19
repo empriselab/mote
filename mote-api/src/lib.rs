@@ -1,5 +1,5 @@
 #![no_std]
-#![warn(missing_docs)]
+#![deny(missing_docs)]
 
 //! Messages used by Mote for firmware <--> host communication
 //!
@@ -34,7 +34,7 @@ pub mod messages;
 use crate::messages::{host_to_mote, mote_to_host};
 
 /// Which side of the mote/host link a piece of code represents.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Role {
     /// The embedded firmware side.
     Mote,
@@ -65,8 +65,16 @@ impl core::fmt::Display for Role {
     }
 }
 
+mod sealed {
+    pub trait Sealed {}
+    impl Sealed for crate::messages::mote_to_host::Message {}
+    impl Sealed for crate::messages::host_to_mote::Message {}
+}
+
 /// Identifies which side of the mote/host link decodes a given message type.
-pub trait MessageRole {
+///
+/// Sealed: only mote-api's own message types implement this.
+pub trait MessageRole: sealed::Sealed {
     /// Which side receives (decodes) this message type.
     const RECEIVER: Role;
 }
@@ -84,7 +92,7 @@ impl MessageRole for host_to_mote::Message {
 const VERSION_HEADER_LEN: usize = 6;
 
 /// The mote-api crate version embedded in every message header.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Version {
     /// Semver major component.
     pub major: u16,
@@ -162,9 +170,17 @@ const fn parse_u16(s: &str) -> u16 {
 #[non_exhaustive]
 pub enum Error {
     /// The message body failed to encode or decode.
+    ///
+    /// Stored as a rendered message rather than the original [`postcard::Error`]:
+    /// postcard's `Error` only implements `core::error::Error` behind its `std`
+    /// feature, which this `no_std` crate doesn't enable, so it can't be used as
+    /// an [`Error::source`] here.
     #[error("message decode failed: {0}")]
     DecodeError(alloc::string::String),
     /// COBS framing failed to encode or decode.
+    ///
+    /// Same caveat as [`DecodeError`](Error::DecodeError): `corncobs::CobsError`
+    /// only implements `core::error::Error` behind its `std` feature.
     #[error("Cobs pack/unpack failed")]
     CobsError(corncobs::CobsError),
     /// The frame was too short to contain a version header.
@@ -282,6 +298,21 @@ where
     in_type: PhantomData<I>,
     out_type: PhantomData<O>,
 }
+
+impl<const MTU: usize, I, O> core::fmt::Debug for MoteComms<MTU, I, O>
+where
+    I: DeserializeOwned,
+    O: Serialize,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("MoteComms")
+            .field("mtu", &MTU)
+            .field("buffered_transmits", &self.buffered_transmits.len())
+            .field("deserialization_buffer", &self.deserialization_buffer.len())
+            .finish()
+    }
+}
+
 impl<const MTU: usize, I, O> Default for MoteComms<MTU, I, O>
 where
     I: for<'de> Deserialize<'de>, // Input type
@@ -418,20 +449,20 @@ mod tests {
                     ssid: String::from("MyWifi"),
                     strength: 80,
                 }],
-                built_in_test: mote_to_host::BITCollection {
-                    power: vec![mote_to_host::BIT {
+                built_in_test: mote_to_host::BitCollection {
+                    power: vec![mote_to_host::Bit {
                         name: String::from("battery"),
-                        result: mote_to_host::BITResult::Pass,
+                        result: mote_to_host::BitResult::Pass,
                     }],
                     wifi: vec![],
-                    lidar: vec![mote_to_host::BIT {
+                    lidar: vec![mote_to_host::Bit {
                         name: String::from("lidar_init"),
-                        result: mote_to_host::BITResult::Waiting,
+                        result: mote_to_host::BitResult::Waiting,
                     }],
                     imu: vec![],
-                    encoders: vec![mote_to_host::BIT {
+                    encoders: vec![mote_to_host::Bit {
                         name: String::from("left_enc"),
-                        result: mote_to_host::BITResult::Fail,
+                        result: mote_to_host::BitResult::Fail,
                     }],
                 },
             })),
@@ -450,7 +481,7 @@ mod tests {
                     password: String::from("hunter2"),
                 },
             ),
-            host_to_mote::Message::SetUID(host_to_mote::SetUID {
+            host_to_mote::Message::SetUid(host_to_mote::SetUid {
                 uid: String::from("mote-abc"),
             }),
             host_to_mote::Message::SetDriveBaseVelocity(host_to_mote::SetDriveBaseVelocity {
