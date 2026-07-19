@@ -4,4 +4,4 @@ tasks:
   default:
     silent: true
     cmds:
-      - task --list
+      - task --list-all

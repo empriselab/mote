@@ -24,7 +24,7 @@ tasks:
   default:
     silent: true
     cmds:
-      - task --list
+      - task --list-all
 
   ci:
     desc: Run the full CI suite
