@@ -88,25 +88,65 @@ tasks:
 
   release-build-cxx-linux:
     desc: >-
-      Build the C++ static library for Linux using cargo-zigbuild targeting glibc 2.17 for broad
-      compatibility. Requires cargo-zigbuild and zig to be installed.
-      Output: target/x86_64-unknown-linux-gnu/release/libmote_ffi.a
+      Build the C++ static library for Linux x86_64, natively inside a manylinux_2_28 (AlmaLinux 8,
+      glibc 2.28) container with gcc-toolset-9 enabled. Output: target/release/libmote_ffi.a
     cmds:
-      - cargo zigbuild --release --no-default-features --features cxx_ffi --target x86_64-unknown-linux-gnu.2.17
+      - |
+        docker run --rm --platform linux/amd64 \
+          -v "$(pwd)/..":/src -w /src/mote-ffi \
+          quay.io/pypa/manylinux_2_28_x86_64 bash -c '
+            set -e
+            dnf install -y -q gcc-toolset-9-gcc-c++
+            source /opt/rh/gcc-toolset-9/enable
+            curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
+            source "$HOME/.cargo/env"
+            cargo build --release --no-default-features --features cxx_ffi
+          '
 
   release-package-cxx-linux:
     desc: >-
-      Build and package the C++ static library for Linux, cxx-generated headers, and schemas into
-      a release tarball. Output: dist/mote-ffi-cxx-linux-x86_64-v<version>.tar.gz
+      Build and package the C++ static library for Linux x86_64, cxx-generated headers, and schemas
+      into a release tarball. Output: dist/mote-ffi-cxx-linux-x86_64-v<version>.tar.gz
     deps: [release-build-cxx-linux]
     cmds:
       - |
         VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
         mkdir -p dist dist/_pkg/include dist/_pkg/schemas
-        cp target/x86_64-unknown-linux-gnu/release/libmote_ffi.a dist/_pkg/
+        cp target/release/libmote_ffi.a dist/_pkg/
         cp -r include/. dist/_pkg/include/
         cp schemas/*.json dist/_pkg/schemas/
         tar -czf dist/mote-ffi-cxx-linux-x86_64-v${VERSION}.tar.gz -C dist/_pkg .
+        rm -rf dist/_pkg
+
+  release-build-cxx-linux-aarch64:
+    desc: >-
+      Build the C++ static library for Linux aarch64. Output: target/release/libmote_ffi.a
+    cmds:
+      - |
+        docker run --rm --platform linux/arm64 \
+          -v "$(pwd)/..":/src -w /src/mote-ffi \
+          quay.io/pypa/manylinux_2_28_aarch64 bash -c '
+            set -e
+            dnf install -y -q gcc-toolset-9-gcc-c++
+            source /opt/rh/gcc-toolset-9/enable
+            curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
+            source "$HOME/.cargo/env"
+            cargo build --release --no-default-features --features cxx_ffi
+          '
+
+  release-package-cxx-linux-aarch64:
+    desc: >-
+      Build and package the C++ static library for Linux aarch64, cxx-generated headers, and
+      schemas into a release tarball. Output: dist/mote-ffi-cxx-linux-aarch64-v<version>.tar.gz
+    deps: [release-build-cxx-linux-aarch64]
+    cmds:
+      - |
+        VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+        mkdir -p dist dist/_pkg/include dist/_pkg/schemas
+        cp target/release/libmote_ffi.a dist/_pkg/
+        cp -r include/. dist/_pkg/include/
+        cp schemas/*.json dist/_pkg/schemas/
+        tar -czf dist/mote-ffi-cxx-linux-aarch64-v${VERSION}.tar.gz -C dist/_pkg .
         rm -rf dist/_pkg
 
   release-build-cxx-macos:
