@@ -33,6 +33,9 @@ fn generate_header() {
 
     std::fs::create_dir_all(out.parent().unwrap()).unwrap();
 
+    println!("cargo:rerun-if-changed=cbindgen.toml");
+    println!("cargo:rerun-if-changed=src");
+
     let config = cbindgen::Config::from_file(format!("{crate_dir}/cbindgen.toml"))
         .expect("Failed to read cbindgen.toml");
 
