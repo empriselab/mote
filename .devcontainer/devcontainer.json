@@ -1,0 +1,19 @@
+{
+    "name": "mote-core",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "dev",
+    "workspaceFolder": "/workspaces/mote-core",
+    "remoteUser": "vscode",
+    "postCreateCommand": "cd mote-firmware && rustup show && cd .. && task --list-all",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "rust-lang.rust-analyzer",
+                "svelte.svelte-vscode",
+                "ms-python.python",
+                "charliermarsh.ruff",
+                "tamasfe.even-better-toml"
+            ]
+        }
+    }
+}

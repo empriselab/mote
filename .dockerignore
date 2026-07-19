@@ -1,0 +1,12 @@
+.git
+
+**/target
+**/node_modules
+**/.vite
+**/dist
+**/__pycache__
+mote-book/book
+
+**/*.uf2
+**/*.pyd
+**/*.pdb
