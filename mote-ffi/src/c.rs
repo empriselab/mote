@@ -23,12 +23,6 @@ struct ErrorPayload<'a> {
 }
 
 /// Converts a caller-provided buffer length to `usize`, rejecting negative values.
-///
-/// `buf_len` arrives as a signed `c_int` from C callers. Casting a negative value
-/// straight to `usize` wraps it into a huge number, silently defeating every
-/// "buffer too small" bounds check below it and enabling out-of-bounds reads/writes
-/// through `copy_nonoverlapping`/`slice::from_raw_parts`. Every function that turns
-/// `buf_len` into a `usize` must go through this first.
 fn checked_buf_len(buf_len: c_int) -> Option<usize> {
     usize::try_from(buf_len).ok()
 }

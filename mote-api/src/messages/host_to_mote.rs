@@ -33,9 +33,9 @@ pub struct SetUid {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct SetDriveBaseVelocity {
     /// Left wheel angular velocity, in radians/second.
-    pub left_velocity_rad: f32,
+    pub left_velocity_rad_per_s: f32,
     /// Right wheel angular velocity, in radians/second.
-    pub right_velocity_rad: f32,
+    pub right_velocity_rad_per_s: f32,
 }
 
 /// A message sent from the host to Mote.

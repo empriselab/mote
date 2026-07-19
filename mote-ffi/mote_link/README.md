@@ -27,7 +27,7 @@ async def main():
         await mote.connect()
 
         # Drive both wheels forward.
-        await mote.send(SetDriveBaseVelocity(left_velocity_rad=1.0, right_velocity_rad=1.0))
+        await mote.send(SetDriveBaseVelocity(left_velocity_rad_per_s=1.0, right_velocity_rad_per_s=1.0))
 
         # Read messages from the robot.
         message = await mote.recv()

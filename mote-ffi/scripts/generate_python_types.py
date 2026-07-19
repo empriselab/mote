@@ -1,39 +1,11 @@
 #!/usr/bin/env python3
-"""Generates mote_link/_generated.py from mote-ffi's JSON schemas.
-
-Mirrors mote-configuration/scripts/generate-types.mjs, which generates
-TypeScript types from the same schemas — this is the Python equivalent, plus
-a generic wire (de)serializer driven by the same class-name-is-the-wire-tag
-convention used to build the message unions below. That's what actually
-prevents drift: there's no hand-written per-variant branch to forget to
-update when a Rust message variant is added, removed, or renamed.
-
-Every JSON Schema `oneOf` in mote-api's messages is one of two shapes:
-
-  - Pure enum: every branch is `{"type": "string", "const": "Foo"}`. Becomes
-    a Python `Enum`.
-  - Tagged union: a mix of those unit (const-string) branches and data
-    branches shaped `{"type": "object", "properties": {"Foo": <schema>}}`
-    (serde's adjacently-tagged representation for enum variants). Each unit
-    branch becomes an empty dataclass; each data branch becomes either the
-    referenced struct's own dataclass directly (when the branch's payload is
-    a struct — Rust's convention here is that the variant and its payload
-    struct share a name, e.g. `SetUid(SetUid)`) or, when the payload isn't a
-    struct (e.g. `Scan(Vec<Point>)`), a single-field "newtype" dataclass
-    whose one field is always named `value` and whose wire form is the bare
-    payload, not `{"value": ...}`.
-
-Both message roots (`HostToMoteMessage`, `MoteToHostMessage`) are tagged
-unions in this same sense, so the same code generates them.
-"""
+"""Generates mote_link/_generated.py from mote-ffi's JSON schemas."""
 
 from __future__ import annotations
 
 import json
 import re
-import sys
 from pathlib import Path
-from typing import Any
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 SCHEMAS_DIR = SCRIPT_DIR.parent / "schemas"

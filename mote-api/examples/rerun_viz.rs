@@ -136,9 +136,6 @@ fn main() -> anyhow::Result<()> {
                             )
                             .unwrap();
                         }
-                        // `Message` is #[non_exhaustive]: this example only visualizes lidar
-                        // scans, so other message types (including any added later) are just
-                        // logged rather than causing a panic.
                         other => {
                             println!("Ignoring unhandled message: {other:?}");
                         }

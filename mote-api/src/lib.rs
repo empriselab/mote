@@ -170,17 +170,9 @@ const fn parse_u16(s: &str) -> u16 {
 #[non_exhaustive]
 pub enum Error {
     /// The message body failed to encode or decode.
-    ///
-    /// Stored as a rendered message rather than the original [`postcard::Error`]:
-    /// postcard's `Error` only implements `core::error::Error` behind its `std`
-    /// feature, which this `no_std` crate doesn't enable, so it can't be used as
-    /// an [`Error::source`] here.
     #[error("message decode failed: {0}")]
     DecodeError(alloc::string::String),
     /// COBS framing failed to encode or decode.
-    ///
-    /// Same caveat as [`DecodeError`](Error::DecodeError): `corncobs::CobsError`
-    /// only implements `core::error::Error` behind its `std` feature.
     #[error("Cobs pack/unpack failed")]
     CobsError(corncobs::CobsError),
     /// The frame was too short to contain a version header.
@@ -485,8 +477,8 @@ mod tests {
                 uid: String::from("mote-abc"),
             }),
             host_to_mote::Message::SetDriveBaseVelocity(host_to_mote::SetDriveBaseVelocity {
-                left_velocity_rad: 1.5,
-                right_velocity_rad: -1.5,
+                left_velocity_rad_per_s: 1.5,
+                right_velocity_rad_per_s: -1.5,
             }),
         ]
     }

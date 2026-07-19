@@ -7,7 +7,7 @@ import rerun as rr
 import rerun.blueprint as rrb
 from pyglet.window import key
 
-from mote_link.link import (
+from mote_link import (
     DriveBaseState,
     ImuMeasurement,
     MoteClient,
@@ -296,8 +296,8 @@ async def run_main():
 
                 await client.send(
                     SetDriveBaseVelocity(
-                        left_velocity_rad=left,
-                        right_velocity_rad=right,
+                        left_velocity_rad_per_s=left,
+                        right_velocity_rad_per_s=right,
                     )
                 )
                 rr.log("drive_base/left/velocity_command_rad_per_s", rr.Scalars(left))
@@ -313,7 +313,9 @@ async def run_main():
             await asyncio.gather(recv_task, return_exceptions=True)
             # Make sure the rover stops when we exit.
             await client.send(
-                SetDriveBaseVelocity(left_velocity_rad=0.0, right_velocity_rad=0.0)
+                SetDriveBaseVelocity(
+                    left_velocity_rad_per_s=0.0, right_velocity_rad_per_s=0.0
+                )
             )
             joystick.close()
 

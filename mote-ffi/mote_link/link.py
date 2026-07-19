@@ -10,9 +10,6 @@ import json
 import logging
 import socket
 
-# `__all__` in _generated.py covers every message type plus to_wire_json/from_wire_json;
-# this re-exports all of it so `from mote_link.link import Ping, SetUid, ...` keeps working.
-from mote_link._generated import *  # noqa: F401,F403
 from mote_link._generated import (
     HostToMoteMessage,
     MoteToHostMessage,
@@ -225,9 +222,6 @@ class MoteClient:
             try:
                 message_json = self._link.poll_receive()
             except ValueError as e:
-                # Raised by the mote_ffi extension (as a plain ValueError, not
-                # OSError -- see src/python.rs) when a packet fails to decode
-                # at the mote-api layer (bad framing, version mismatch, etc).
                 _logger.warning("Discarded undecodable message from Mote: %s", e)
                 continue
             if message_json is not None:

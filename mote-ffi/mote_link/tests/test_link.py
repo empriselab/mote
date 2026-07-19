@@ -58,11 +58,13 @@ class TestHostToMoteEncoding:
         }
 
     def test_drive_base_command(self):
-        msg = SetDriveBaseVelocity(left_velocity_rad=1.5, right_velocity_rad=-0.5)
+        msg = SetDriveBaseVelocity(
+            left_velocity_rad_per_s=1.5, right_velocity_rad_per_s=-0.5
+        )
         assert json.loads(to_wire_json(msg)) == {
             "SetDriveBaseVelocity": {
-                "left_velocity_rad": 1.5,
-                "right_velocity_rad": -0.5,
+                "left_velocity_rad_per_s": 1.5,
+                "right_velocity_rad_per_s": -0.5,
             }
         }
 
@@ -86,7 +88,9 @@ class TestRoundTrip:
         assert from_wire_json(to_wire_json(msg), HostToMoteMessage) == msg
 
     def test_set_drive_base_velocity_round_trip(self):
-        msg = SetDriveBaseVelocity(left_velocity_rad=1.5, right_velocity_rad=-0.5)
+        msg = SetDriveBaseVelocity(
+            left_velocity_rad_per_s=1.5, right_velocity_rad_per_s=-0.5
+        )
         assert from_wire_json(to_wire_json(msg), HostToMoteMessage) == msg
 
     def test_scan_points_preserved(self):

@@ -259,8 +259,8 @@ async fn motor_task(
                 watchdog_deadline = Instant::now() + Duration::from_secs(WATCH_DOG_TIMEOUT);
                 // Handle the command
                 sleep.set_high();
-                left_motor.set_setpoint_rad_per_s(-command.left_velocity_rad);
-                right_motor.set_setpoint_rad_per_s(command.right_velocity_rad);
+                left_motor.set_setpoint_rad_per_s(-command.left_velocity_rad_per_s);
+                right_motor.set_setpoint_rad_per_s(command.right_velocity_rad_per_s);
             }
         }
     }
