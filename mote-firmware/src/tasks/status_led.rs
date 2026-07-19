@@ -6,7 +6,7 @@ use embassy_rp::pio::Pio;
 use embassy_rp::pio_programs::ws2812::PioWs2812Program;
 use embassy_time::{Duration, Timer};
 use led_driver::{LedDriver, colors};
-use mote_api::messages::mote_to_host::{BITList, BITResult};
+use mote_api::messages::mote_to_host::{BitList, BitResult};
 // use smart_leds::brightness;
 use static_cell::StaticCell;
 
@@ -32,16 +32,16 @@ enum LedState {
     Fail,
 }
 
-fn worst_result(results: &BITList) -> LedState {
+fn worst_result(results: &BitList) -> LedState {
     if results.is_empty() {
         return LedState::Uninitialised;
     }
     let mut state = LedState::Pass;
     for bit in results.iter() {
         match bit.result {
-            BITResult::Fail => return LedState::Fail,
-            BITResult::Waiting => state = LedState::Waiting,
-            BITResult::Pass => {}
+            BitResult::Fail => return LedState::Fail,
+            BitResult::Waiting => state = LedState::Waiting,
+            BitResult::Pass => {}
         }
     }
     state

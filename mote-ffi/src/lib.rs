@@ -1,4 +1,4 @@
-//! Foreign function interfaces for Python and TypeScript (WASM)
+//! Foreign function interfaces for Python, TypeScript (WASM), and C++
 
 use std::marker::PhantomData;
 use std::string::String;
@@ -15,8 +15,8 @@ pub mod python;
 #[cfg(feature = "wasm_ffi")]
 pub mod wasm;
 
-#[cfg(feature = "c_ffi")]
-pub mod c;
+#[cfg(feature = "cxx_ffi")]
+pub mod mote_cxx;
 
 /// Error type
 #[derive(Error, Debug)]
@@ -196,14 +196,14 @@ mod tests {
         let mut host_ffi = make_host_ffi();
         let mut mote = HostLink::new();
 
-        host_ffi.send(r#"{"SetUID":{"uid":"mote-abc"}}"#).unwrap();
+        host_ffi.send(r#"{"SetUid":{"uid":"mote-abc"}}"#).unwrap();
         let packet_json = host_ffi.poll_transmit().unwrap().unwrap();
         mote.handle_receive(&extract_payload(&packet_json));
 
         let received = mote.poll_receive().unwrap().unwrap();
         assert_eq!(
             received,
-            host_to_mote::Message::SetUID(host_to_mote::SetUID {
+            host_to_mote::Message::SetUid(host_to_mote::SetUid {
                 uid: "mote-abc".into()
             })
         );

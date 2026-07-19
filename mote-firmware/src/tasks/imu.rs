@@ -5,23 +5,23 @@ use lsm6ds33::{
     AccelerometerOutput, AccelerometerScale, Error as ImuError, GyroscopeFullScale, GyroscopeOutput, Lsm6ds33Async,
 };
 use mote_api::messages::mote_to_host;
-use mote_api::messages::mote_to_host::{BIT, BITResult, IMUAxisTriple, IMUMeasurement};
+use mote_api::messages::mote_to_host::{Bit, BitResult, ImuAxisTriple, ImuMeasurement};
 
 use super::{ImuResources, Irqs};
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
 use crate::wifi::DATA_OFFLOAD_CHANNEL;
 
-// NUMBER OF MISSED IMU READS IN A ROW BEFORE WE FLAG A BIT FAILURE
+// NUMBER OF MISSED IMU READS IN A ROW BEFORE WE FLAG A Bit FAILURE
 const MISSED_READ_THRESHOLD: u8 = 10;
 const INVALID_TEMPERATURE: f32 = 25.0; // value returned by get_sensor_data on read failure 
 // (MUST be 25.0 since imu.read_all() may not return an error but just return 0
 // for all values, in this case the temp is read as 25)
 
-fn default_measurement() -> IMUMeasurement {
-    IMUMeasurement {
-        accel: IMUAxisTriple { x: 0.0, y: 0.0, z: 0.0 },
-        gyro: IMUAxisTriple { x: 0.0, y: 0.0, z: 0.0 },
+fn default_measurement() -> ImuMeasurement {
+    ImuMeasurement {
+        accel: ImuAxisTriple { x: 0.0, y: 0.0, z: 0.0 },
+        gyro: ImuAxisTriple { x: 0.0, y: 0.0, z: 0.0 },
     }
 }
 
@@ -31,27 +31,27 @@ fn default_measurement() -> IMUMeasurement {
 // rate).
 pub async fn get_sensor_data(
     imu: &mut Lsm6ds33Async<I2c<'static, I2C1, embassy_rp::i2c::Async>>,
-) -> Option<(f32, IMUMeasurement)> {
+) -> Option<(f32, ImuMeasurement)> {
     match (imu.accel_data_available().await, imu.gyro_data_available().await) {
         (Ok(false), Ok(_)) | (Ok(_), Ok(false)) => None,
         (Ok(true), Ok(true)) => Some(match imu.read_all().await {
             Ok((temperature, gyro_tuple, accel_tuple)) => {
-                // Map the accelerometer tuple (f32, f32, f32) to IMUAxisTriple
-                let accel = IMUAxisTriple {
+                // Map the accelerometer tuple (f32, f32, f32) to ImuAxisTriple
+                let accel = ImuAxisTriple {
                     x: accel_tuple.0,
                     y: accel_tuple.1,
                     z: accel_tuple.2,
                 };
 
-                // Map the gyroscope tuple (f32, f32, f32) to IMUAxisTriple
-                let gyro = IMUAxisTriple {
+                // Map the gyroscope tuple (f32, f32, f32) to ImuAxisTriple
+                let gyro = ImuAxisTriple {
                     x: gyro_tuple.0,
                     y: gyro_tuple.1,
                     z: gyro_tuple.2,
                 };
 
                 // Return the temperature and the combined measurement
-                (temperature, IMUMeasurement { accel, gyro })
+                (temperature, ImuMeasurement { accel, gyro })
             }
             // Default error case
             Err(_) => (INVALID_TEMPERATURE, default_measurement()), // invalid temperature to indicate error
@@ -70,9 +70,9 @@ async fn imu_task(r: ImuResources) {
     // Sensor Reading loop
     loop {
         if let Some((temp, measurement)) = get_sensor_data(&mut imu).await {
-            let _ = DATA_OFFLOAD_CHANNEL.try_send(mote_to_host::Message::IMUMeasurement(measurement));
+            let _ = DATA_OFFLOAD_CHANNEL.try_send(mote_to_host::Message::ImuMeasurement(measurement));
 
-            // get sensor data errored, update BIT and log, and missed read count
+            // get sensor data errored, update Bit and log, and missed read count
             if temp == INVALID_TEMPERATURE {
                 missed_read_count += 1;
                 defmt::error!(
@@ -85,10 +85,10 @@ async fn imu_task(r: ImuResources) {
                         update_bit_result(
                             &mut configuration_state.built_in_test.imu,
                             "Reading Values",
-                            BITResult::Fail,
+                            BitResult::Fail,
                         );
                     }
-                    // waiting here for a few seconds to allow the BIT state to be observed as
+                    // waiting here for a few seconds to allow the Bit state to be observed as
                     // failed before attempting recovery
                     embassy_time::Timer::after_secs(5).await;
 
@@ -130,8 +130,8 @@ async fn reset_imu(
                         defmt::info!("IMU Initialized and Configured");
                         {
                             let mut state = CONFIGURATION_STATE.lock().await;
-                            update_bit_result(&mut state.built_in_test.imu, "Init", BITResult::Pass);
-                            update_bit_result(&mut state.built_in_test.imu, "Reading Values", BITResult::Pass);
+                            update_bit_result(&mut state.built_in_test.imu, "Init", BitResult::Pass);
+                            update_bit_result(&mut state.built_in_test.imu, "Reading Values", BitResult::Pass);
                         }
                         return driver;
                     }
@@ -158,7 +158,7 @@ async fn reset_imu(
 
         {
             let mut state = CONFIGURATION_STATE.lock().await;
-            update_bit_result(&mut state.built_in_test.imu, "Init", BITResult::Fail);
+            update_bit_result(&mut state.built_in_test.imu, "Init", BitResult::Fail);
         }
 
         defmt::warn!("IMU recovery: Retrying in 5 seconds...");
@@ -170,13 +170,13 @@ pub async fn init(spawner: Spawner, r: ImuResources) {
     // setup bit state for config page
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        let init_bit = BIT {
+        let init_bit = Bit {
             name: "Init".into(),
-            result: BITResult::Waiting,
+            result: BitResult::Waiting,
         };
-        let health_bit = BIT {
+        let health_bit = Bit {
             name: "Reading Values".into(),
-            result: BITResult::Waiting,
+            result: BitResult::Waiting,
         };
         configuration_state.built_in_test.imu.push(init_bit);
         configuration_state.built_in_test.imu.push(health_bit);

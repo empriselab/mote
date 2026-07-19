@@ -7,7 +7,6 @@ use embassy_rp::peripherals::FLASH;
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::mutex::Mutex;
 use mote_api::messages::host_to_mote::SetNetworkConnectionConfig;
-use serde::{Deserialize, Serialize};
 
 const FLASH_SIZE: usize = 2 * 1024 * 1024;
 const CONFIG_OFFSET: u32 = (FLASH_SIZE - ERASE_SIZE) as u32;
@@ -18,16 +17,30 @@ const SCRATCH_SIZE: usize = ERASE_SIZE;
 
 const MAX_SAVED_WIFI_NETWORKS: usize = 3;
 
-/// All data persisted to flash. Add fields here (with `#[serde(default)]`) as
-/// new configuration categories are introduced (e.g. IMU biases).
-#[derive(Serialize, Deserialize, Default)]
+/// All data persisted to flash. Fields are encoded in this fixed order. Add new
+/// fields only at the end of `to_bytes`/`from_bytes`, and only remove fields
+/// from the end.
+#[non_exhaustive]
+#[derive(Default)]
 struct StoredConfig {
     /// Saved WiFi networks, most recently connected first.
-    #[serde(default)]
     wifi: Vec<SetNetworkConnectionConfig>,
     /// User-assigned device identifier.
-    #[serde(default)]
     uid: Option<String>,
+}
+
+impl StoredConfig {
+    fn to_bytes(&self) -> Vec<u8> {
+        let mut buf = postcard::to_allocvec(&self.wifi).expect("StoredConfig serialization failed");
+        buf.extend(postcard::to_allocvec(&self.uid).expect("StoredConfig serialization failed"));
+        buf
+    }
+
+    fn from_bytes(data: &[u8]) -> Option<Self> {
+        let (wifi, data) = postcard::take_from_bytes(data).ok()?;
+        let (uid, _) = postcard::take_from_bytes(data).ok()?;
+        Some(Self { wifi, uid })
+    }
 }
 
 struct FlashConfig {
@@ -56,12 +69,12 @@ pub async fn load_wifi() -> Vec<SetNetworkConnectionConfig> {
         .unwrap_or_default()
 }
 
-/// Load the saved UID from flash, if any.
+/// Load the saved Uid from flash, if any.
 pub async fn load_uid() -> Option<String> {
     FLASH_CONFIG.lock().await.as_mut()?.load_uid()
 }
 
-/// Save the UID to flash.
+/// Save the Uid to flash.
 pub async fn save_uid(uid: String) {
     if let Some(config) = FLASH_CONFIG.lock().await.as_mut() {
         config.save_uid(uid);
@@ -99,11 +112,11 @@ impl FlashConfig {
             .blocking_read(CONFIG_OFFSET + HEADER_SIZE as u32, &mut self.scratch[..data_len])
             .ok()?;
 
-        bitcode::deserialize(&self.scratch[..data_len]).ok()
+        StoredConfig::from_bytes(&self.scratch[..data_len])
     }
 
     fn save(&mut self, config: StoredConfig) {
-        let encoded = bitcode::serialize(&config).expect("StoredConfig serialization failed");
+        let encoded = config.to_bytes();
 
         if encoded.len() > SCRATCH_SIZE - HEADER_SIZE {
             defmt::error!("flash_config: encoded size {} exceeds scratch buffer", encoded.len());

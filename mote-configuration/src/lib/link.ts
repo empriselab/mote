@@ -110,7 +110,7 @@ async function write() {
 export async function set_uid(uid: string, error_handler: () => void) {
     if (uid.length > 3) {
         try {
-            const msg: HostToMoteMessage = { SetUID: { uid } };
+            const msg: HostToMoteMessage = { SetUid: { uid } };
             link.send(msg);
             await write();
         } catch (error) {

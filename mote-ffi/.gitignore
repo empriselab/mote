@@ -1,2 +1,3 @@
 include/*
 schemas/*
+mote_link/_generated.py

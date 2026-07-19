@@ -5,7 +5,7 @@ use embassy_rp::pio::{Instance, Pio};
 use embassy_rp::pwm::SetDutyCycle;
 use embassy_rp::{gpio, pwm};
 use embassy_time::{Duration, Instant, Ticker, Timer};
-use mote_api::messages::mote_to_host::{BIT, BITResult, DriveBaseState, Message, WheelJointState};
+use mote_api::messages::mote_to_host::{Bit, BitResult, DriveBaseState, Message, WheelJointState};
 use pid::Pid;
 
 use crate::helpers::update_bit_result;
@@ -44,7 +44,7 @@ const LEFT_ENCODER_BIT: &str = "Left Wheel";
 const RIGHT_ENCODER_BIT: &str = "Right Wheel";
 
 /// Update the result of one of the encoder built-in-test checks.
-async fn set_encoder_bit(name: &'static str, result: BITResult) {
+async fn set_encoder_bit(name: &'static str, result: BitResult) {
     let mut configuration_state = CONFIGURATION_STATE.lock().await;
     update_bit_result(&mut configuration_state.built_in_test.encoders, name, result);
 }
@@ -59,13 +59,14 @@ struct Motor<'d, T: SetDutyCycle, P: Instance, const SM: usize> {
     bridge: PwmBridge<T>,
     pio_encoder: PioEncoder<'d, P, SM>,
     pid: Pid<f32>,
+    invert: bool,
 
     encoder_value: i32,
     pub joint_state: WheelJointState,
 }
 
 impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
-    fn new(bridge: PwmBridge<T>, encoder: PioEncoder<'d, P, SM>) -> Self {
+    fn new(bridge: PwmBridge<T>, encoder: PioEncoder<'d, P, SM>, invert: bool) -> Self {
         let ouput_limit = 100. - MOTOR_DEADBAND_PERCENT as f32;
         let pid = *Pid::<f32>::new(0., ouput_limit).p(8.0, ouput_limit).i(2.0, ouput_limit);
 
@@ -74,6 +75,7 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
             pio_encoder: encoder,
             pid,
             encoder_value: 0,
+            invert,
             joint_state: WheelJointState {
                 effort_percent: 0.0,
                 velocity_rad_per_s: 0.0,
@@ -91,14 +93,15 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
     /// set_setpoint
     async fn step(&mut self, dt_ms: u64) {
         let dt = dt_ms as f32 / 1000.;
+        let inversion_coefficient = if self.invert { -1 } else { 1 };
 
         // Calculate rotation delta as pulses per second
         let last_encoder_read = self.encoder_value;
-        self.encoder_value = self.pio_encoder.read().await;
+        self.encoder_value = inversion_coefficient * -self.pio_encoder.read().await;
         let measurement = encoder_pulses_to_rad(self.encoder_value - last_encoder_read);
 
         // Get the PID output accounting for the motor deadband
-        let control_output = self.pid.next_control_output(measurement / dt).output;
+        let control_output = inversion_coefficient as f32 * self.pid.next_control_output(measurement / dt).output;
         let deadband_adjusted_output = if control_output > 0. {
             control_output + MOTOR_DEADBAND_PERCENT as f32
         } else {
@@ -116,10 +119,9 @@ impl<'d, T: SetDutyCycle, P: Instance, const SM: usize> Motor<'d, T, P, SM> {
         }
 
         // Update the joint state
-        // Negated to convert rotation direction to right hand coordinate system
-        self.joint_state.position_rad = -(encoder_pulses_to_rad(self.encoder_value));
-        self.joint_state.velocity_rad_per_s = -(measurement / dt);
-        self.joint_state.effort_percent = -deadband_adjusted_output;
+        self.joint_state.position_rad = encoder_pulses_to_rad(self.encoder_value);
+        self.joint_state.velocity_rad_per_s = measurement / dt;
+        self.joint_state.effort_percent = deadband_adjusted_output;
     }
 }
 
@@ -167,11 +169,11 @@ async fn motor_task(
     );
     let (Some(left_a), Some(left_b)) = left_pwm.split() else {
         error!("Unable to init drive base PWM. Drive-base disabled.");
-        set_encoder_bit(ENCODER_INIT_BIT, BITResult::Fail).await;
+        set_encoder_bit(ENCODER_INIT_BIT, BitResult::Fail).await;
         return;
     };
-    let left_pwm_bridge = PwmBridge::new(left_b, left_a, 0);
-    let mut left_motor = Motor::new(left_pwm_bridge, left_encoder);
+    let left_pwm_bridge = PwmBridge::new(left_a, left_b, 0);
+    let mut left_motor = Motor::new(left_pwm_bridge, left_encoder, false);
 
     // Configure right wheel
     let right_encoder = PioEncoder::new(
@@ -189,17 +191,17 @@ async fn motor_task(
     );
     let (Some(right_a), Some(right_b)) = right_pwm.split() else {
         error!("Unable to init drive base PWM. Drive-base disabled.");
-        set_encoder_bit(ENCODER_INIT_BIT, BITResult::Fail).await;
+        set_encoder_bit(ENCODER_INIT_BIT, BitResult::Fail).await;
         return;
     };
-    let right_pwm_bridge = PwmBridge::new(right_b, right_a, 0);
-    let mut right_motor = Motor::new(right_pwm_bridge, right_encoder);
+    let right_pwm_bridge = PwmBridge::new(right_a, right_b, 0);
+    let mut right_motor = Motor::new(right_pwm_bridge, right_encoder, true);
 
     // Init sleep pin
     let mut sleep = gpio::Output::new(motor_driver_r.sleep, gpio::Level::High);
 
     // Both wheels configured successfully.
-    set_encoder_bit(ENCODER_INIT_BIT, BITResult::Pass).await;
+    set_encoder_bit(ENCODER_INIT_BIT, BitResult::Pass).await;
 
     // PID, telem and watchdog timers
     let mut pid_ticker = Ticker::every(Duration::from_millis(PID_CONTROL_LOOP_PERIOD_MS));
@@ -231,19 +233,19 @@ async fn motor_task(
 
                 // Mark each encoder check as passed once it reports a count.
                 if !left_counted && left_motor.encoder_value != 0 {
-                    set_encoder_bit(LEFT_ENCODER_BIT, BITResult::Pass).await;
+                    set_encoder_bit(LEFT_ENCODER_BIT, BitResult::Pass).await;
                     left_counted = true;
                 }
                 if !right_counted && right_motor.encoder_value != 0 {
-                    set_encoder_bit(RIGHT_ENCODER_BIT, BITResult::Pass).await;
+                    set_encoder_bit(RIGHT_ENCODER_BIT, BitResult::Pass).await;
                     right_counted = true;
                 }
             }
             embassy_futures::select::Either4::Second(_) => {
                 // Send a value to the data offload link
                 let _ = DATA_OFFLOAD_CHANNEL.try_send(Message::DriveBaseState(DriveBaseState {
-                    left: left_motor.joint_state.clone(),
-                    right: right_motor.joint_state.clone(),
+                    left: left_motor.joint_state,
+                    right: right_motor.joint_state,
                 }));
             }
             embassy_futures::select::Either4::Third(_) => {
@@ -259,8 +261,8 @@ async fn motor_task(
                 watchdog_deadline = Instant::now() + Duration::from_secs(WATCH_DOG_TIMEOUT);
                 // Handle the command
                 sleep.set_high();
-                left_motor.set_setpoint_rad_per_s(-command.left_velocity_rad);
-                right_motor.set_setpoint_rad_per_s(command.right_velocity_rad);
+                left_motor.set_setpoint_rad_per_s(command.left_velocity_rad_per_s);
+                right_motor.set_setpoint_rad_per_s(command.right_velocity_rad_per_s);
             }
         }
     }
@@ -276,9 +278,9 @@ pub async fn init(
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         for name in [ENCODER_INIT_BIT, LEFT_ENCODER_BIT, RIGHT_ENCODER_BIT] {
-            configuration_state.built_in_test.encoders.push(BIT {
+            configuration_state.built_in_test.encoders.push(Bit {
                 name: name.into(),
-                result: BITResult::Waiting,
+                result: BitResult::Waiting,
             });
         }
     }

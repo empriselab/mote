@@ -19,7 +19,7 @@ Attach the battery to your Mote. Place your Mote on the ground with enough space
 In the terminal of your choice, run the demo.
 
 ```bash
-uvx --from mote-link rerun-demo
+uvx --from 'mote-link[demo]' rerun-demo
 ```
 
 Follow the instructions in your terminal to select and connect to your Mote. 

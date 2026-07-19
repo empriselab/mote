@@ -1,9 +1,9 @@
-name: Release FFI C Library
+name: Release FFI C++ Library
 
 on:
   push:
     tags:
-      - 'mote-c-v*.*.*'
+      - 'mote-cxx-v*.*.*'
 
 env:
   CARGO_TERM_COLOR: always
@@ -13,16 +13,16 @@ defaults:
     shell: bash
 
 jobs:
-  release-ffi-c:
+  release-ffi-cxx:
     permissions:
       contents: write
     strategy:
       matrix:
         include:
           - os: ubuntu-latest
-            recipe: release-package-c-linux
+            recipe: release-package-cxx-linux
           - os: macos-latest
-            recipe: release-package-c-macos
+            recipe: release-package-cxx-macos
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
 
       - name: Check version matches tag
         run: |
-          TAG_VERSION="${GITHUB_REF_NAME#mote-c-v}"
+          TAG_VERSION="${GITHUB_REF_NAME#mote-cxx-v}"
           CRATE_VERSION=$(grep '^version' mote-ffi/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
           if [ "$TAG_VERSION" != "$CRATE_VERSION" ]; then
             echo "Error: Tag version ($TAG_VERSION) does not match crate version ($CRATE_VERSION)"

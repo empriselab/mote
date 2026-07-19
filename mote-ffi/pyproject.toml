@@ -4,10 +4,24 @@ version = "0.1.0"
 description = "Communicating with Mote"
 readme = "mote_link/README.md"
 requires-python = ">=3.8"
+license = { text = "MIT" }
+keywords = ["robotics", "embedded", "protocol"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "Topic :: Scientific/Engineering :: Robotics",
+]
 dependencies = [
     "zeroconf>=0.136",
-    "rerun-sdk>=0.21",
     "survey>=5.4",
+]
+
+[project.optional-dependencies]
+demo = [
+    "rerun-sdk>=0.21",
     "pyglet>=2.0",
 ]
 

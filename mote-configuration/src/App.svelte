@@ -2,12 +2,12 @@
     import { handle_telem_recv, mote_telem } from "./lib/shared.svelte";
     import { rescan, serial_connect } from "./lib/link";
     import { clear_errors } from "./lib/errors.svelte";
-    import type { ResultOfStringOrString } from "./lib/mote_api_types";
+    import type { ResultOfStringOr_ConnectionError } from "./lib/mote_api_types";
 
     // The connected SSID, or null when disconnected or the last attempt failed.
     // (Failures are surfaced to the user as a toast by handle_telem_recv.)
     function connected_ssid(
-        conn: ResultOfStringOrString | null | undefined,
+        conn: ResultOfStringOr_ConnectionError | null | undefined,
     ): string | null {
         return conn && "Ok" in conn ? conn.Ok : null;
     }

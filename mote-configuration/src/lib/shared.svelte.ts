@@ -1,4 +1,4 @@
-import type { MoteToHostMessage, State } from './mote_api_types';
+import type { ConnectionError, MoteToHostMessage, State } from './mote_api_types';
 import { push_error } from './errors.svelte';
 import { stop_connecting } from './connecting.svelte';
 
@@ -8,6 +8,11 @@ interface MoteTelem {
 
 export let mote_telem: MoteTelem = $state({ latest: {} });
 
+function connection_error_message(err: ConnectionError): string {
+    if (err === 'Timeout') return 'Connection attempt timed out';
+    if (err === 'AuthOrRefused') return 'Failed to join the network (incorrect password or the network refused the connection)';
+    return err.Other;
+}
 
 export function handle_telem_recv(telem: MoteToHostMessage) {
     if (telem !== null && typeof telem === 'object' && 'State' in telem) {
@@ -19,11 +24,12 @@ export function handle_telem_recv(telem: MoteToHostMessage) {
 
         const current = mote_telem.latest.current_network_connection;
         if (current && 'Err' in current) {
-            const previous_error =
-                previous && 'Err' in previous ? previous.Err : null;
-            if (current.Err !== previous_error) {
+            const current_message = connection_error_message(current.Err);
+            const previous_message =
+                previous && 'Err' in previous ? connection_error_message(previous.Err) : null;
+            if (current_message !== previous_message) {
                 // A newly-failed attempt: alert the user and end the spinner.
-                push_error('Failed to connect to network:\n' + current.Err);
+                push_error('Failed to connect to network:\n' + current_message);
                 stop_connecting();
             }
         } else if (current && 'Ok' in current) {

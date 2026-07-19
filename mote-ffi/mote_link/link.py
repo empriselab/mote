@@ -9,9 +9,13 @@ import ipaddress
 import json
 import logging
 import socket
-from dataclasses import dataclass
-from enum import Enum
-from typing import Union
+
+from mote_link._generated import (
+    HostToMoteMessage,
+    MoteToHostMessage,
+    from_wire_json,
+    to_wire_json,
+)
 
 
 UDP_PORT = 7475
@@ -19,237 +23,16 @@ UDP_PORT = 7475
 _logger = logging.getLogger(__name__)
 
 
-class MoteConnectionError(Exception):
+class MoteError(Exception):
+    """Base class for all errors raised by mote_link."""
+
+
+class MoteConnectionError(MoteError):
     """Raised when a connection attempt to Mote fails."""
 
 
-# Message types
-@dataclass
-class LidarPoint:
-    quality: int
-    angle_rad: float
-    distance_mm: float
-
-
-@dataclass
-class NetworkConnection:
-    ssid: str
-    strength: int  # rssi
-
-
-@dataclass
-class NetworkConnected:
-    ssid: str
-
-
-@dataclass
-class NetworkConnectionFailed:
-    reason: str
-
-
-# Result of the most recent network connection attempt: either connected to a
-# network, or the last attempt failed with a human-readable reason. A value of
-# `None` means idle or a connection is in progress.
-NetworkConnectionResult = Union[NetworkConnected, NetworkConnectionFailed]
-
-
-class BITResult(Enum):
-    Waiting = "Waiting"
-    Pass = "Pass"
-    Fail = "Fail"
-
-
-@dataclass
-class BIT:
-    name: str
-    result: BITResult
-
-
-@dataclass
-class BITCollection:
-    power: list[BIT]
-    wifi: list[BIT]
-    lidar: list[BIT]
-    imu: list[BIT]
-    encoders: list[BIT]
-
-
-@dataclass
-class MoteState:
-    uid: str
-    ip: str | None
-    current_network_connection: NetworkConnectionResult | None
-    available_network_connections: list[NetworkConnection]
-    built_in_test: BITCollection
-
-
-@dataclass
-class Ping:
-    pass
-
-
-@dataclass
-class Pong:
-    pass
-
-
-@dataclass
-class RequestNetworkScan:
-    pass
-
-
-@dataclass
-class SetNetworkConnectionConfig:
-    ssid: str
-    password: str
-
-
-@dataclass
-class SetUID:
-    uid: str
-
-
-@dataclass
-class WheelJointState:
-    effort_percent: float
-    velocity_rad_per_s: float
-    position_rad: float
-
-
-@dataclass
-class DriveBaseState:
-    left: WheelJointState
-    right: WheelJointState
-
-
-@dataclass
-class IMUAxisTriple:
-    x: float
-    y: float
-    z: float
-
-
-@dataclass
-class IMUMeasurement:
-    accel: IMUAxisTriple
-    gyro: IMUAxisTriple
-
-
-@dataclass
-class SetDriveBaseVelocity:
-    left_velocity_rad: float
-    right_velocity_rad: float
-
-
-@dataclass
-class Scan:
-    points: list[LidarPoint]
-
-
-@dataclass
-class State:
-    data: MoteState
-
-
-# Union of all messages the host can send to Mote
-HostMessage = Union[
-    Ping,
-    Pong,
-    RequestNetworkScan,
-    SetNetworkConnectionConfig,
-    SetUID,
-    SetDriveBaseVelocity,
-]
-
-# Union of all messages Mote can send to the host
-MoteMessage = Union[Ping, Pong, Scan, DriveBaseState, IMUMeasurement, State]
-
-
-# Converts mote_ffi json based messages into Python native types
-def _serialize_host_message(msg: HostMessage) -> str:
-    if isinstance(msg, Ping):
-        return json.dumps("Ping")
-    if isinstance(msg, Pong):
-        return json.dumps("Pong")
-    if isinstance(msg, RequestNetworkScan):
-        return json.dumps("RequestNetworkScan")
-    if isinstance(msg, SetNetworkConnectionConfig):
-        return json.dumps(
-            {"SetNetworkConnectionConfig": {"ssid": msg.ssid, "password": msg.password}}
-        )
-    if isinstance(msg, SetUID):
-        return json.dumps({"SetUID": {"uid": msg.uid}})
-    if isinstance(msg, SetDriveBaseVelocity):
-        return json.dumps(
-            {
-                "DriveBaseCommand": {
-                    "left_velocity_rad": msg.left_velocity_rad,
-                    "right_velocity_rad": msg.right_velocity_rad,
-                }
-            }
-        )
-    raise TypeError(f"Unknown host message type: {type(msg)}")
-
-
-# Parses the serialized `Option<Result<String, String>>` network connection
-# result: `None`, `{"Ok": ssid}`, or `{"Err": reason}`.
-def _parse_network_connection(value) -> NetworkConnectionResult | None:
-    if value is None:
-        return None
-    if isinstance(value, dict):
-        if "Ok" in value:
-            return NetworkConnected(ssid=value["Ok"])
-        if "Err" in value:
-            return NetworkConnectionFailed(reason=value["Err"])
-    raise ValueError(f"Unknown network connection result: {value!r}")
-
-
-# Python native types into mote_ffi json based messages
-def _deserialize_mote_message(data) -> MoteMessage:
-    if data == "Ping":
-        return Ping()
-    if data == "Pong":
-        return Pong()
-    if isinstance(data, dict):
-        if "Scan" in data:
-            return Scan(points=[LidarPoint(**p) for p in data["Scan"]])
-        if "DriveBaseState" in data:
-            d = data["DriveBaseState"]
-            return DriveBaseState(
-                left=WheelJointState(**d["left"]),
-                right=WheelJointState(**d["right"]),
-            )
-        if "IMUMeasurement" in data:
-            d = data["IMUMeasurement"]
-            return IMUMeasurement(
-                accel=IMUAxisTriple(**d["accel"]),
-                gyro=IMUAxisTriple(**d["gyro"]),
-            )
-        if "State" in data:
-            s = data["State"]
-            return State(
-                data=MoteState(
-                    uid=s["uid"],
-                    ip=s.get("ip"),
-                    current_network_connection=_parse_network_connection(
-                        s.get("current_network_connection")
-                    ),
-                    available_network_connections=[
-                        NetworkConnection(**nc)
-                        for nc in s["available_network_connections"]
-                    ],
-                    built_in_test=BITCollection(
-                        **{
-                            key: [
-                                BIT(name=b["name"], result=BITResult(b["result"]))
-                                for b in bits
-                            ]
-                            for key, bits in s["built_in_test"].items()
-                        }
-                    ),
-                )
-            )
-    raise ValueError(f"Unknown mote message: {data!r}")
+class MoteProtocolError(MoteError):
+    """Raised when a message received from Mote can't be decoded."""
 
 
 # Prompt the client to chose a robot from all devices advertising on the provided service.
@@ -324,7 +107,6 @@ class _MoteProtocol(asyncio.DatagramProtocol):
         pass
 
 
-#
 class MoteClient:
     def __init__(self):
         """
@@ -394,46 +176,61 @@ class MoteClient:
         self.ip = ip
         await self._open_connection()
 
-    async def send(self, message: HostMessage):
+    async def close(self):
+        """
+        Disconnect from Mote.
+
+        Only needed if the client wasn't opened as an `async with` context
+        manager; `__aexit__` already calls this.
+        """
+        if self._protocol is not None and self._protocol.transport is not None:
+            self._protocol.transport.close()
+        self._protocol = None
+        self._link = None
+
+    async def send(self, message: HostToMoteMessage):
         """
         Send a message to Mote.
         """
-        assert self._link is not None and self._protocol is not None, (
-            "Not connected, try calling MoteClient.connect"
-        )
-        assert self._protocol.transport is not None
+        if (
+            self._link is None
+            or self._protocol is None
+            or self._protocol.transport is None
+        ):
+            raise MoteError("Not connected, try calling MoteClient.connect")
 
-        self._link.send(_serialize_host_message(message))
+        self._link.send(to_wire_json(message))
         while True:
             transmit_json = self._link.poll_transmit()
             if transmit_json is None:
                 break
             self._protocol.transport.sendto(bytes(json.loads(transmit_json)))
 
-    async def recv(self) -> MoteMessage:
+    async def recv(self) -> MoteToHostMessage:
         """
         Receive one message from Mote.
 
         Suspends until a complete message is decoded, yielding control to the
         event loop between packets.
         """
-        assert self._link is not None and self._protocol is not None, (
-            "Not connected, try calling MoteClient.connect"
-        )
+        if self._link is None or self._protocol is None:
+            raise MoteError("Not connected, try calling MoteClient.connect")
 
         while True:
             data = await self._protocol._queue.get()
             self._link.handle_receive(json.dumps(list(data)))
             try:
                 message_json = self._link.poll_receive()
-            except OSError as e:
+            except ValueError as e:
                 _logger.warning("Discarded undecodable message from Mote: %s", e)
                 continue
             if message_json is not None:
-                return _deserialize_mote_message(json.loads(message_json))
+                try:
+                    return from_wire_json(message_json, MoteToHostMessage)
+                except (ValueError, KeyError) as e:
+                    raise MoteProtocolError(
+                        f"Could not decode message from Mote: {e}"
+                    ) from e
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        if self._protocol is not None:
-            assert self._protocol.transport is not None
-            self._protocol.transport.close()
-            self._protocol = None
+        await self.close()

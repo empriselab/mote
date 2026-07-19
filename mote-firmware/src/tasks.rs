@@ -30,23 +30,23 @@ assign_resources! {
         usb: USB
     },
     left_encoder: LeftEncoderResources{
-        phase_a: PIN_8,
-        phase_b: PIN_9,
-    },
-    right_encoder: RightEncoderResources{
         phase_a: PIN_6,
         phase_b: PIN_7,
+    },
+    right_encoder: RightEncoderResources{
+        phase_a: PIN_8,
+        phase_b: PIN_9,
     },
     encoder_driver: EncoderDriverResources{
         pio: PIO1,
     },
     drv8833_resources: DRV8833Resources{
-        left_pwm: PWM_SLICE6,
-        left_a: PIN_12,
-        left_b: PIN_13,
-        right_pwm: PWM_SLICE5,
-        right_a: PIN_10,
-        right_b: PIN_11,
+        left_pwm: PWM_SLICE5,
+        left_a: PIN_10,
+        left_b: PIN_11,
+        right_pwm: PWM_SLICE6,
+        right_a: PIN_12,
+        right_b: PIN_13,
         sleep: PIN_18,
     },
     imu: ImuResources{
@@ -90,23 +90,8 @@ bind_interrupts!(pub struct Irqs {
 });
 
 // and init global configuration state
-use alloc::vec::Vec;
-
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::mutex::Mutex;
-use mote_api::messages::mote_to_host::{BITCollection, State, UID};
+use mote_api::messages::mote_to_host::State;
 
-pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::new(State {
-    uid: UID::new(),
-    ip: None,
-    mac: None,
-    current_network_connection: None,
-    available_network_connections: Vec::new(),
-    built_in_test: BITCollection {
-        power: Vec::new(),
-        lidar: Vec::new(),
-        imu: Vec::new(),
-        wifi: Vec::new(),
-        encoders: Vec::new(),
-    },
-});
+pub static CONFIGURATION_STATE: Mutex<CriticalSectionRawMutex, State> = Mutex::new(State::new());

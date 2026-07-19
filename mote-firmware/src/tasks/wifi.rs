@@ -14,7 +14,7 @@ use embassy_rp::peripherals::PIO0;
 use embassy_rp::pio::Pio;
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
-use mote_api::messages::mote_to_host::{BIT, BITResult};
+use mote_api::messages::mote_to_host::{Bit, BitResult};
 use mote_api::messages::{host_to_mote, mote_to_host};
 use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
@@ -38,24 +38,24 @@ async fn net_task(mut runner: embassy_net::Runner<'static, cyw43::NetDriver<'sta
 }
 
 pub async fn init(spawner: Spawner, r: Cyw43Resources) {
-    // Init BIT
+    // Init Bit
     {
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        let init = BIT {
+        let init = Bit {
             name: "Init".into(),
-            result: BITResult::Waiting,
+            result: BitResult::Waiting,
         };
-        let connection = BIT {
+        let connection = Bit {
             name: "Connected to Network".into(),
-            result: BITResult::Waiting,
+            result: BitResult::Waiting,
         };
-        let ip_v4 = BIT {
+        let ip_v4 = Bit {
             name: "IPV4 UP".into(),
-            result: BITResult::Waiting,
+            result: BitResult::Waiting,
         };
-        let multicast = BIT {
+        let multicast = Bit {
             name: "mDNS UP".into(),
-            result: BITResult::Waiting,
+            result: BitResult::Waiting,
         };
         for test in [init, connection, ip_v4, multicast] {
             configuration_state.built_in_test.wifi.push(test);
@@ -132,7 +132,7 @@ pub async fn init(spawner: Spawner, r: Cyw43Resources) {
     {
         // Update init state
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
-        update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BITResult::Pass);
+        update_bit_result(&mut configuration_state.built_in_test.wifi, "Init", BitResult::Pass);
         // Update mac address
         configuration_state.mac = Some(mac_str);
     }

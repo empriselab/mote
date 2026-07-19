@@ -4,7 +4,7 @@ tasks:
   default:
     silent: true
     cmds:
-      - task --list
+      - task --list-all
 
   # WASM / TS
 
@@ -12,14 +12,30 @@ tasks:
     cmds:
       - wasm-pack build --out-dir target/pkg-node --target bundler --features wasm_ffi
 
-  build-c:
-    desc: "Build the C static library. Output: target/release/libmote_ffi.a  (header: include/mote_link.h)"
+  build-cxx:
+    desc: "Build the C++ static library. Output: target/release/libmote_ffi.a  (headers: include/mote-ffi/src/mote_cxx.rs.h, include/rust/cxx.h)"
     cmds:
-      - cargo build --release --no-default-features --features c_ffi
+      - cargo build --release --no-default-features --features cxx_ffi
+
+  test-wasm:
+    desc: "Run the WASM binding's tests under Node (requires wasm-pack)."
+    cmds:
+      - wasm-pack test --node --features wasm_ffi
+
+  # Python
+
+  generate-python-types:
+    desc: "Regenerate mote_link/_generated.py from mote-ffi's JSON schemas (schemas/*.json)."
+    cmds:
+      - cargo build --quiet
+      # Uses only the standard library, so this doesn't need `uv run` / a synced venv --
+      # safe to run before `dev-setup`'s `uv sync` on a fresh checkout.
+      - python3 scripts/generate_python_types.py
 
   # General
 
   dev-setup:
+    deps: [generate-python-types]
     cmds:
       - uv sync --all-extras --cache-dir .uv_cache
       - uv run maturin develop --features python_ffi
@@ -29,20 +45,23 @@ tasks:
       - uv sync --all-extras --no-dev --cache-dir .uv_cache
 
   test:
+    deps: [generate-python-types]
     cmds:
       - cargo test --all-features
+      - task: test-wasm
       - uv run pytest
 
   format:
     cmds:
       - cargo fmt
-      - uv format --preview-features format
+      - uv --preview format
 
   lint:
+    deps: [generate-python-types]
     cmds:
       - cmd: echo "Linting mote-api"
         silent: true
-      - uv run ty check
+      - uv run --all-extras ty check
       - cargo clippy --all-features  -- -D warnings
 
   build:
@@ -60,52 +79,52 @@ tasks:
   format-check:
     cmds:
       - cargo fmt --check
-      - uv format --check --preview-features format
+      - uv --preview format --check
 
   ci:
     deps: [build, lint, test, format-check]
 
   # Release
 
-  release-build-c-linux:
+  release-build-cxx-linux:
     desc: >-
-      Build the C static library for Linux using cargo-zigbuild targeting glibc 2.17 for broad
+      Build the C++ static library for Linux using cargo-zigbuild targeting glibc 2.17 for broad
       compatibility. Requires cargo-zigbuild and zig to be installed.
       Output: target/x86_64-unknown-linux-gnu/release/libmote_ffi.a
     cmds:
-      - cargo zigbuild --release --no-default-features --features c_ffi --target x86_64-unknown-linux-gnu.2.17
+      - cargo zigbuild --release --no-default-features --features cxx_ffi --target x86_64-unknown-linux-gnu.2.17
 
-  release-package-c-linux:
+  release-package-cxx-linux:
     desc: >-
-      Build and package the C static library for Linux, header, and schemas into a release
-      tarball. Output: dist/mote-ffi-c-linux-x86_64-v<version>.tar.gz
-    deps: [release-build-c-linux]
+      Build and package the C++ static library for Linux, cxx-generated headers, and schemas into
+      a release tarball. Output: dist/mote-ffi-cxx-linux-x86_64-v<version>.tar.gz
+    deps: [release-build-cxx-linux]
     cmds:
       - |
         VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
         mkdir -p dist dist/_pkg/include dist/_pkg/schemas
         cp target/x86_64-unknown-linux-gnu/release/libmote_ffi.a dist/_pkg/
-        cp include/mote_link.h dist/_pkg/include/
+        cp -r include/. dist/_pkg/include/
         cp schemas/*.json dist/_pkg/schemas/
-        tar -czf dist/mote-ffi-c-linux-x86_64-v${VERSION}.tar.gz -C dist/_pkg .
+        tar -czf dist/mote-ffi-cxx-linux-x86_64-v${VERSION}.tar.gz -C dist/_pkg .
         rm -rf dist/_pkg
 
-  release-build-c-macos:
-    desc: "Build the C static library for macOS (native arm64, requires macOS 12.0+). Output: target/release/libmote_ffi.a"
+  release-build-cxx-macos:
+    desc: "Build the C++ static library for macOS (native arm64, requires macOS 12.0+). Output: target/release/libmote_ffi.a"
     cmds:
-      - MACOSX_DEPLOYMENT_TARGET=12.0 cargo build --release --no-default-features --features c_ffi
+      - MACOSX_DEPLOYMENT_TARGET=12.0 cargo build --release --no-default-features --features cxx_ffi
 
-  release-package-c-macos:
+  release-package-cxx-macos:
     desc: >-
-      Build and package the C static library for macOS, header, and schemas into a release
-      tarball. Output: dist/mote-ffi-c-macos-aarch64-v<version>.tar.gz
-    deps: [release-build-c-macos]
+      Build and package the C++ static library for macOS, cxx-generated headers, and schemas into
+      a release tarball. Output: dist/mote-ffi-cxx-macos-aarch64-v<version>.tar.gz
+    deps: [release-build-cxx-macos]
     cmds:
       - |
         VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
         mkdir -p dist dist/_pkg/include dist/_pkg/schemas
         cp target/release/libmote_ffi.a dist/_pkg/
-        cp include/mote_link.h dist/_pkg/include/
+        cp -r include/. dist/_pkg/include/
         cp schemas/*.json dist/_pkg/schemas/
-        tar -czf dist/mote-ffi-c-macos-aarch64-v${VERSION}.tar.gz -C dist/_pkg .
+        tar -czf dist/mote-ffi-cxx-macos-aarch64-v${VERSION}.tar.gz -C dist/_pkg .
         rm -rf dist/_pkg

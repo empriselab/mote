@@ -40,18 +40,18 @@ async fn handle_host_message(msg: host_to_mote::Message) {
         host_to_mote::Message::SetNetworkConnectionConfig(set_network_connection_config) => {
             WIFI_REQUEST_CONNECT.send(set_network_connection_config).await;
         }
-        host_to_mote::Message::SetUID(set_uid) => {
+        host_to_mote::Message::SetUid(set_uid) => {
             CONFIGURATION_STATE.lock().await.uid = set_uid.uid.clone();
             FLASH_SAVE_CHANNEL
                 .send(FlashSaveRequest::Uid(set_uid.uid.clone()))
                 .await;
-            info!("Set UID: {}", set_uid.uid.as_str());
+            info!("Set Uid: {}", set_uid.uid.as_str());
         }
         host_to_mote::Message::RequestNetworkScan => {
             WIFI_REQUEST_RESCAN.signal(());
             info!("Requesting network scan");
         }
-        _ => todo!(),
+        _ => warn!("Received unhandled host message type"),
     }
 }
 

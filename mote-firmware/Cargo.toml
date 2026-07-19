@@ -1,6 +1,6 @@
 [package]
 name = "mote-firmware"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 
 [features]
@@ -70,10 +70,7 @@ static_cell = "2.1"
 rand = { version = "0.8", default-features = false }
 embedded-io-async = { version = "0.7", features = ["defmt"] }
 
-bitcode = { version = "0.6", default-features = false, features = [
-    "derive",
-    "serde",
-] }
+postcard = { version = "1", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_with = { version = "3.14", default-features = false, features = [
     "macros",

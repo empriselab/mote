@@ -1,3 +1,0 @@
-[export]
-# Exclude `log` from wasm.rs — cbindgen parses all source files regardless of feature flags
-exclude = ["log"]
