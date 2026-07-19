@@ -92,7 +92,7 @@ async def _chose_from_mdns_service(service_name: str) -> str:
 class _MoteProtocol(asyncio.DatagramProtocol):
     def __init__(self):
         self.transport: asyncio.DatagramTransport | None = None
-        self._queue: asyncio.Queue[bytes] = asyncio.Queue()
+        self._queue: asyncio.Queue[bytes] = asyncio.Queue[bytes]()
 
     def connection_made(self, transport):
         self.transport = transport

@@ -81,6 +81,12 @@ tasks:
       - cargo fmt --check
       - uv --preview format --check
 
+  upgrade:
+    desc: Upgrade locked Rust and Python dependency versions
+    cmds:
+      - cargo update
+      - uv lock --upgrade
+
   ci:
     deps: [build, lint, test, format-check]
 
