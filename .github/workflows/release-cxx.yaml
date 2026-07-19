@@ -21,10 +21,8 @@ jobs:
         include:
           - os: ubuntu-latest
             recipe: release-package-cxx-linux
-            docker_platform: linux/amd64
-          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
             recipe: release-package-cxx-linux-aarch64
-            docker_platform: linux/arm64
           - os: macos-latest
             recipe: release-package-cxx-macos
     runs-on: ${{ matrix.os }}
@@ -48,12 +46,6 @@ jobs:
             exit 1
           fi
           echo "Version check passed: $CRATE_VERSION"
-
-      - name: Set up QEMU
-        if: matrix.docker_platform == 'linux/arm64'
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
 
       - name: Build and package
         working-directory: mote-ffi
