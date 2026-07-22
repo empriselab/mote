@@ -14,7 +14,7 @@ This example uses [uv](https://docs.astral.sh/uv/) to run a Python program. Inst
 In the terminal of your choice, run the demo.
 
 ```bash
-uvx mote_link rerun-demo
+uvx --from mote-link rerun-demo
 ```
 
 Follow the instructions in your terminal to select and connect to your Mote. 
