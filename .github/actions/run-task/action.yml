@@ -58,8 +58,8 @@ runs:
       uses: devcontainers/ci@v0.3
       with:
         configFile: .devcontainer/ci/devcontainer.json
-        imageName: ghcr.io/empriselab/mote-core-devcontainer
-        cacheFrom: ghcr.io/empriselab/mote-core-devcontainer
+        imageName: ghcr.io/empriselab/mote-devcontainer
+        cacheFrom: ghcr.io/empriselab/mote-devcontainer
         push: filter
         env: |
           CARGO_TERM_COLOR=always

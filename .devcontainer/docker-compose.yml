@@ -4,9 +4,9 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
       cache_from:
-        - ghcr.io/empriselab/mote-core-devcontainer:latest
+        - ghcr.io/empriselab/mote-devcontainer:latest
     volumes:
-      - ..:/workspaces/mote-core:cached
+      - ..:/workspaces/mote:cached
       - cargo-registry:/home/vscode/.cargo/registry
       - cargo-git:/home/vscode/.cargo/git
       - uv-cache:/home/vscode/.cache/uv

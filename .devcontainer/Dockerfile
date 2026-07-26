@@ -1,4 +1,4 @@
-# Devcontainer image for mote-core.
+# Devcontainer image for mote.
 
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
@@ -69,7 +69,7 @@ RUN uv tool install codespell
 RUN curl -sfL https://github.com/errata-ai/vale/releases/download/v3.15.1/vale_3.15.1_Linux_64-bit.tar.gz \
         | tar -xz -C /home/vscode/.local/bin vale
 
-WORKDIR /workspaces/mote-core
+WORKDIR /workspaces/mote
 
 # Pre-install mote-firmware's toolchain
 COPY --chown=vscode:vscode mote-firmware/rust-toolchain.toml mote-firmware/rust-toolchain.toml

@@ -1,7 +1,7 @@
 {
-    "name": "mote-core-ci",
+    "name": "mote-ci",
     "dockerComposeFile": "docker-compose.yml",
     "service": "dev",
-    "workspaceFolder": "/workspaces/mote-core",
+    "workspaceFolder": "/workspaces/mote",
     "remoteUser": "vscode"
 }
