@@ -7,6 +7,10 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         pkg-config \
+        python3 \
+        python3-dev \
+        python3-pip \
+        pipx \
         jq \
         libudev-dev \
         libusb-1.0-0 \
