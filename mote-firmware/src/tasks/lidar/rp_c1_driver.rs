@@ -4,11 +4,17 @@
 // This implementation only covers the C1, but could extended with a little
 // work.
 
-use defmt::{Format, error, warn};
+use defmt::{Format, debug, error, warn};
 use embassy_time::{Duration, TimeoutError, Timer, with_timeout};
 use embedded_io_async::{ErrorType, ReadExactError};
 
 const START_FLAG: u8 = 0xA5;
+
+const HEALTH_RESPONSE_HEADER: [u8; 7] = [0xA5, 0x5A, 0x03, 0x00, 0x00, 0x00, 0x06];
+
+const START_SCAN_RESPONSE: [u8; 7] = [0xA5, 0x5A, 0x05, 0x00, 0x00, 0x40, 0x81];
+
+const MAX_RESYNC_SKIP: usize = 64;
 
 #[non_exhaustive]
 struct Requests;
@@ -55,6 +61,15 @@ pub enum ReadSamplesError<T> {
     IoError(T),
 }
 
+/// Error from `RPLidarC1::sync_to_header`.
+enum SyncError<E> {
+    /// An IO error occurred while reading from the connection.
+    Io(ReadExactError<E>),
+    /// `MAX_RESYNC_SKIP` bytes were discarded without finding the expected
+    /// bytes
+    NotFound,
+}
+
 pub struct RPLidarC1<T>
 where
     T: embedded_io_async::Write + embedded_io_async::Read,
@@ -98,41 +113,82 @@ where
         }
     }
 
-    pub async fn check_health(&mut self) -> LidarState {
-        let mut resp = [0; 10];
+    /// Use a sliding window to seek a pattern of bytes.
+    /// `SyncError::NotFound` once `MAX_RESYNC_SKIP` bytes have been discarded
+    /// without a match.
+    async fn sync_to_bytes(&mut self, byte_pattern: &[u8; 7]) -> Result<usize, SyncError<<T as ErrorType>::Error>> {
+        let mut window = [0u8; 7];
+        self.connection.read_exact(&mut window).await.map_err(SyncError::Io)?;
 
+        let mut skipped = 0;
+        while window != *byte_pattern {
+            if skipped >= MAX_RESYNC_SKIP {
+                return Err(SyncError::NotFound);
+            }
+            window.copy_within(1.., 0);
+            self.connection
+                .read_exact(&mut window[6..])
+                .await
+                .map_err(SyncError::Io)?;
+            skipped += 1;
+        }
+
+        Ok(skipped)
+    }
+
+    pub async fn check_health(&mut self) -> LidarState {
         // Clear the UART buffer
         self.clear_read().await;
 
         match self.connection.write_all(&Requests::GET_HEALTH).await {
-            Ok(()) => match self.connection.read_exact(&mut resp).await {
-                Ok(()) => {
-                    if resp[0..7] == [0xA5, 0x5A, 0x03, 0x00, 0x00, 0x00, 0x06] {
-                        match resp[7] {
-                            0x00 => {
-                                return LidarState::ScanRequest;
+            Ok(()) => {
+                match with_timeout(Duration::from_millis(500), self.sync_to_bytes(&HEALTH_RESPONSE_HEADER)).await {
+                    Ok(Ok(skipped)) => {
+                        if skipped > 0 {
+                            debug!(
+                                "Discarded {} leading junk byte(s) before finding LiDAR GET_HEALTH response header",
+                                skipped
+                            );
+                        }
+
+                        let mut payload = [0u8; 3];
+                        match with_timeout(Duration::from_millis(200), self.connection.read_exact(&mut payload)).await {
+                            Ok(Ok(())) => match payload[0] {
+                                0x00 => {
+                                    return LidarState::ScanRequest;
+                                }
+                                status => {
+                                    let mut error: [u8; 2] = [0; 2];
+                                    error.copy_from_slice(&payload[0..2]);
+                                    error!(
+                                        "LiDAR GET_HEALTH returned status code {} and error code {}",
+                                        status,
+                                        u16::from_le_bytes(error)
+                                    );
+                                }
+                            },
+                            Ok(Err(err)) => {
+                                error!("Failed to read GET_HEALTH response payload from LiDAR ({})", err);
                             }
-                            status => {
-                                let mut error: [u8; 2] = [0; 2];
-                                error.copy_from_slice(&resp[7..9]);
-                                error!(
-                                    "LiDAR GET_HEALTH returned status code {} and error code {}",
-                                    status,
-                                    u16::from_le_bytes(error)
-                                );
+                            Err(TimeoutError) => {
+                                error!("Timed out reading GET_HEALTH response payload from LiDAR");
                             }
                         }
-                    } else {
+                    }
+                    Ok(Err(SyncError::NotFound)) => {
                         error!(
-                            "LiDAR returned incorrect response to GET_HEALTH message ({:#x}), resetting...",
-                            resp
+                            "Could not find LiDAR GET_HEALTH response header within {} bytes, resetting...",
+                            MAX_RESYNC_SKIP
                         );
                     }
+                    Ok(Err(SyncError::Io(err))) => {
+                        error!("Failed to read GET_HEALTH response from LiDAR ({})", err);
+                    }
+                    Err(TimeoutError) => {
+                        error!("Timed out waiting for LiDAR GET_HEALTH response header");
+                    }
                 }
-                Err(err) => {
-                    error!("Failed to read GET_HEALTH response from LiDAR ({})", err);
-                }
-            },
+            }
             Err(err) => {
                 error!("Failed to send GET_HEALTH command to LiDAR ({}), resetting...", err);
             }
@@ -142,24 +198,31 @@ where
     }
 
     pub async fn scan_request(&mut self) -> LidarState {
-        let mut resp = [0; 7];
         match self.connection.write_all(&Requests::SCAN).await {
-            Ok(()) => match self.connection.read_exact(&mut resp).await {
-                Ok(()) => {
-                    if resp == [0xA5, 0x5A, 0x05, 0x00, 0x00, 0x40, 0x81] {
-                        return LidarState::ReceiveSample;
-                    } else {
-                        warn!(
-                            "LiDAR returned incorrect response to START_SCAN message ({:#x}), checking health...",
-                            resp
+            Ok(()) => match with_timeout(Duration::from_millis(500), self.sync_to_bytes(&START_SCAN_RESPONSE)).await {
+                Ok(Ok(skipped)) => {
+                    if skipped > 0 {
+                        debug!(
+                            "Discarded {} leading junk byte(s) before finding LiDAR START_SCAN response",
+                            skipped
                         );
                     }
+                    return LidarState::ReceiveSample;
                 }
-                Err(err) => {
+                Ok(Err(SyncError::NotFound)) => {
+                    warn!(
+                        "Could not find LiDAR START_SCAN response within {} bytes, checking health...",
+                        MAX_RESYNC_SKIP
+                    );
+                }
+                Ok(Err(SyncError::Io(err))) => {
                     warn!(
                         "Failed to read START_SCAN response from LiDAR ({}), checking health...",
                         err
                     );
+                }
+                Err(TimeoutError) => {
+                    warn!("Timed out waiting for LiDAR START_SCAN response, checking health...");
                 }
             },
             Err(err) => {
