@@ -17,33 +17,18 @@ defaults:
 jobs:
   build-lint-format-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
     - uses: actions/checkout@v4
 
-    - uses: Swatinem/rust-cache@v2
+    - name: Run CI validation
+      uses: ./.github/actions/run-task
       with:
-        workspaces: |
+        run: task ci
+        rust-cache-workspaces: |
           mote-firmware
           mote-api
-
-    - name: Setup mdBook
-      uses: peaceiris/actions-mdbook@v2
-      with:
-        mdbook-version: 'latest'
-
-    - name: Setup wasm-pack
-      uses: jetli/wasm-pack-action@v0.4.0
-      with:
-        version: 'v0.15.0'
-
-    - name: Setup uv
-      uses: astral-sh/setup-uv@v7
-      with:
-        enable-cache: true
-        version: 'latest'
-
-    - name: Install Task
-      uses: go-task/setup-task@v2
-
-    - name: Run CI validation
-      run: task ci
+          mote-ffi
+        npm-cache-dependency-path: mote-configuration/package-lock.json

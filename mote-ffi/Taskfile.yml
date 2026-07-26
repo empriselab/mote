@@ -28,9 +28,7 @@ tasks:
     desc: "Regenerate mote_link/_generated.py from mote-ffi's JSON schemas (schemas/*.json)."
     cmds:
       - cargo build --quiet
-      # Uses only the standard library, so this doesn't need `uv run` / a synced venv --
-      # safe to run before `dev-setup`'s `uv sync` on a fresh checkout.
-      - python3 scripts/generate_python_types.py
+      - uv run scripts/generate_python_types.py
 
   # General
 
