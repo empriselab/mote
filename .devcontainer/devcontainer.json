@@ -12,7 +12,8 @@
                 "svelte.svelte-vscode",
                 "ms-python.python",
                 "charliermarsh.ruff",
-                "tamasfe.even-better-toml"
+                "tamasfe.even-better-toml",
+                "task.vscode-task"
             ]
         }
     }
