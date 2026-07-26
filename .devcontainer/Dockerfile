@@ -70,3 +70,7 @@ RUN curl -sfL https://github.com/errata-ai/vale/releases/download/v3.15.1/vale_3
         | tar -xz -C /home/vscode/.local/bin vale
 
 WORKDIR /workspaces/mote-core
+
+# Pre-install mote-firmware's toolchain
+COPY --chown=vscode:vscode mote-firmware/rust-toolchain.toml mote-firmware/rust-toolchain.toml
+RUN cd mote-firmware && rustup show
