@@ -9,11 +9,7 @@ services:
       - cargo-git:/home/vscode/.cargo/git
       - uv-cache:/home/vscode/.cache/uv
     command: sleep infinity
-    # Firmware flashing (task firmware:provision/deploy, via probe-rs) needs
-    # raw USB access to the debug probe, which only works reliably with
-    # Docker on native Linux hosts (not Docker Desktop on macOS/Windows) —
-    # see mote-book/src/advanced/contributing/dev_env.md. Uncomment on a
-    # native-Linux host to enable it:
+    # Uncomment on a native-Linux host to enable USB passthrough for firmware deployment:
     # privileged: true
     # devices:
     #   - /dev/bus/usb:/dev/bus/usb
