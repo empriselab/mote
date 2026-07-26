@@ -1,8 +1,8 @@
 {
-    "name": "mote-core",
+    "name": "mote",
     "dockerComposeFile": "docker-compose.yml",
     "service": "dev",
-    "workspaceFolder": "/workspaces/mote-core",
+    "workspaceFolder": "/workspaces/mote",
     "remoteUser": "vscode",
     "postCreateCommand": "cd mote-firmware && rustup show && cd .. && task --list-all",
     "customizations": {
