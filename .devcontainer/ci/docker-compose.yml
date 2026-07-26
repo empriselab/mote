@@ -1,0 +1,13 @@
+services:
+  dev:
+    build:
+      context: ../..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ../..:/workspaces/mote-core:cached
+      # In CI we want to share the caches with the host so they can be saved and restored.
+      - ${HOME:-/home/runner}/.cargo/registry:/home/vscode/.cargo/registry
+      - ${HOME:-/home/runner}/.cargo/git:/home/vscode/.cargo/git
+      - ${HOME:-/home/runner}/.cache/uv:/home/vscode/.cache/uv
+      - ${HOME:-/home/runner}/.npm:/home/vscode/.npm
+    command: sleep infinity

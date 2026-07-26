@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cmake \
     && rm -rf /var/lib/apt/lists/*
 
-# Node.js (mote-configuration's Svelte/Vite/TS build), matching CI's lts/*.
+# Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*

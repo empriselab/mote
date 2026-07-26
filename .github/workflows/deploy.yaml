@@ -14,6 +14,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  packages: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 concurrency:
@@ -37,24 +38,11 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - uses: Swatinem/rust-cache@v2
+      - name: Build book and web artifact
+        uses: ./.github/actions/run-task
         with:
-          workspaces: |
-            mote-api
-
-      - name: Setup mdBook
-        uses: peaceiris/actions-mdbook@v2
-        with:
-          mdbook-version: 'latest'
-
-      - name: Install Task
-        uses: go-task/setup-task@v2
-
-      - name: Test Book
-        run: task book:test
-
-      - name: Run CI web build
-        run: task ci-web-artifact
+          run: task book:test && task ci-web-artifact
+          rust-cache-workspaces: mote-api
 
       - name: Fill in firmware download link
         run: |

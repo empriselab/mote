@@ -17,26 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: lts/*
-          cache: 'npm'
-          cache-dependency-path: 'mote-configuration/package-lock.json'
-
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: mote-ffi
-
-      - uses: jetli/wasm-pack-action@v0.4.0
-        with:
-          version: 'latest'
-
-      - name: Install Task
-        uses: go-task/setup-task@v2
 
       - name: Check version matches tag
         run: |
@@ -49,8 +32,11 @@ jobs:
           echo "Version check passed: $CODE_VERSION"
 
       - name: Build and package
-        working-directory: mote-configuration
-        run: task release-package
+        uses: ./.github/actions/run-task
+        with:
+          run: task config:release-package
+          rust-cache-workspaces: mote-ffi
+          npm-cache-dependency-path: mote-configuration/package-lock.json
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
