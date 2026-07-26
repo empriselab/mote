@@ -2,7 +2,15 @@
 
 ## DevContainer
 
-DevContainer support coming in [#13](https://github.com/empriselab/mote/issues/13). DevContainers do not support USB passthrough (outside of Linux), so you'll need to follow the local install directions if you wish to develop firmware.
+A [DevContainer](https://containers.dev/) is provided in [`.devcontainer/`](https://github.com/empriselab/mote/tree/main/.devcontainer).
+Open the repo in VS Code with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) and choose "Reopen in Container"
+
+> [!TIP]
+> `probe-rs` firmware deployments will not work on MacOS or Windows due to USB passthrough limitations with Docker Desktop.
+>
+> On native Linux, USB passthrough can be enabled by uncommenting the relevant lines in [`.devcontainer/docker-compose.yml`](https://github.com/empriselab/mote/tree/main/.devcontainer/docker-compose.yml).
+>
+> On MacOS and Windows, the firmware binary can be built inside of the dev container with `task firmware:build` and subsequently deployed using a local `probe-rs` install.
 
 ## Local Install
 
