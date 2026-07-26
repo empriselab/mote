@@ -41,11 +41,12 @@ runs:
         restore-keys: |
           npm-${{ runner.os }}-
 
-    - name: Make cache dirs writable for the container user
+    - name: Make cache dirs and workspace writable for the container user
       shell: bash
       run: |
         mkdir -p ~/.cargo/registry ~/.cargo/git ~/.cache/uv ~/.npm
         chmod -R a+rwX ~/.cargo/registry ~/.cargo/git ~/.cache/uv ~/.npm
+        chmod -R a+rwX "$GITHUB_WORKSPACE"
 
     - name: Log in to GHCR
       uses: docker/login-action@v3
