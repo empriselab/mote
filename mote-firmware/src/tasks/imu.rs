@@ -47,7 +47,7 @@ pub async fn get_sensor_data(
                 let gyro = ImuAxisTriple {
                     x: gyro_tuple.0,
                     y: gyro_tuple.1,
-                    z: gyro_tuple.2,
+                    z: -gyro_tuple.2, // Negative corrects for NED sign conventions
                 };
 
                 // Return the temperature and the combined measurement
