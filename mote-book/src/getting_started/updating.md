@@ -1,6 +1,6 @@
 # Updating Firmware
 
-Before you can using your Mote, you must program the microcontroller on board the robot with the latest firmware.
+Before you can start using your Mote you'll need to program it with the latest firmware.
 
 1. Download the latest version of mote-firmware: [MOTE_FW_TAG_PLACEHOLDER](MOTE_FW_URL_PLACEHOLDER).
 
