@@ -1,16 +1,20 @@
 # Mote
 
+<!-- ``` -->
+<!-- ┃ ┳┳┓┏┓┏┳┓┏┓ ┃ -->
+<!-- ┃ ┃┃┃┃┃ ┃ ┣  ┃ -->
+<!-- ┃ ┛ ┗┗┛ ┻ ┗┛ ┃ -->
+<!-- ``` -->
+<!-- --- -->
+
 A low-cost, high-confidence mobile robot for hands-on robotics education.
 
-![](./getting_started/assets/assembly/24_assembly_complete.webp)
+<div class="image-split">
+    <img src="./assets/glam.webp"/>
+    <img src="./getting_started/assets/assembly/24_assembly_complete.webp"/>
+</div>
+<iframe src="https://app.rerun.io/version/0.34.1/index.html?url=https://empriselab.github.io/mote/getting_started/assets/hello_world/mote-link-example-roaming.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe>
 
-## Highlights
-
-* LiDAR, IMU, and wheel position data streamed over WiFi
-* Polished SDKs for ROS, ROS2, Python and Rust
-* Wide cross-platform support
-* Open source firmware, software, and hardware
-* Only $100
 
 ## Getting Started
 
