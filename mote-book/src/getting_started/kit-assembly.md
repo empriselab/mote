@@ -1,6 +1,6 @@
 # Kit Assembly
 
-This tutorial will guide you through assembling your Mote. It should take around 15 minutes.
+In this tutorial you will assemble your Mote. It should take around 15 minutes.
 
 ## Gather Parts
 
@@ -9,7 +9,6 @@ Missing something? Check out [the sourcing guide](../hardware-sourcing/acquire.m
 
 ![Required parts](./assets/assembly/all_parts.webp)
 
-### Custom
 
 | Item | Quantity | Picture | 
 |---|---|---|
@@ -19,28 +18,16 @@ Missing something? Check out [the sourcing guide](../hardware-sourcing/acquire.m
 | Tail Runner | 1 | ![](./assets/assembly/tail_runner.webp) |
 | LiDAR Mount | 1 | ![](./assets/assembly/lidar_stand.webp) |
 | Wheel Spacers | 2 | ![](./assets/assembly/wheel_spacers.webp) |
-
-### Off the Shelf
-
-| Item | Quantity | Picture | 
-|---|---|---|
 | LiDAR | 1 | ![](./assets/assembly/rp_c1_lidar.webp) |
 | Orange Wheel | 2 | ![](./assets/assembly/wheels.webp) |
 | Motor with Encoder | 2 | ![](./assets/assembly/motors.webp) |
 | 25mm M2.5 Hex Head Machine Screws | 6 | ![](./assets/assembly/25mm_screws.webp) |
 | 6mm M2.5 Hex Head Machine Screws | 2 | ![](./assets/assembly/6mm_screws.webp) |
-
-### Miscellaneous
-
-| Item | Quantity | Picture | 
-|---|---|---|
 | 2mm Hex Key | 1 | ![](./assets/assembly/hex_key.webp) |
 | USB-C to C Cable | 1 | ![](./assets/assembly/usb_cable.webp) |
 | 5000 mAh USB Portable Battery  | 1 | … add photo … |
 
-## Assemble Your Mote
-
-### Motor Mounts
+## Motor Subassembly
 
 ![](./assets/assembly/1_assembly_right_motor.webp)
 
@@ -57,7 +44,7 @@ Repeat for the left side motor mount.
 
 ![](./assets/assembly/4_assembly_both_motors.webp)
 
-### LiDAR Stackup
+## Body Assembly
 
 Slide the circuit board between the two halves of the motor mounts, aligning the holes in the mounts with those in the circuit board.
 
@@ -81,7 +68,7 @@ Place the LiDAR on top of the LiDAR stand, then thread the 25mm screws into the 
 ![](./assets/assembly/10_assembly_lidar_on_stack.webp)
 ![](./assets/assembly/11_assembly_lidar_tighten.webp)
 
-### Cables
+## Cables
 
 Connect both motors to the circuit board.
 
@@ -109,7 +96,7 @@ Restrain the motor cables using a cable tie. Trim the cable tie to prevent dragg
 ![](./assets/assembly/17_assembly_ziptie.webp)
 ![](./assets/assembly/18_assembly_ziptie_trim.webp)
 
-### Wheels
+## Wheels
 
 Add a wheel spacer to the left motor.
 
@@ -124,19 +111,22 @@ Secure the wheel with a 25mm screw.
 > [!TIP]
 > The M2.5 screw must be threaded into the hole on the wheel. You may need to apply some pressure to get the thread started.
 
-<img src="./assets/assembly/21_assembly_wheel_with_screw.webp" width="48%"/> <img src="./assets/assembly/21_assembly_wheel_with_screw_after.webp" width="48%"/>
+<div class="image-split">
+    <img src="./assets/assembly/21_assembly_wheel_with_screw.webp"/> 
+    <img src="./assets/assembly/21_assembly_wheel_with_screw_after.webp"/>
+</div>
 
 Repeat for the right wheel.
 
 ![](./assets/assembly/22_assembly_both_wheels.webp)
 
-### Tail Runner
+## Tail Runner
 
 Place a 6mm screw into the hole on the tail runner. Align the screw with the nut on the circuit board, then use the hex key to secure the tail runner to the circuit board. Repeat with the second 6mm screw and hole on the tail runner.
 
 ![](./assets/assembly/23_assembly_tail_screw.webp)
 
-### Success
+## Success
 You've successfully assembled your Mote!
 
 ![](./assets/assembly/24_assembly_complete.webp)
