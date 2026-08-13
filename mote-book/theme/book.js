@@ -3,7 +3,7 @@
 /* global default_theme, default_dark_theme, default_light_theme, hljs, ClipboardJS */
 
 // Fix back button cache problem
-window.onunload = function() { };
+window.onunload = function () { };
 
 // Global variable, shared between modules
 function playground_text(playground, hidden = true) {
@@ -38,7 +38,7 @@ function playground_text(playground, hidden = true) {
         })
             .then(response => response.json())
             .then(response => {
-            // get list of crates available in the rust playground
+                // get list of crates available in the rust playground
                 const playground_crates = response.crates.map(item => item['id']);
                 playgrounds.forEach(block => handle_crate_list_update(block, playground_crates));
             });
@@ -90,7 +90,7 @@ function playground_text(playground, hidden = true) {
         }
 
         // check if all used crates are available on play.rust-lang.org
-        const all_available = snippet_crates.every(function(elem) {
+        const all_available = snippet_crates.every(function (elem) {
             return playground_crates.indexOf(elem) > -1;
         });
 
@@ -162,7 +162,7 @@ function playground_text(playground, hidden = true) {
     const code_nodes = Array
         .from(document.querySelectorAll('code'))
         // Don't highlight `inline code` blocks in headers.
-        .filter(function(node) {
+        .filter(function (node) {
             return !node.parentElement.classList.contains('header');
         });
 
@@ -170,33 +170,33 @@ function playground_text(playground, hidden = true) {
         // language-rust class needs to be removed for editable
         // blocks or highlightjs will capture events
         code_nodes
-            .filter(function(node) {
+            .filter(function (node) {
                 return node.classList.contains('editable');
             })
-            .forEach(function(block) {
+            .forEach(function (block) {
                 block.classList.remove('language-rust');
             });
 
         code_nodes
-            .filter(function(node) {
+            .filter(function (node) {
                 return !node.classList.contains('editable');
             })
-            .forEach(function(block) {
+            .forEach(function (block) {
                 hljs.highlightBlock(block);
             });
     } else {
-        code_nodes.forEach(function(block) {
+        code_nodes.forEach(function (block) {
             hljs.highlightBlock(block);
         });
     }
 
     // Adding the hljs class gives code blocks the color css
     // even if highlighting doesn't apply
-    code_nodes.forEach(function(block) {
+    code_nodes.forEach(function (block) {
         block.classList.add('hljs');
     });
 
-    Array.from(document.querySelectorAll('code.hljs')).forEach(function(block) {
+    Array.from(document.querySelectorAll('code.hljs')).forEach(function (block) {
 
         const lines = Array.from(block.querySelectorAll('.boring'));
         // If no lines were hidden, return
@@ -215,7 +215,7 @@ aria-label="Show hidden lines"></button>';
         const pre_block = block.parentNode;
         pre_block.insertBefore(buttons, pre_block.firstChild);
 
-        buttons.firstChild.addEventListener('click', function(e) {
+        buttons.firstChild.addEventListener('click', function (e) {
             if (this.title === 'Show hidden lines') {
                 this.innerHTML = document.getElementById('fa-eye-slash').innerHTML;
                 this.title = 'Hide lines';
@@ -233,7 +233,7 @@ aria-label="Show hidden lines"></button>';
     });
 
     if (window.playground_copyable) {
-        Array.from(document.querySelectorAll('pre code')).forEach(function(block) {
+        Array.from(document.querySelectorAll('pre code')).forEach(function (block) {
             const pre_block = block.parentNode;
             if (!pre_block.classList.contains('playground')) {
                 let buttons = pre_block.querySelector('.buttons');
@@ -255,7 +255,7 @@ aria-label="Show hidden lines"></button>';
     }
 
     // Process playground code blocks
-    Array.from(document.querySelectorAll('.playground')).forEach(function(pre_block) {
+    Array.from(document.querySelectorAll('.playground')).forEach(function (pre_block) {
         // Add play button
         let buttons = pre_block.querySelector('.buttons');
         if (!buttons) {
@@ -297,7 +297,7 @@ aria-label="Show hidden lines"></button>';
 
             buttons.insertBefore(undoChangesButton, buttons.firstChild);
 
-            undoChangesButton.addEventListener('click', function() {
+            undoChangesButton.addEventListener('click', function () {
                 const editor = window.ace.edit(code_block);
                 editor.setValue(editor.originalCode);
                 editor.clearSelection();
@@ -312,7 +312,7 @@ aria-label="Show hidden lines"></button>';
     const themePopup = document.getElementById('mdbook-theme-list');
     const themeColorMetaTag = document.querySelector('meta[name="theme-color"]');
     const themeIds = [];
-    themePopup.querySelectorAll('button.theme').forEach(function(el) {
+    themePopup.querySelectorAll('button.theme').forEach(function (el) {
         themeIds.push(el.id);
     });
     const stylesheets = {
@@ -328,7 +328,7 @@ aria-label="Show hidden lines"></button>';
     }
 
     function updateThemeSelected() {
-        themePopup.querySelectorAll('.theme-selected').forEach(function(el) {
+        themePopup.querySelectorAll('.theme-selected').forEach(function (el) {
             el.classList.remove('theme-selected');
         });
         const selected = get_saved_theme() ?? 'default_theme';
@@ -398,12 +398,12 @@ aria-label="Show hidden lines"></button>';
             ace_theme = 'ace/theme/dawn';
         }
 
-        setTimeout(function() {
+        setTimeout(function () {
             themeColorMetaTag.content = getComputedStyle(document.documentElement).backgroundColor;
         }, 1);
 
         if (window.ace && window.editors) {
-            window.editors.forEach(function(editor) {
+            window.editors.forEach(function (editor) {
                 editor.setTheme(ace_theme);
             });
         }
@@ -423,14 +423,14 @@ aria-label="Show hidden lines"></button>';
     }
 
     const query = window.matchMedia('(prefers-color-scheme: dark)');
-    query.onchange = function() {
+    query.onchange = function () {
         set_theme(get_theme(), false);
     };
 
     // Set theme.
     set_theme(get_theme(), false);
 
-    themeToggleButton.addEventListener('click', function() {
+    themeToggleButton.addEventListener('click', function () {
         if (themePopup.style.display === 'block') {
             hideThemes();
         } else {
@@ -438,7 +438,7 @@ aria-label="Show hidden lines"></button>';
         }
     });
 
-    themePopup.addEventListener('click', function(e) {
+    themePopup.addEventListener('click', function (e) {
         let theme;
         if (e.target.className === 'theme') {
             theme = e.target.id;
@@ -457,7 +457,7 @@ aria-label="Show hidden lines"></button>';
         }
     });
 
-    themePopup.addEventListener('focusout', function(e) {
+    themePopup.addEventListener('focusout', function (e) {
         // e.relatedTarget is null in Safari and Firefox on macOS (see workaround below)
         if (!!e.relatedTarget &&
             !themeToggleButton.contains(e.relatedTarget) &&
@@ -469,7 +469,7 @@ aria-label="Show hidden lines"></button>';
 
     // Should not be needed, but it works around an issue on macOS & iOS:
     // https://github.com/rust-lang/mdBook/issues/628
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (themePopup.style.display === 'block' &&
             !themeToggleButton.contains(e.target) &&
             !themePopup.contains(e.target)
@@ -478,7 +478,7 @@ aria-label="Show hidden lines"></button>';
         }
     });
 
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
             return;
         }
@@ -488,32 +488,32 @@ aria-label="Show hidden lines"></button>';
 
         let li;
         switch (e.key) {
-        case 'Escape':
-            e.preventDefault();
-            hideThemes();
-            break;
-        case 'ArrowUp':
-            e.preventDefault();
-            li = document.activeElement.parentElement;
-            if (li && li.previousElementSibling) {
-                li.previousElementSibling.querySelector('button').focus();
-            }
-            break;
-        case 'ArrowDown':
-            e.preventDefault();
-            li = document.activeElement.parentElement;
-            if (li && li.nextElementSibling) {
-                li.nextElementSibling.querySelector('button').focus();
-            }
-            break;
-        case 'Home':
-            e.preventDefault();
-            themePopup.querySelector('li:first-child button').focus();
-            break;
-        case 'End':
-            e.preventDefault();
-            themePopup.querySelector('li:last-child button').focus();
-            break;
+            case 'Escape':
+                e.preventDefault();
+                hideThemes();
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                li = document.activeElement.parentElement;
+                if (li && li.previousElementSibling) {
+                    li.previousElementSibling.querySelector('button').focus();
+                }
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                li = document.activeElement.parentElement;
+                if (li && li.nextElementSibling) {
+                    li.nextElementSibling.querySelector('button').focus();
+                }
+                break;
+            case 'Home':
+                e.preventDefault();
+                themePopup.querySelector('li:first-child button').focus();
+                break;
+            case 'End':
+                e.preventDefault();
+                themePopup.querySelector('li:last-child button').focus();
+                break;
         }
     });
 })();
@@ -552,7 +552,7 @@ aria-label="Show hidden lines"></button>';
 
     function showSidebar() {
         document.documentElement.classList.add('sidebar-visible');
-        Array.from(sidebarLinks).forEach(function(link) {
+        Array.from(sidebarLinks).forEach(function (link) {
             link.setAttribute('tabIndex', 0);
         });
         sidebarToggleButton.setAttribute('aria-expanded', true);
@@ -566,7 +566,7 @@ aria-label="Show hidden lines"></button>';
 
     function hideSidebar() {
         document.documentElement.classList.remove('sidebar-visible');
-        Array.from(sidebarLinks).forEach(function(link) {
+        Array.from(sidebarLinks).forEach(function (link) {
             link.setAttribute('tabIndex', -1);
         });
         sidebarToggleButton.setAttribute('aria-expanded', false);
@@ -618,14 +618,14 @@ aria-label="Show hidden lines"></button>';
         window.removeEventListener('mouseup', stopResize, false);
     }
 
-    document.addEventListener('touchstart', function(e) {
+    document.addEventListener('touchstart', function (e) {
         firstContact = {
             x: e.touches[0].clientX,
             time: Date.now(),
         };
     }, { passive: true });
 
-    document.addEventListener('touchmove', function(e) {
+    document.addEventListener('touchmove', function (e) {
         if (!firstContact) {
             return;
         }
@@ -647,7 +647,7 @@ aria-label="Show hidden lines"></button>';
 })();
 
 (function chapterNavigation() {
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.altKey || e.ctrlKey || e.metaKey) {
             return;
         }
@@ -706,10 +706,10 @@ aria-label="Show hidden lines"></button>';
 
         // Usually needs the Shift key to be pressed
         switch (e.key) {
-        case '?':
-            e.preventDefault();
-            showHelp();
-            break;
+            case '?':
+                e.preventDefault();
+                showHelp();
+                break;
         }
 
         // Rest of the keys are only active when the Shift key is not pressed
@@ -718,22 +718,22 @@ aria-label="Show hidden lines"></button>';
         }
 
         switch (e.key) {
-        case 'ArrowRight':
-            e.preventDefault();
-            if (html.dir === 'rtl') {
-                prev();
-            } else {
-                next();
-            }
-            break;
-        case 'ArrowLeft':
-            e.preventDefault();
-            if (html.dir === 'rtl') {
-                next();
-            } else {
-                prev();
-            }
-            break;
+            case 'ArrowRight':
+                e.preventDefault();
+                if (html.dir === 'rtl') {
+                    prev();
+                } else {
+                    next();
+                }
+                break;
+            case 'ArrowLeft':
+                e.preventDefault();
+                if (html.dir === 'rtl') {
+                    next();
+                } else {
+                    prev();
+                }
+                break;
         }
     });
 })();
@@ -752,34 +752,26 @@ aria-label="Show hidden lines"></button>';
     }
 
     const clipboardSnippets = new ClipboardJS('.clip-button', {
-        text: function(trigger) {
+        text: function (trigger) {
             hideTooltip(trigger);
             const playground = trigger.closest('pre');
             return playground_text(playground, false);
         },
     });
 
-    Array.from(clipButtons).forEach(function(clipButton) {
-        clipButton.addEventListener('mouseout', function(e) {
+    Array.from(clipButtons).forEach(function (clipButton) {
+        clipButton.addEventListener('mouseout', function (e) {
             hideTooltip(e.currentTarget);
         });
     });
 
-    clipboardSnippets.on('success', function(e) {
+    clipboardSnippets.on('success', function (e) {
         e.clearSelection();
         showTooltip(e.trigger, 'Copied!');
     });
 
-    clipboardSnippets.on('error', function(e) {
+    clipboardSnippets.on('error', function (e) {
         showTooltip(e.trigger, 'Clipboard error!');
-    });
-})();
-
-(function scrollToTop() {
-    const menuTitle = document.querySelector('.menu-title');
-
-    menuTitle.addEventListener('click', function() {
-        document.scrollingElement.scrollTo({ top: 0, behavior: 'smooth' });
     });
 })();
 
@@ -796,7 +788,7 @@ aria-label="Show hidden lines"></button>';
         let topCache = menu.style.top.slice(0, -2);
         menu.classList.remove('sticky');
         let stickyCache = false; // Same as menu.classList.contains('sticky'), but faster
-        document.addEventListener('scroll', function() {
+        document.addEventListener('scroll', function () {
             scrollTop = Math.max(document.scrollingElement.scrollTop, 0);
             // `null` means that it doesn't need to be updated
             let nextSticky = null;

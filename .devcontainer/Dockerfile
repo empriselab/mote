@@ -45,7 +45,7 @@ RUN sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /home/vs
 RUN cargo install wasm-pack --version 0.15.0 --locked
 
 # MdBook
-RUN cargo install mdbook --locked
+RUN cargo install mdbook --version v0.5.2 --locked
 
 # probe-rs
 RUN curl --proto '=https' --tlsv1.2 -LsSf \
