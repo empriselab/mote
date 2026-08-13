@@ -24,10 +24,6 @@ h2 {
     .desktop-only {
         display: none;
     }
-
-    .image-split {
-        flex-direction: column;
-    }
 }
 
 /* pre code.hljs { */
