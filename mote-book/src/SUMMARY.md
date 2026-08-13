@@ -32,7 +32,7 @@
 # Troubleshooting
 
 - [Common Issues](./troubleshooting/common_issues.md)
-- [Debugging](./troubleshooting/debugging.md)
+- [Status LEDs](./troubleshooting/status_leds.md)
 
 # Hardware Sourcing
 

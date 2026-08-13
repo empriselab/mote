@@ -2,9 +2,11 @@
 
 In this example we'll use the mote-link Python library to stream data from and send commands to your robot.
 
-<iframe src="https://app.rerun.io/version/0.34.1/index.html?url=https://empriselab.github.io/mote/getting_started/assets/hello_world/mote-link-example-roaming.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe>
+<div class="desktop-only">
+    <iframe src="https://app.rerun.io/version/0.34.1/index.html?url=https://empriselab.github.io/mote/getting_started/assets/hello_world/mote-link-example-roaming.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe>
 
 *Example data - Mote driving around my apartment*
+</div>
 
 <!-- <iframe src="https://app.rerun.io/version/0.34.1/index.html?url=http://localhost:8080/getting_started/assets/hello_world/mote-link-example-roaming.rrd" width="100%" style="aspect-ratio: 1.5;"></iframe> -->
 
@@ -36,6 +38,6 @@ Use the arrow keys to drive Mote around.
 
 ## Troubleshooting
 
-### My Mote drives backwards
+__My Mote drives backwards__
 
 [Check your motor cable connections](./kit-assembly.html#cables). Are the left and right motor connections swapped?

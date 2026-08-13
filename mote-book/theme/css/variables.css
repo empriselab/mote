@@ -17,10 +17,10 @@
 /* Themes */
 
 .night {
-    --bg: #141414;
-    --fg: #c5c5c5;
+    --bg: #080808;
+    --fg: #f5f5f5;
 
-    --sidebar-bg: #141414;
+    --sidebar-bg: #080808;
     --sidebar-fg: #c8c9db;
     --sidebar-non-existant: #5c6773;
     --sidebar-active: #ffb454;
@@ -44,7 +44,7 @@
 
     --warning-border: #ff8e00;
 
-    --table-border-color: #c5c5c5;
+    --table-border-color: #757575;
 
     --searchbar-border-color: #848484;
     --searchbar-bg: #424242;

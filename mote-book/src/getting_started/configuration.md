@@ -41,7 +41,7 @@ You can use a friendly name to communicate with your Mote.
 
 ## Troubleshooting
 
-### My network doesn't appear
+__My network doesn't appear__
 
 Mote can only connect to 2.4 GHz networks. Make sure your router has the 2.4 GHz band enabled.
 
