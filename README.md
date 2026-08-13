@@ -4,7 +4,9 @@
 [![Deploy Docs](https://github.com/mote-robotics/mote-core/actions/workflows/deploy.yaml/badge.svg)](https://github.com/mote-robotics/mote-core/actions/workflows/deploy.yaml)
 [![Hardware Check](https://github.com/mote-robotics/mote-core/actions/workflows/hardware-check.yaml/badge.svg)](https://github.com/mote-robotics/mote-core/actions/workflows/hardware-check.yaml)
 
-A low cost and high confidence mobile robot.
+A low cost, high reliability mobile robot for hands-on robotics education.
+
+[](mote/mote-book/src/assets/glam.webp)
 
 ## Motivation
 

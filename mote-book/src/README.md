@@ -1,13 +1,17 @@
-# Mote
+<pre style="text-align: center">
+         ┓            ┏         
+░░░░░▒▒▒▓┃ ┳┳┓┏┓┏┳┓┏┓ ┃▓▒▒▒░░░░░
+░░░░░▒▒▒▓┃ ┃┃┃┃┃ ┃ ┣  ┃▓▒▒▒░░░░░
+░░░░░▒▒▒▓┃ ┛ ┗┗┛ ┻ ┗┛ ┃▓▒▒▒░░░░░
+         ┛            ┗         
+</pre>
 
-<!-- ``` -->
-<!-- ┃ ┳┳┓┏┓┏┳┓┏┓ ┃ -->
-<!-- ┃ ┃┃┃┃┃ ┃ ┣  ┃ -->
-<!-- ┃ ┛ ┗┗┛ ┻ ┗┛ ┃ -->
-<!-- ``` -->
-<!-- --- -->
+<br>
 
-A low-cost, high-confidence mobile robot for hands-on robotics education.
+<p style="text-align: center"> A low-cost, high-reliablity mobile robot for hands-on robotics education. </p>
+
+<br>
+<br>
 
 <div class="image-split">
     <img src="./assets/glam.webp"/>
