@@ -1,6 +1,8 @@
 import asyncio
 import colorsys
 import math
+import argparse
+from ipaddress import ip_address
 
 import pyglet
 import rerun as rr
@@ -174,7 +176,7 @@ class _Joystick:
 
 
 # Example application that connects to Mote and logs sensor data to rerun.
-async def run_main():
+async def run_main(args: argparse.Namespace):
     rr.init("mote_rerun_example_python")
     server_uri = rr.serve_grpc()
     rr.serve_web_viewer(connect_to=server_uri)
@@ -257,7 +259,12 @@ async def run_main():
     rr.send_blueprint(blueprint)
 
     async with MoteClient() as client:
-        await client.connect()
+        if args.name is not None:
+            await client.connect_with_uid(args.name)
+        if args.ip is not None:
+            await client.connect_with_ip(args.ip)
+        else:
+            await client.connect()
 
         print("Pinging Mote")
         await client.send(Ping())
@@ -321,8 +328,17 @@ async def run_main():
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description="A mote-link example visualizing telemetry using rerun.io."
+    )
+
+    parser.add_argument("--ip", type=ip_address, help="(optional) Mote's IP address")
+    parser.add_argument("--name", help="(optional) Mote's mDNS hostname")
+
+    args = parser.parse_args()
+
     try:
-        asyncio.run(run_main())
+        asyncio.run(run_main(args))
     except KeyboardInterrupt:
         print("\nDisconnected.")
     except MoteConnectionError as e:

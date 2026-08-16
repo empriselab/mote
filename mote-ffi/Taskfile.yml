@@ -70,7 +70,7 @@ tasks:
   rerun-demo:
     deps: [dev-setup]
     cmds:
-      - uv run rerun-demo
+      - uv run rerun-demo {{.CLI_ARGS}}
 
   # CI
 
