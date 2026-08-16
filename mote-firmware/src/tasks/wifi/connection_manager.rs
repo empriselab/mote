@@ -24,7 +24,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
         let mut configuration_state = CONFIGURATION_STATE.lock().await;
         // A failed connection leaves us without a valid address. Clear the
         // stale IP
-        if result == BitResult::Fail {
+        if result == BitResult::Waiting {
             configuration_state.ip = None;
         }
         configuration_state.current_network_connection = current_network;
@@ -97,7 +97,7 @@ async fn attempt_join_network<'a>(control: &mut cyw43::Control<'a>, config: SetN
         return true;
     }
 
-    update_network_bit(Some(Err(last_error)), BitResult::Fail).await;
+    update_network_bit(Some(Err(last_error)), BitResult::Waiting).await;
     false
 }
 
