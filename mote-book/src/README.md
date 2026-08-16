@@ -8,7 +8,7 @@
 
 <br>
 
-<p style="text-align: center"> A low-cost, high-reliablity mobile robot for hands-on robotics education. </p>
+<p style="text-align: center"> The low-cost, high-reliablity mobile robot for hands-on robotics education. </p>
 
 <br>
 <br>
