@@ -6,7 +6,6 @@
          ┛            ┗         
 </pre>
 
-<br>
 
 <p style="text-align: center"> The low-cost, high-reliablity mobile robot for hands-on robotics education. </p>
 
@@ -32,4 +31,4 @@
 
 ## Getting Started
 
-[Assemble your kit](./getting_started/kit-assembly.md) if you already have the parts, or go to the [hardware sourcing guide](./hardware-sourcing/acquire.md) if you're starting from scratch.
+[Assemble your kit](./getting_started/kit-assembly.md) if you already have the parts, or checkout the [hardware sourcing guide](./hardware-sourcing/acquire.md) if you're starting from scratch.
