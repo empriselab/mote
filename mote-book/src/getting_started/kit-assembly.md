@@ -49,6 +49,7 @@ Repeat for the left side motor mount.
 Slide the circuit board between the two halves of the motor mounts, aligning the holes in the mounts with those in the circuit board.
 
 ![](./assets/assembly/5_assembly_motors_on_board.webp)
+![](./assets/assembly/5_assembly_motors_on_board_side_view.webp)
 ![](./assets/assembly/6_assembly_motors_on_board_three_quarters.webp)
 
 Insert the 25mm screws through the holes in the motor mounts and circuit board.
