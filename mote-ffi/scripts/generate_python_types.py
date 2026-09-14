@@ -19,7 +19,7 @@ PRIMITIVE_TYPES = {
 }
 
 BANNER = '''\
-"""Generated from mote-ffi's JSON schemas — do not edit by hand.
+"""Generated from mote-ffi's JSON schemas.  Do not edit by hand.
 
 Regenerate with `task ffi:generate-python-types` (see
 mote-ffi/scripts/generate_python_types.py) after changing mote-api's message
