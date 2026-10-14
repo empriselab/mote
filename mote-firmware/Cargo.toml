@@ -3,11 +3,19 @@ name = "mote-firmware"
 version = "0.2.1"
 edition = "2024"
 
+[[bin]]
+name = "mote-firmware"
+test = false
+harness = false
+
 [features]
 bake-cyw43-firmware = []
 
 [dependencies]
 mote-api = { path = "../mote-api" }
+
+units = { package = "sci-units", version = "0.6", features = ["use_defmt", "f32"] }
+heapless = { version = "0.9", features = ["defmt", "serde"] }
 
 embassy-embedded-hal = { version = "0.6", features = ["defmt"] }
 embassy-executor = { version = "0.10", features = [
@@ -97,8 +105,3 @@ embedded-alloc = "0.7"
 
 smart-leds = "0.4"
 
-[profile.release]
-lto = true
-opt-level = 3
-codegen-units = 1
-debug = true

@@ -11,7 +11,7 @@ use schemars::JsonSchema;
 // Lidar Data
 /// A single lidar range reading.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, defmt::Format)]
 pub struct Point {
     /// Reading quality/confidence, as reported by the lidar driver.
     pub quality: u8,
@@ -24,7 +24,7 @@ pub struct Point {
 // Encoder / Drive Base Data
 /// Encoder-derived state of a single drive wheel.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, defmt::Format)]
 pub struct WheelJointState {
     /// Applied motor effort, as a percentage of maximum.
     pub effort_percent: f32,
@@ -36,7 +36,7 @@ pub struct WheelJointState {
 
 /// Encoder-derived state of both drive wheels.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, defmt::Format)]
 pub struct DriveBaseState {
     /// Left wheel state.
     pub left: WheelJointState,
@@ -47,7 +47,7 @@ pub struct DriveBaseState {
 // IMU Data
 /// A 3-axis IMU reading (used for both acceleration and angular velocity).
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, defmt::Format)]
 pub struct ImuAxisTriple {
     /// X axis.
     pub x: f32,
@@ -59,7 +59,7 @@ pub struct ImuAxisTriple {
 
 /// A single IMU sample.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, defmt::Format)]
 pub struct ImuMeasurement {
     /// Linear acceleration.
     pub accel: ImuAxisTriple,
@@ -71,7 +71,7 @@ pub struct ImuMeasurement {
 
 /// A WiFi network visible to Mote during a scan.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, defmt::Format)]
 pub struct NetworkConnection {
     /// Network SSID.
     pub ssid: String,
@@ -81,7 +81,7 @@ pub struct NetworkConnection {
 
 /// Outcome of a single built-in test.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash, defmt::Format)]
 pub enum BitResult {
     /// The test hasn't completed yet.
     Waiting,
@@ -93,7 +93,7 @@ pub enum BitResult {
 
 /// A single named built-in test and its outcome.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, defmt::Format)]
 pub struct Bit {
     /// Human-readable test name.
     pub name: String,
@@ -105,7 +105,7 @@ pub type BitList = Vec<Bit>;
 
 /// Built-in test results, grouped by subsystem.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default, defmt::Format)]
 #[non_exhaustive]
 pub struct BitCollection {
     /// Power subsystem tests.
@@ -139,7 +139,7 @@ pub type Uid = String;
 
 /// Why the most recent network connection attempt failed.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, defmt::Format)]
 pub enum ConnectionError {
     /// The join attempt didn't complete within the retry timeout.
     Timeout,
@@ -152,7 +152,7 @@ pub enum ConnectionError {
 
 /// Mote's current aggregate state, as telemetered to the host.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default, defmt::Format)]
 #[non_exhaustive]
 pub struct State {
     /// Device identifier.
@@ -189,7 +189,7 @@ impl State {
 
 /// A message sent from Mote to the host.
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, defmt::Format)]
 #[non_exhaustive]
 pub enum Message {
     /// Liveness check; the host responds with [`Pong`](Message::Pong).
@@ -204,4 +204,7 @@ pub enum Message {
     ImuMeasurement(ImuMeasurement),
     /// Full aggregate device state.
     State(Box<State>),
+    /// Pubsub Message
+    #[cfg(not(feature = "schemars"))]
+    PubSub(super::router::Message),
 }

@@ -13,6 +13,8 @@ use thiserror::Error;
 
 /// Message type definitions sent over the mote/host link.
 pub mod messages;
+/// Modules for working on control, guidance, and navigation
+pub mod work;
 
 use crate::messages::{host_to_mote, mote_to_host};
 

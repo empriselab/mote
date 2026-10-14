@@ -43,7 +43,7 @@ pub static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 4] = [
     embassy_rp::binary_info::rp_program_build_attribute!(),
 ];
 
-static mut CORE1_STACK: Stack<10000> = Stack::new();
+static mut CORE1_STACK: Stack<{ 64 * 1024 }> = Stack::new();
 static EXECUTOR0: StaticCell<Executor> = StaticCell::new();
 static EXECUTOR1: StaticCell<Executor> = StaticCell::new();
 
@@ -135,6 +135,9 @@ async fn core1_task(
 
     imu::init(spawner, imu_r).await;
     info!("IMU INIT complete");
+
+    gnc::init(spawner).await;
+    info!("Gnc INIT complete");
 
     drive_base::init(
         spawner,

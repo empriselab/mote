@@ -1137,6 +1137,7 @@ checksum = "25ba4bd83f9415b58b4ed8dc5714c76e626a105be4646c02630ad730ad3b5aa4"
 dependencies = [
  "defmt 1.1.1",
  "hash32",
+ "serde_core",
  "stable_deref_trait",
 ]
 
@@ -1217,6 +1218,12 @@ name = "libc"
 version = "0.2.186"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
+
+[[package]]
+name = "libm"
+version = "0.2.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6d2cec3eae94f9f509c767b45932f1ada8350c4bdb85af2fcab4a3c14807981"
 
 [[package]]
 name = "linked_list_allocator"
@@ -1331,7 +1338,12 @@ name = "mote-api"
 version = "0.2.0"
 dependencies = [
  "corncobs",
+ "defmt 1.1.1",
+ "heapless 0.9.3",
+ "libm",
+ "num-traits",
  "postcard",
+ "sci-units",
  "serde",
  "thiserror",
 ]
@@ -1363,6 +1375,7 @@ dependencies = [
  "embedded-hal-async",
  "embedded-io-async 0.7.0",
  "fixed",
+ "heapless 0.9.3",
  "lsm6ds33",
  "mote-api",
  "panic-probe",
@@ -1370,6 +1383,7 @@ dependencies = [
  "postcard",
  "rand",
  "rand_core 0.10.1",
+ "sci-units",
  "serde",
  "serde_with",
  "smart-leds",
@@ -1816,6 +1830,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
  "winapi-util",
+]
+
+[[package]]
+name = "sci-units"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e3717ac1aa2eae4c8fb3acf1ffe92f850def445a348aafbadba75ea5d97cdbd"
+dependencies = [
+ "defmt 0.3.100",
+ "libm",
+ "sci-units-proc-macro",
+ "serde",
+]
+
+[[package]]
+name = "sci-units-proc-macro"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a81de5d01b89c59dce45e4d9808ac11dfc85b03ce30ed8c2a02e36cd73d4ef61"
+dependencies = [
+ "quote",
+ "serde",
+ "syn 1.0.109",
 ]
 
 [[package]]

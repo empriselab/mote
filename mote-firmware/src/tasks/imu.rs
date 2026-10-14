@@ -4,17 +4,17 @@ use embassy_rp::peripherals::I2C1;
 use lsm6ds33::{
     AccelerometerOutput, AccelerometerScale, Error as ImuError, GyroscopeFullScale, GyroscopeOutput, Lsm6ds33Async,
 };
-use mote_api::messages::mote_to_host;
+// use mote_api::messages::mote_to_host;
 use mote_api::messages::mote_to_host::{Bit, BitResult, ImuAxisTriple, ImuMeasurement};
 
-use super::{ImuResources, Irqs};
+use super::{ImuResources, Irqs, router};
 use crate::helpers::update_bit_result;
 use crate::tasks::CONFIGURATION_STATE;
-use crate::wifi::DATA_OFFLOAD_CHANNEL;
+// use crate::wifi::DATA_OFFLOAD_CHANNEL;
 
 // NUMBER OF MISSED IMU READS IN A ROW BEFORE WE FLAG A Bit FAILURE
 const MISSED_READ_THRESHOLD: u8 = 10;
-const INVALID_TEMPERATURE: f32 = 25.0; // value returned by get_sensor_data on read failure 
+const INVALID_TEMPERATURE: f32 = 25.0; // value returned by get_sensor_data on read failure
 // (MUST be 25.0 since imu.read_all() may not return an error but just return 0
 // for all values, in this case the temp is read as 25)
 
@@ -70,7 +70,22 @@ async fn imu_task(r: ImuResources) {
     // Sensor Reading loop
     loop {
         if let Some((temp, measurement)) = get_sensor_data(&mut imu).await {
-            let _ = DATA_OFFLOAD_CHANNEL.try_send(mote_to_host::Message::ImuMeasurement(measurement));
+            // let _ = DATA_OFFLOAD_CHANNEL.
+            // try_send(mote_to_host::Message::ImuMeasurement(measurement));
+            let outgoing = router::Imu {
+                timestamp: router::get_timestamp(),
+                accel: router::Accel {
+                    x: units::Acceleration::new(measurement.accel.x),
+                    y: units::Acceleration::new(measurement.accel.y),
+                    z: units::Acceleration::new(measurement.accel.z),
+                },
+                gyro: router::Gyro {
+                    x: units::AngularVelocity::new(measurement.gyro.x),
+                    y: units::AngularVelocity::new(measurement.gyro.y),
+                    z: units::AngularVelocity::new(measurement.gyro.z),
+                },
+            };
+            router::TO_GNC_CHAN.send(router::Message::Imu(outgoing)).await;
 
             // get sensor data errored, update Bit and log, and missed read count
             if temp == INVALID_TEMPERATURE {
